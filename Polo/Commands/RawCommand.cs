@@ -19,6 +19,7 @@
 
             // Move all RAW files to the RAW folder
 
+            // Show list of moved RAW files
         }
     }
 }
