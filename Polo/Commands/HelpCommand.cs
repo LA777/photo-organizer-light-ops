@@ -16,7 +16,7 @@ namespace Polo.Commands
 
             foreach (var command in commands)
             {
-                Console.WriteLine($"-{command.ShortName}, --{command.Name}\t\t\t{command.Description}");
+                Console.WriteLine($"-{command.ShortName}, --{command.Name}\t\t{command.Description}");
             }
         }
     }

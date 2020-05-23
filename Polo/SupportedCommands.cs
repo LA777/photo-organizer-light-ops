@@ -8,7 +8,8 @@ namespace Polo
         private static readonly IEnumerable<ICommand> Commands = new List<ICommand>
         {
             new VersionCommand(),
-            new HelpCommand()
+            new HelpCommand(),
+            new RawCommand()
         };
 
         public static IEnumerable<ICommand> GetCommandsList()
