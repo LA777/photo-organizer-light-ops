@@ -1,12 +1,10 @@
-﻿using System;
-
-namespace Polo
+﻿namespace Polo
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            CommandParser.Parse(args);
         }
     }
 }
