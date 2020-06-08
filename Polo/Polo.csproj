@@ -3,6 +3,8 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <StartupObject>Polo.Program</StartupObject>
+    <ApplicationIcon>Icon\multimediaphotoviewer.ico</ApplicationIcon>
   </PropertyGroup>
 
 </Project>
