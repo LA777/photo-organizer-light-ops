@@ -1,0 +1,10 @@
+﻿
+TODO
+
+- add logging
+
+- add Remove orphanage RAW files command
+
+- delete files to Recycle bin
+
+
