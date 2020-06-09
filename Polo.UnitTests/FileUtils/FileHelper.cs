@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Threading;
 
 namespace Polo.UnitTests.FileUtils
@@ -19,6 +20,18 @@ namespace Polo.UnitTests.FileUtils
         public static void CreateJpegFiles(string folderPath)
         {
             CreateFiles(folderPath, JpegExtension);
+        }
+
+        public static void DeleteRandomJpegFiles(string folderPath, int filesDeleteCount)
+        {
+            for (var i = 0; i < filesDeleteCount; i++)
+            {
+                var jpegFiles = Directory.EnumerateFiles(folderPath, $"*.{JpegExtension}", SearchOption.TopDirectoryOnly).ToList();
+                var random = new Random(42);
+                var randomIndex = random.Next(0, jpegFiles.Count);
+                var randomFilePath = jpegFiles[randomIndex];
+                File.Delete(randomFilePath);
+            }
         }
 
         public static void CreateRawFiles(string folderPath)
