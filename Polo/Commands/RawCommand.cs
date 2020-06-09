@@ -1,4 +1,7 @@
-﻿namespace Polo.Commands
+﻿using System;
+using System.IO;
+
+namespace Polo.Commands
 {
     public class RawCommand : ICommand
     {
@@ -10,16 +13,21 @@
 
         public void Action()
         {
-            // TODO LA
-            // Get current folder
+            var currentDirectory = Environment.CurrentDirectory;
+            Console.WriteLine(currentDirectory);
 
-            // Create RAW folder if it does not exist
+            var rawFolderPath = Path.Join(currentDirectory, "RAW");
+            Directory.CreateDirectory(rawFolderPath);
 
-            // Find all RAW files
+            var rawFiles = Directory.EnumerateFiles(currentDirectory, "*.ORF", SearchOption.TopDirectoryOnly);
 
-            // Move all RAW files to the RAW folder
-
-            // Show list of moved RAW files
+            foreach (var rawFilePath in rawFiles)
+            {
+                var fileInfo = new FileInfo(rawFilePath);
+                var destinationFilePath = Path.Join(rawFolderPath, fileInfo.Name);
+                File.Move(rawFilePath, destinationFilePath);
+                Console.WriteLine($"Moved: {fileInfo.Name}");
+            }
         }
     }
 }
