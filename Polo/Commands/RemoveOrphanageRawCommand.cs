@@ -15,8 +15,6 @@ namespace Polo.Commands
         public void Action()
         {
             var currentDirectory = Environment.CurrentDirectory;
-            Console.WriteLine(currentDirectory);
-
             var jpegFiles = Directory.EnumerateFiles(currentDirectory, "*.JPG", SearchOption.TopDirectoryOnly).ToList();
 
             var rawFolderPath = Path.Join(currentDirectory, "RAW");

@@ -14,8 +14,6 @@ namespace Polo.Commands
         public void Action()
         {
             var currentDirectory = Environment.CurrentDirectory;
-            Console.WriteLine(currentDirectory);
-
             var rawFolderPath = Path.Join(currentDirectory, "RAW");
             Directory.CreateDirectory(rawFolderPath);
 
