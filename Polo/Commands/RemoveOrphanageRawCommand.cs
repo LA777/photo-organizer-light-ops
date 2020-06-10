@@ -1,4 +1,8 @@
-﻿namespace Polo.Commands
+﻿using System;
+using System.IO;
+using System.Linq;
+
+namespace Polo.Commands
 {
     public class RemoveOrphanageRawCommand : ICommand
     {
@@ -10,12 +14,26 @@
 
         public void Action()
         {
-            // Get JPEG files
-            // Get RAW files
+            var currentDirectory = Environment.CurrentDirectory;
+            Console.WriteLine(currentDirectory);
 
-            // Get orphanage RAW files
+            var jpegFiles = Directory.EnumerateFiles(currentDirectory, "*.JPG", SearchOption.TopDirectoryOnly).ToList();
 
-            // Remove orphanage RAW files
+            var rawFolderPath = Path.Join(currentDirectory, "RAW");
+            var rawFiles = Directory.EnumerateFiles(rawFolderPath, "*.ORF", SearchOption.TopDirectoryOnly).ToList();
+
+            var jpegFilesNames = jpegFiles.Select(Path.GetFileNameWithoutExtension);
+            var rawFilesNames = rawFiles.Select(Path.GetFileNameWithoutExtension);
+
+            var orphanageRawFilesNames = rawFilesNames.Except(jpegFilesNames);
+            var orphanageRawFiles = orphanageRawFilesNames.Select(x => Path.Join(rawFolderPath, $"{x}.ORF"));
+
+            foreach (var rawFile in orphanageRawFiles)
+            {
+                File.Delete(rawFile);
+                var fileInfo = new FileInfo(rawFile);
+                Console.WriteLine($"RAW file deleted: {fileInfo.Name}");
+            }
         }
     }
 }

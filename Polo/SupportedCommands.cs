@@ -9,7 +9,8 @@ namespace Polo
         {
             new VersionCommand(),
             new HelpCommand(),
-            new RawCommand()
+            new RawCommand(),
+            new RemoveOrphanageRawCommand()
         };
 
         public static IEnumerable<ICommand> GetCommandsList()

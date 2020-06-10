@@ -11,6 +11,8 @@ namespace Polo.UnitTests.FileUtils
         public const string JpegExtension = "JPG";
         public const string RawExtension = "ORF";
         public const string TestFolderName = "UnitTestTemp";
+        public const string FilePrefix = "UTP-";
+        public const string RawFolderName = "RAW";
 
         public static string UnitTestFolder { get; set; } = Directory.GetCurrentDirectory();
         // "C:\\Git\\LA777\\photo-organizer-light-ops\\Polo.UnitTests\\bin\\Debug"
@@ -41,11 +43,19 @@ namespace Polo.UnitTests.FileUtils
 
         public static string CreateTestFolder()
         {
-            //FileHelper.TryDeleteTestFolder();
             var directoryInfo = Directory.CreateDirectory(TestFolderFullPath);
 
             return directoryInfo.FullName;
         }
+
+        public static string CreateRawFolder()
+        {
+            var rawFolderPath = Path.Join(TestFolderFullPath, RawFolderName);
+            var directoryInfo = Directory.CreateDirectory(rawFolderPath);
+
+            return directoryInfo.FullName;
+        }
+
         public static void TryDeleteTestFolder(int retryCount = 3)
         {
             if (!Directory.Exists(TestFolderFullPath))
@@ -77,7 +87,7 @@ namespace Polo.UnitTests.FileUtils
         {
             for (var i = 0; i < FileLimit; i++)
             {
-                var fileName = $"UTP-{i}";
+                var fileName = $"{FilePrefix}{i}";
                 CreateFile(folderPath, fileName, fileExtensions);
             }
         }

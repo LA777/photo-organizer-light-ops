@@ -18,10 +18,9 @@ namespace Polo.UnitTests.Commands
             // Arrange
             var testFolderPath = FileHelper.CreateTestFolder();
             FileHelper.CreateJpegFiles(testFolderPath);
-            var rawFolderPath = Path.Join(testFolderPath, "RAW");
+            var rawFolderPath = FileHelper.CreateRawFolder();
             FileHelper.CreateRawFiles(rawFolderPath);
             Environment.CurrentDirectory = testFolderPath;
-            // Remove several JPEG files
             const int jpegFilesDeleteCount = 2;
             FileHelper.DeleteRandomJpegFiles(testFolderPath, jpegFilesDeleteCount);
             const int expectedFilesCount = FileHelper.FileLimit - jpegFilesDeleteCount;
