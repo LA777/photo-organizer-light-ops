@@ -10,7 +10,8 @@ namespace Polo
             new VersionCommand(),
             new HelpCommand(),
             new RawCommand(),
-            new RemoveOrphanageRawCommand()
+            new RemoveOrphanageRawCommand(),
+            new MoveRawToJpegFolderCommand()
         };
 
         public static IEnumerable<ICommand> GetCommandsList()
