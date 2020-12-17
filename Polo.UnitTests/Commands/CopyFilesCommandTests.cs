@@ -1,6 +1,8 @@
 using FluentAssertions;
 using Microsoft.Extensions.Options;
+using Moq;
 using Polo.Abstractions.Commands;
+using Polo.Abstractions.Services;
 using Polo.Commands;
 using Polo.Options;
 using Polo.UnitTests.FileUtils;
@@ -19,7 +21,8 @@ namespace Polo.UnitTests.Commands
         private static readonly IOptions<ApplicationSettings> _mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(_validApplicationSettings);
         private static readonly string _sourceFolderName = "Source Fotos";
         private static readonly string _destinationFolderName = "Destination Fotos";
-        private readonly ICommand _sut = new CopyFilesCommand(_mockApplicationOptions);
+        private static readonly Mock<IConsoleService> _consoleServiceMock = new Mock<IConsoleService>();
+        private readonly ICommand _sut = new CopyFilesCommand(_mockApplicationOptions, _consoleServiceMock.Object);
 
         private readonly Folder folderStructureInitial = new Folder()
         {
@@ -195,7 +198,7 @@ namespace Polo.UnitTests.Commands
 
             ApplicationSettings _validApplicationSettings = new ApplicationSettings() { DefaultSourceDriveName = sourceFolderPath };
             IOptions<ApplicationSettings> _mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(_validApplicationSettings);
-            var sut = new CopyFilesCommand(_mockApplicationOptions);
+            var sut = new CopyFilesCommand(_mockApplicationOptions, _consoleServiceMock.Object);
 
             // Act
             sut.Action(arguments);
@@ -217,7 +220,7 @@ namespace Polo.UnitTests.Commands
 
             ApplicationSettings _validApplicationSettings = new ApplicationSettings() { DefaultSourceDriveName = sourceFolderPath };
             IOptions<ApplicationSettings> _mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(_validApplicationSettings);
-            var sut = new CopyFilesCommand(_mockApplicationOptions);
+            var sut = new CopyFilesCommand(_mockApplicationOptions, _consoleServiceMock.Object);
 
             // Act
             Exception exception = Assert.Throws<DirectoryNotFoundException>(() => sut.Action(arguments));
