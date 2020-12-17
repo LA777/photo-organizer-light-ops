@@ -1,35 +1,42 @@
-﻿using System;
+﻿using Polo.Abstractions;
+using Polo.Abstractions.Commands;
+using Polo.Abstractions.Services;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Polo
 {
-    public class CommandParser
+    public class CommandParser : ICommandParser
     {
+        private readonly IConsoleService _consoleService;
         private const string ShortCommandPrefix = "-";
         private const string CommandPrefix = "--";
 
-        public static void Parse(string[] arguments)
+        public CommandParser(IConsoleService consoleService)
         {
-            var commands = SupportedCommands.GetCommandsList();
+            _consoleService = consoleService ?? throw new ArgumentNullException(nameof(consoleService));
+        }
 
-            foreach (var argument in arguments)
+        public void Parse(string[] arguments, IEnumerable<ICommand> commands)
+        {
+            var argument = arguments.First();
+
+            var matchedCommand = commands.FirstOrDefault(x => $"{CommandPrefix}{x.Name}" == argument);
+            if (matchedCommand != null)
             {
-                var matchedCommand = commands.FirstOrDefault(x => $"{CommandPrefix}{x.Name}" == argument);
-                if (matchedCommand != null)
+                matchedCommand.Action(arguments, commands);
+            }
+            else
+            {
+                var matchedShortCommand = commands.FirstOrDefault(x => $"{ShortCommandPrefix}{x.ShortName}" == argument);
+                if (matchedShortCommand != null)
                 {
-                    matchedCommand.Action();
+                    matchedShortCommand.Action(arguments, commands);
                 }
                 else
                 {
-                    var matchedShortCommand = commands.FirstOrDefault(x => $"{ShortCommandPrefix}{x.ShortName}" == argument);
-                    if (matchedShortCommand != null)
-                    {
-                        matchedShortCommand.Action();
-                    }
-                    else
-                    {
-                        Console.WriteLine("ERROR: Unknown command. Please enter --help to see available commands list.");
-                    }
+                    _consoleService.WriteLine("ERROR: Unknown command. Please enter --help to see available commands list.");
                 }
             }
         }

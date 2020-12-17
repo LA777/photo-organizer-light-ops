@@ -1,4 +1,7 @@
 using FluentAssertions;
+using Moq;
+using Polo.Abstractions.Commands;
+using Polo.Abstractions.Services;
 using Polo.Commands;
 using Polo.UnitTests.FileUtils;
 using Polo.UnitTests.Models;
@@ -9,9 +12,10 @@ using Xunit;
 
 namespace Polo.UnitTests.Commands
 {
-    public class MoveRawToJpegFolderCommandTests : IDisposable
+    [Collection("Sequential")]
+    public class MoveRawToJpegFolderCommandTests : CommandTestBase
     {
-        private readonly ICommand _sut = new MoveRawToJpegFolderCommand();
+        private readonly ICommand _sut;
 
         private readonly Folder folderStructureInitial = new Folder()
         {
@@ -148,6 +152,12 @@ namespace Polo.UnitTests.Commands
             }
         };
 
+        public MoveRawToJpegFolderCommandTests()
+        {
+            var consoleServiceMock = new Mock<IConsoleService>();
+            _sut = new MoveRawToJpegFolderCommand(consoleServiceMock.Object);
+        }
+
         [Fact]
         public void Action_Should_Move_Raw_Files_To_Jpeg_Folder_Test()
         {
@@ -159,20 +169,8 @@ namespace Polo.UnitTests.Commands
             _sut.Action();
 
             // Assert
-
             var folderStructureActual = FileHelper.CreateFolderStructureByFolderAndFiles(testFolderFullPath);
             folderStructureActual.Should().BeEquivalentTo(folderStructureExpected);
-        }
-
-        private static void ReleaseUnmanagedResources()
-        {
-            FileHelper.TryDeleteTestFolder();
-        }
-
-        public void Dispose()
-        {
-            ReleaseUnmanagedResources();
-            GC.SuppressFinalize(this);
         }
 
         ~MoveRawToJpegFolderCommandTests()

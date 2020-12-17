@@ -1,4 +1,7 @@
 using FluentAssertions;
+using Moq;
+using Polo.Abstractions.Commands;
+using Polo.Abstractions.Services;
 using Polo.Commands;
 using Polo.UnitTests.FileUtils;
 using System;
@@ -8,9 +11,16 @@ using Xunit;
 
 namespace Polo.UnitTests.Commands
 {
-    public class RemoveOrphanageRawCommandTests : IDisposable
+    [Collection("Sequential")]
+    public class RemoveOrphanageRawCommandTests : CommandTestBase
     {
-        private readonly ICommand _sut = new RemoveOrphanageRawCommand();
+        private readonly ICommand _sut;
+
+        public RemoveOrphanageRawCommandTests()
+        {
+            var consoleServiceMock = new Mock<IConsoleService>();
+            _sut = new RemoveOrphanageRawCommand(consoleServiceMock.Object);
+        }
 
         [Fact]
         public void Action_Should_Create_Raw_Folder_And_Move_Raw_Files_Test()
@@ -38,17 +48,6 @@ namespace Polo.UnitTests.Commands
             var jpegFilesNames = jpegFiles.Select(Path.GetFileNameWithoutExtension);
             var rawFilesNames = rawFiles.Select(Path.GetFileNameWithoutExtension);
             rawFilesNames.Should().BeEquivalentTo(jpegFilesNames);
-        }
-
-        private static void ReleaseUnmanagedResources()
-        {
-            FileHelper.TryDeleteTestFolder();
-        }
-
-        public void Dispose()
-        {
-            ReleaseUnmanagedResources();
-            GC.SuppressFinalize(this);
         }
 
         ~RemoveOrphanageRawCommandTests()

@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Polo.Abstractions.Commands;
+using Polo.Abstractions.Services;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -6,13 +9,19 @@ namespace Polo.Commands
 {
     public class RemoveOrphanageRawCommand : ICommand
     {
+        private readonly IConsoleService _consoleService;
         public string Name => "remove-orphanage-raw";
 
         public string ShortName => "ror";
 
         public string Description => "Removes orphanage raw files from RAW folder.";
 
-        public void Action()
+        public RemoveOrphanageRawCommand(IConsoleService consoleService)
+        {
+            _consoleService = consoleService ?? throw new ArgumentNullException(nameof(consoleService));
+        }
+
+        public void Action(string[] arguments = null, IEnumerable<ICommand> commands = null)
         {
             var currentDirectory = Environment.CurrentDirectory;
             var jpegFiles = Directory.EnumerateFiles(currentDirectory, "*.JPG", SearchOption.TopDirectoryOnly).ToList();
@@ -30,7 +39,7 @@ namespace Polo.Commands
             {
                 File.Delete(rawFile);
                 var fileInfo = new FileInfo(rawFile);
-                Console.WriteLine($"RAW file deleted: {fileInfo.Name}");
+                _consoleService.WriteLine($"RAW file deleted: {fileInfo.Name}");
             }
         }
     }

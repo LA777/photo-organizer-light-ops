@@ -7,4 +7,17 @@ TODO
 
 - delete files to Recycle bin
 
+- add settings
+
+- add Copy files from to
+
+- add Move files from to
+
+- add Move videos to video subfolder
+
+- add resize JPEG files
+
+- add SIGN to JPEG files
+
+
 

@@ -1,10 +1,14 @@
-﻿using System;
+﻿using Polo.Abstractions.Commands;
+using Polo.Abstractions.Services;
+using System;
+using System.Collections.Generic;
 
 namespace Polo.Commands
 {
     public class VersionCommand : ICommand
     {
-        private const string Version = "0.0.1";
+        private readonly IConsoleService _consoleService;
+        private const string Version = "0.0.2";
 
         public string Name => "version";
 
@@ -12,9 +16,14 @@ namespace Polo.Commands
 
         public string Description => "Shows application version.";
 
-        public void Action()
+        public VersionCommand(IConsoleService consoleService)
         {
-            Console.WriteLine(Version);
+            _consoleService = consoleService ?? throw new ArgumentNullException(nameof(consoleService));
+        }
+
+        public void Action(string[] arguments = null, IEnumerable<ICommand> commands = null)
+        {
+            _consoleService.WriteLine(Version);
         }
     }
 }

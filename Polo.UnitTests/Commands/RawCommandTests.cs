@@ -1,4 +1,7 @@
 using FluentAssertions;
+using Moq;
+using Polo.Abstractions.Commands;
+using Polo.Abstractions.Services;
 using Polo.Commands;
 using Polo.UnitTests.FileUtils;
 using System;
@@ -8,9 +11,16 @@ using Xunit;
 
 namespace Polo.UnitTests.Commands
 {
-    public class RawCommandTests : IDisposable
+    [Collection("Sequential")]
+    public class RawCommandTests : CommandTestBase
     {
-        private readonly ICommand _sut = new RawCommand();
+        private readonly ICommand _sut;
+
+        public RawCommandTests()
+        {
+            var consoleServiceMock = new Mock<IConsoleService>();
+            _sut = new RawCommand(consoleServiceMock.Object);
+        }
 
         [Fact]
         public void Action_Should_Create_Raw_Folder_And_Move_Raw_Files_Test()
@@ -35,17 +45,6 @@ namespace Polo.UnitTests.Commands
 
             var rawFiles = Directory.EnumerateFiles(rawFolderPath, $"*.{FileHelper.RawExtension}", SearchOption.TopDirectoryOnly);
             rawFiles.Count().Should().Be(FileHelper.FileLimit);
-        }
-
-        private static void ReleaseUnmanagedResources()
-        {
-            FileHelper.TryDeleteTestFolder();
-        }
-
-        public void Dispose()
-        {
-            ReleaseUnmanagedResources();
-            GC.SuppressFinalize(this);
         }
 
         ~RawCommandTests()
