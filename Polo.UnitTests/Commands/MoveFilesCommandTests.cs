@@ -15,15 +15,15 @@ using Xunit;
 namespace Polo.UnitTests.Commands
 {
     [Collection("Sequential")]
-    public class CopyFilesCommandTests : CommandTestBase
+    public class MoveFilesCommandTests : CommandTestBase
     {
-        private const string ShortCommand = "-c";
+        private const string ShortCommand = "-m";
         private static readonly ApplicationSettings _validApplicationSettings = new ApplicationSettings() { DefaultSourceDriveName = "e://" };
         private static readonly IOptions<ApplicationSettings> _mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(_validApplicationSettings);
         private static readonly string _sourceFolderName = "Source Fotos";
         private static readonly string _destinationFolderName = "Destination Fotos";
         private static readonly Mock<IConsoleService> _consoleServiceMock = new Mock<IConsoleService>();
-        private readonly ICommand _sut = new CopyFilesCommand(_mockApplicationOptions, _consoleServiceMock.Object);
+        private readonly ICommand _sut = new MoveFilesCommand(_mockApplicationOptions, _consoleServiceMock.Object);
 
         private readonly Folder folderStructureInitial = new Folder()
         {
@@ -62,21 +62,7 @@ namespace Polo.UnitTests.Commands
                 new Folder()
                 {
                     Name = _sourceFolderName,
-                    Files = new List<string>()
-                    {
-                        "UTP-1.ORF",
-                        "UTP-2.ORF",
-                        "UTP-3.ORF",
-                        "UTP-4.ORF",
-                        "UTP-5.ORF",
-                        "UTP-6.ORF",
-                        "UTP-1.jpg",
-                        "UTP-2.jpg",
-                        "UTP-3.jpg",
-                        "UTP-4.jpg",
-                        "UTP-5.jpg",
-                        "UTP-6.jpg"
-                    }
+                    Files = new List<string>(){ }
                 },
                 new Folder()
                 {
@@ -101,7 +87,7 @@ namespace Polo.UnitTests.Commands
         };
 
         [Fact]
-        public void Action_Should_Copy_Files_With_Three_Arguments_Test()
+        public void Action_Should_Move_Files_With_Three_Arguments_Test()
         {
             // Arrange
             var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(folderStructureInitial);
@@ -153,7 +139,7 @@ namespace Polo.UnitTests.Commands
         }
 
         [Fact]
-        public void Action_Should_Copy_Files_With_Two_Arguments_Test()
+        public void Action_Should_Move_Files_With_Two_Arguments_Test()
         {
             // Arrange
             var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(folderStructureInitial);
@@ -188,7 +174,7 @@ namespace Polo.UnitTests.Commands
         }
 
         [Fact]
-        public void Action_Should_Copy_Files_With_One_Argument_Test()
+        public void Action_Should_Move_Files_With_One_Argument_Test()
         {
             // Arrange
             var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(folderStructureInitial);
@@ -199,7 +185,7 @@ namespace Polo.UnitTests.Commands
 
             ApplicationSettings _validApplicationSettings = new ApplicationSettings() { DefaultSourceDriveName = sourceFolderPath };
             IOptions<ApplicationSettings> _mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(_validApplicationSettings);
-            var sut = new CopyFilesCommand(_mockApplicationOptions, _consoleServiceMock.Object);
+            var sut = new MoveFilesCommand(_mockApplicationOptions, _consoleServiceMock.Object);
 
             // Act
             sut.Action(arguments);
@@ -230,7 +216,7 @@ namespace Polo.UnitTests.Commands
             Assert.Equal($"Directory {sourceFolderPath} does not exists.", exception.Message);
         }
 
-        ~CopyFilesCommandTests()
+        ~MoveFilesCommandTests()
         {
             ReleaseUnmanagedResources();
         }

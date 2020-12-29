@@ -8,22 +8,22 @@ using System.IO;
 
 namespace Polo.Commands
 {
-    public class CopyFilesCommand : ICommand
+    public class MoveFilesCommand : ICommand
     {
         private readonly IConsoleService _consoleService;
         private readonly IOptions<ApplicationSettings> _applicationOptions;
 
-        public CopyFilesCommand(IOptions<ApplicationSettings> applicationOptions, IConsoleService consoleService)
+        public MoveFilesCommand(IOptions<ApplicationSettings> applicationOptions, IConsoleService consoleService)
         {
             _applicationOptions = applicationOptions ?? throw new ArgumentNullException(nameof(applicationOptions));
             _consoleService = consoleService ?? throw new ArgumentNullException(nameof(consoleService));
         }
 
-        public string Name => "copy";
+        public string Name => "move";
 
-        public string ShortName => "c";
+        public string ShortName => "m";
 
-        public string Description => "Copy files.";
+        public string Description => "Move files.";
 
         public void Action(string[] arguments = null, IEnumerable<ICommand> commands = null)
         {
@@ -63,8 +63,8 @@ namespace Polo.Commands
             {
                 var destinationFileName = Path.GetFileName(file);
                 var destinationFilePath = Path.Combine(destinationDirectory, destinationFileName);
-                File.Copy(file, destinationFilePath);
-                _consoleService.WriteLine($"File copied: {destinationFileName}");
+                File.Move(file, destinationFilePath, false);
+                _consoleService.WriteLine($"File moved: {destinationFileName}");
             }
         }
     }
