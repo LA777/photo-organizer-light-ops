@@ -20,7 +20,7 @@ DONE
 
 + add Move files from to
 
-+ add Move videos to video subfolder
++ add Move videos to video sub-folder
 
 
 
