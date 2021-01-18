@@ -18,7 +18,7 @@ namespace Polo.UnitTests.Commands
     public class MoveFilesCommandTests : CommandTestBase
     {
         private const string ShortCommand = "-m";
-        private static readonly ApplicationSettings _validApplicationSettings = new ApplicationSettings() { DefaultSourceDriveName = "e://" };
+        private static readonly ApplicationSettings _validApplicationSettings = new ApplicationSettings("e://", null, null, null);
         private static readonly IOptions<ApplicationSettings> _mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(_validApplicationSettings);
         private static readonly string _sourceFolderName = "Source Fotos";
         private static readonly string _destinationFolderName = "Destination Fotos";
@@ -183,7 +183,7 @@ namespace Polo.UnitTests.Commands
             Environment.CurrentDirectory = destinationFolderPath;
             var arguments = new string[] { ShortCommand };
 
-            ApplicationSettings _validApplicationSettings = new ApplicationSettings() { DefaultSourceDriveName = sourceFolderPath };
+            ApplicationSettings _validApplicationSettings = new ApplicationSettings(sourceFolderPath, null, null, null);
             IOptions<ApplicationSettings> _mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(_validApplicationSettings);
             var sut = new MoveFilesCommand(_mockApplicationOptions, _consoleServiceMock.Object);
 
@@ -205,7 +205,7 @@ namespace Polo.UnitTests.Commands
             Environment.CurrentDirectory = destinationFolderPath;
             var arguments = new string[] { ShortCommand };
 
-            ApplicationSettings _validApplicationSettings = new ApplicationSettings() { DefaultSourceDriveName = sourceFolderPath };
+            ApplicationSettings _validApplicationSettings = new ApplicationSettings(sourceFolderPath, null, null, null);
             IOptions<ApplicationSettings> _mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(_validApplicationSettings);
             var sut = new CopyFilesCommand(_mockApplicationOptions, _consoleServiceMock.Object);
 

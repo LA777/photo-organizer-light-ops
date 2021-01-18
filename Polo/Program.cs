@@ -53,6 +53,7 @@ namespace Polo
             services.AddSingleton<ICommand, RemoveOrphanageRawCommand>();
             services.AddSingleton<ICommand, CopyFilesCommand>();
             services.AddSingleton<ICommand, MoveFilesCommand>();
+            services.AddSingleton<ICommand, MoveVideoToSubfolderCommand>();
         }
     }
 }

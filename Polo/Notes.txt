@@ -3,21 +3,25 @@ TODO
 
 - add logging
 
-+ add Remove orphanage RAW files command
-
 - delete files to Recycle bin
+
+- add resize JPEG files
+
+- add SIGN to JPEG files
+
+
+DONE
+
++ add Remove orphanage RAW files command
 
 + add settings
 
 + add Copy files from to
 
-- add Move files from to
++ add Move files from to
 
-- add Move videos to video subfolder
++ add Move videos to video subfolder
 
-- add resize JPEG files
-
-- add SIGN to JPEG files
 
 
 

@@ -26,7 +26,7 @@ namespace Polo.Commands
             var rawFolderPath = Path.Join(currentDirectory, "RAW");
             Directory.CreateDirectory(rawFolderPath);
 
-            var rawFiles = Directory.EnumerateFiles(currentDirectory, "*.ORF", SearchOption.TopDirectoryOnly);
+            var rawFiles = Directory.EnumerateFiles(currentDirectory, "*.ORF", SearchOption.TopDirectoryOnly); // TODO - add list of raw file extensions
 
             foreach (var rawFilePath in rawFiles)
             {

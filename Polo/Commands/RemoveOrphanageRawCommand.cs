@@ -24,16 +24,16 @@ namespace Polo.Commands
         public void Action(string[] arguments = null, IEnumerable<ICommand> commands = null)
         {
             var currentDirectory = Environment.CurrentDirectory;
-            var jpegFiles = Directory.EnumerateFiles(currentDirectory, "*.JPG", SearchOption.TopDirectoryOnly).ToList();
+            var jpegFiles = Directory.EnumerateFiles(currentDirectory, "*.JPG", SearchOption.TopDirectoryOnly).ToList(); // TODO - use settings file
 
             var rawFolderPath = Path.Join(currentDirectory, "RAW");
-            var rawFiles = Directory.EnumerateFiles(rawFolderPath, "*.ORF", SearchOption.TopDirectoryOnly).ToList();
+            var rawFiles = Directory.EnumerateFiles(rawFolderPath, "*.ORF", SearchOption.TopDirectoryOnly).ToList(); // TODO - use settings file
 
             var jpegFilesNames = jpegFiles.Select(Path.GetFileNameWithoutExtension);
             var rawFilesNames = rawFiles.Select(Path.GetFileNameWithoutExtension);
 
             var orphanageRawFilesNames = rawFilesNames.Except(jpegFilesNames);
-            var orphanageRawFiles = orphanageRawFilesNames.Select(x => Path.Join(rawFolderPath, $"{x}.ORF"));
+            var orphanageRawFiles = orphanageRawFilesNames.Select(x => Path.Join(rawFolderPath, $"{x}.ORF")); // TODO - use settings file
 
             foreach (var rawFile in orphanageRawFiles)
             {

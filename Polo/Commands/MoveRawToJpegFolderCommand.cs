@@ -26,13 +26,13 @@ namespace Polo.Commands
             var rawFolderPath = Path.Join(currentDirectory, "RAW");
 
             // get all RAW files
-            var rawFiles = Directory.EnumerateFiles(rawFolderPath, "*.ORF", SearchOption.TopDirectoryOnly);
+            var rawFiles = Directory.EnumerateFiles(rawFolderPath, "*.ORF", SearchOption.TopDirectoryOnly); // TODO - use settings file
 
             foreach (var rawFilePath in rawFiles)
             {
                 var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(rawFilePath);
                 var allFotosFolder = Directory.GetParent(currentDirectory).FullName;
-                var jpegFiles = Directory.EnumerateFiles(allFotosFolder, $"{fileNameWithoutExtension}.jpg", SearchOption.AllDirectories);
+                var jpegFiles = Directory.EnumerateFiles(allFotosFolder, $"{fileNameWithoutExtension}.jpg", SearchOption.AllDirectories); // TODO - use file extension
                 if (jpegFiles.Count() > 1)
                 {
                     throw new Exception($"Files more than one. {jpegFiles.First()}");
