@@ -19,7 +19,8 @@ namespace Polo.UnitTests.Commands
     public class MoveVideoToSubfolderCommandTests : CommandTestBase
     {
         private static readonly IEnumerable<string> videoFileExtensions = new List<string>() { "mkv", "avi", "m2ts", "ts", "mp4", "m4p", "m4v", "mpg", "mpeg" };
-        private static readonly ApplicationSettings _validApplicationSettings = new ApplicationSettings(string.Empty, Enumerable.Empty<string>(), Enumerable.Empty<string>(), videoFileExtensions);
+        private static readonly IEnumerable<string> _emptyList = Enumerable.Empty<string>();
+        private static readonly ApplicationSettings _validApplicationSettings = new ApplicationSettings(string.Empty, _emptyList, _emptyList, videoFileExtensions);
         private static readonly IOptions<ApplicationSettings> _mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(_validApplicationSettings);
         private static readonly string VideoSubfolderName = "video";
         private static readonly string AlbumName = "Album1";

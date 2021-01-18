@@ -10,6 +10,7 @@ using Polo.UnitTests.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Xunit;
 
 namespace Polo.UnitTests.Commands
@@ -18,8 +19,8 @@ namespace Polo.UnitTests.Commands
     public class CopyFilesCommandTests : CommandTestBase
     {
         private const string ShortCommand = "-c";
-
-        private static readonly ApplicationSettings _validApplicationSettings = new ApplicationSettings("e://", null, null, null);
+        private static readonly IEnumerable<string> _emptyList = Enumerable.Empty<string>();
+        private static readonly ApplicationSettings _validApplicationSettings = new ApplicationSettings("e://", _emptyList, _emptyList, _emptyList);
         private static readonly IOptions<ApplicationSettings> _mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(_validApplicationSettings);
         private static readonly string _sourceFolderName = "Source Fotos";
         private static readonly string _destinationFolderName = "Destination Fotos";
@@ -198,7 +199,7 @@ namespace Polo.UnitTests.Commands
             Environment.CurrentDirectory = destinationFolderPath;
             var arguments = new string[] { ShortCommand };
 
-            ApplicationSettings _validApplicationSettings = new ApplicationSettings(sourceFolderPath, null, null, null);
+            ApplicationSettings _validApplicationSettings = new ApplicationSettings(sourceFolderPath, _emptyList, _emptyList, _emptyList);
             IOptions<ApplicationSettings> _mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(_validApplicationSettings);
             var sut = new CopyFilesCommand(_mockApplicationOptions, _consoleServiceMock.Object);
 
@@ -220,7 +221,7 @@ namespace Polo.UnitTests.Commands
             Environment.CurrentDirectory = destinationFolderPath;
             var arguments = new string[] { ShortCommand };
 
-            ApplicationSettings _validApplicationSettings = new ApplicationSettings(sourceFolderPath, null, null, null);
+            ApplicationSettings _validApplicationSettings = new ApplicationSettings(sourceFolderPath, _emptyList, _emptyList, _emptyList);
             IOptions<ApplicationSettings> _mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(_validApplicationSettings);
             var sut = new CopyFilesCommand(_mockApplicationOptions, _consoleServiceMock.Object);
 
