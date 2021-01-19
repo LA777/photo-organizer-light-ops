@@ -2,11 +2,11 @@ using FluentAssertions;
 using Microsoft.Extensions.Options;
 using Moq;
 using Polo.Abstractions.Commands;
-using Polo.Abstractions.Services;
 using Polo.Commands;
 using Polo.Options;
 using Polo.UnitTests.FileUtils;
 using Polo.UnitTests.Models;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -24,8 +24,8 @@ namespace Polo.UnitTests.Commands
         private static readonly IEnumerable<string> _jpegFileExtensions = new List<string>() { "jpg", "jpeg" };
         private static readonly ApplicationSettings _validApplicationSettings = new ApplicationSettings(jpegFileExtensions: _jpegFileExtensions, rawFileExtensions: _rawFileExtensions, rawFolderName: _rawFolderName);
         private static readonly IOptions<ApplicationSettings> _mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(_validApplicationSettings);
-        private static readonly Mock<IConsoleService> _consoleServiceMock = new Mock<IConsoleService>();
-        private readonly ICommand _sut = new MoveRawToJpegFolderCommand(_mockApplicationOptions, _consoleServiceMock.Object);
+        private static readonly Mock<ILogger> _loggerMock = new Mock<ILogger>();
+        private readonly ICommand _sut = new MoveRawToJpegFolderCommand(_mockApplicationOptions, _loggerMock.Object);
 
         private readonly Folder folderStructureInitial = new Folder()
         {

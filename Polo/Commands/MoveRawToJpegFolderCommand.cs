@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using Polo.Abstractions.Commands;
-using Polo.Abstractions.Services;
 using Polo.Options;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,7 +11,7 @@ namespace Polo.Commands
 {
     public class MoveRawToJpegFolderCommand : ICommand
     {
-        private readonly IConsoleService _consoleService;
+        private readonly ILogger _logger;
         private readonly ApplicationSettings _applicationSettings;
 
         public string Name => "move-raw";
@@ -20,10 +20,10 @@ namespace Polo.Commands
 
         public string Description => "Move RAW files to the RAW sub-folder in the JPEG folder.";
 
-        public MoveRawToJpegFolderCommand(IOptions<ApplicationSettings> applicationOptions, IConsoleService consoleService)
+        public MoveRawToJpegFolderCommand(IOptions<ApplicationSettings> applicationOptions, ILogger logger)
         {
             _applicationSettings = applicationOptions.Value ?? throw new ArgumentNullException(nameof(applicationOptions));
-            _consoleService = consoleService ?? throw new ArgumentNullException(nameof(consoleService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public void Action(string[] arguments = null, IEnumerable<ICommand> commands = null)
@@ -59,7 +59,7 @@ namespace Polo.Commands
                     var fileInfo = new FileInfo(rawFilePath);
                     var destinationFilePath = Path.Join(rawSubFolderPath, fileInfo.Name);
                     fileInfo.MoveTo(destinationFilePath);
-                    _consoleService.WriteLine($"Moved: {fileInfo.Name}");
+                    _logger.Information($"Moved: {fileInfo.Name}");
                 }
             }
         }

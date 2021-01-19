@@ -2,11 +2,11 @@ using FluentAssertions;
 using Microsoft.Extensions.Options;
 using Moq;
 using Polo.Abstractions.Commands;
-using Polo.Abstractions.Services;
 using Polo.Commands;
 using Polo.Options;
 using Polo.UnitTests.FileUtils;
 using Polo.UnitTests.Models;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,8 +22,8 @@ namespace Polo.UnitTests.Commands
         private static readonly IOptions<ApplicationSettings> _mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(_validApplicationSettings);
         private static readonly string _sourceFolderName = "Source Fotos";
         private static readonly string _destinationFolderName = "Destination Fotos";
-        private static readonly Mock<IConsoleService> _consoleServiceMock = new Mock<IConsoleService>();
-        private readonly ICommand _sut = new CopyFilesCommand(_mockApplicationOptions, _consoleServiceMock.Object);
+        private static readonly Mock<ILogger> _loggerMock = new Mock<ILogger>();
+        private readonly ICommand _sut = new CopyFilesCommand(_mockApplicationOptions, _loggerMock.Object);
 
         private readonly Folder folderStructureInitial = new Folder()
         {
@@ -102,6 +102,24 @@ namespace Polo.UnitTests.Commands
 
         [Fact]
         public void Action_Should_Copy_Files_With_Three_Arguments_Test()
+        {
+            // Arrange
+            var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(folderStructureInitial);
+            var sourceFolderPath = Path.Combine(testFolderFullPath, _sourceFolderName);
+            var destinationFolderPath = Path.Combine(testFolderFullPath, _destinationFolderName);
+            Environment.CurrentDirectory = testFolderFullPath;
+            var arguments = new string[] { ShortCommand, sourceFolderPath, destinationFolderPath };
+
+            // Act
+            _sut.Action(arguments);
+
+            // Assert
+            var folderStructureActual = FileHelper.CreateFolderStructureByFolderAndFiles(testFolderFullPath);
+            folderStructureActual.Should().BeEquivalentTo(folderStructureExpected);
+        }
+
+        [Fact]
+        public void Action_Should_Copy_Files_With_Three_Arguments_If_Path_Contains_Whitespace_Test()
         {
             // Arrange
             var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(folderStructureInitial);
@@ -199,7 +217,7 @@ namespace Polo.UnitTests.Commands
 
             ApplicationSettings _validApplicationSettings = new ApplicationSettings(defaultSourceDriveName: sourceFolderPath);
             IOptions<ApplicationSettings> _mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(_validApplicationSettings);
-            var sut = new CopyFilesCommand(_mockApplicationOptions, _consoleServiceMock.Object);
+            var sut = new CopyFilesCommand(_mockApplicationOptions, _loggerMock.Object);
 
             // Act
             sut.Action(arguments);
@@ -221,7 +239,7 @@ namespace Polo.UnitTests.Commands
 
             ApplicationSettings _validApplicationSettings = new ApplicationSettings(defaultSourceDriveName: sourceFolderPath);
             IOptions<ApplicationSettings> _mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(_validApplicationSettings);
-            var sut = new CopyFilesCommand(_mockApplicationOptions, _consoleServiceMock.Object);
+            var sut = new CopyFilesCommand(_mockApplicationOptions, _loggerMock.Object);
 
             // Act
             Exception exception = Assert.Throws<DirectoryNotFoundException>(() => sut.Action(arguments));

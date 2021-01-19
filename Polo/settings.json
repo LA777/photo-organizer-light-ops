@@ -1,4 +1,5 @@
 {
+  "LogFilePath": "logs\\polo-log-.txt",
   "DefaultSourceDriveName": "j:\\",
   "RawFolderName": "RAW",
   "JpegFileExtensions": [ "jpg", "jpeg" ],

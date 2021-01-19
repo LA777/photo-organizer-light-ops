@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using Polo.Abstractions.Commands;
-using Polo.Abstractions.Services;
 using Polo.Options;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,7 +11,7 @@ namespace Polo.Commands
 {
     public class RemoveOrphanageRawCommand : ICommand
     {
-        private readonly IConsoleService _consoleService;
+        private readonly ILogger _logger;
         private readonly ApplicationSettings _applicationSettings;
 
         public string Name => "remove-orphanage-raw";
@@ -20,10 +20,10 @@ namespace Polo.Commands
 
         public string Description => "Removes orphanage raw files from the RAW folder.";
 
-        public RemoveOrphanageRawCommand(IOptions<ApplicationSettings> applicationOptions, IConsoleService consoleService)
+        public RemoveOrphanageRawCommand(IOptions<ApplicationSettings> applicationOptions, ILogger logger)
         {
             _applicationSettings = applicationOptions.Value ?? throw new ArgumentNullException(nameof(applicationOptions));
-            _consoleService = consoleService ?? throw new ArgumentNullException(nameof(consoleService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public void Action(string[] arguments = null, IEnumerable<ICommand> commands = null)
@@ -56,7 +56,7 @@ namespace Polo.Commands
             {
                 var fileInfo = new FileInfo(rawFile);
                 fileInfo.Delete();
-                _consoleService.WriteLine($"RAW file deleted: {fileInfo.Name}");
+                _logger.Information($"RAW file deleted: {fileInfo.Name}");
             }
         }
     }

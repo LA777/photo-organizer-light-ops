@@ -4,18 +4,23 @@ namespace Polo.Options
 {
     public class ApplicationSettings
     {
-        public string DefaultSourceDriveName { get; private set; }
-        public string RawFolderName { get; private set; }
-        public List<string> JpegFileExtensions { get; private set; }
-        public List<string> RawFileExtensions { get; private set; }
-        public List<string> VideoFileExtensions { get; private set; }
+        public string LogFilePath { get; private set; } = "logs\\polo-log-.txt";
+        public string DefaultSourceDriveName { get; private set; } = string.Empty;
+        public string RawFolderName { get; private set; } = "RAW";
+        public List<string> JpegFileExtensions { get; private set; } = new List<string>();
+        public List<string> RawFileExtensions { get; private set; } = new List<string>();
+        public List<string> VideoFileExtensions { get; private set; } = new List<string>();
 
-        public ApplicationSettings(string defaultSourceDriveName = null,
+        public ApplicationSettings() { }
+
+        public ApplicationSettings(string logFilePath = null,
+            string defaultSourceDriveName = null,
             string rawFolderName = null,
             IEnumerable<string> jpegFileExtensions = null,
             IEnumerable<string> rawFileExtensions = null,
             IEnumerable<string> videoFileExtensions = null)
         {
+            LogFilePath = logFilePath;
             DefaultSourceDriveName = defaultSourceDriveName;
             RawFolderName = rawFolderName;
 

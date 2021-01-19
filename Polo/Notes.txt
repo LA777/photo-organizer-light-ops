@@ -1,9 +1,6 @@
 ﻿
 TODO
 
-
-- add logging to file
-
 - delete files to Recycle bin
 
 - add resize JPEG files
@@ -29,5 +26,6 @@ DONE
 
 + Complete TODOs in code
 
++ add logging to file
 
 

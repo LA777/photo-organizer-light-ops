@@ -2,7 +2,7 @@
   "profiles": {
     "Polo": {
       "commandName": "Project",
-      "commandLineArgs": "-v"
+      "commandLineArgs": "-c \"d:\\temp\\Test delete\\Source\" \"d:\\temp\\Test delete\\Destination\""
     }
   }
 }

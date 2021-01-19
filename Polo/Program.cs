@@ -2,10 +2,9 @@
 using Microsoft.Extensions.DependencyInjection;
 using Polo.Abstractions;
 using Polo.Abstractions.Commands;
-using Polo.Abstractions.Services;
 using Polo.Commands;
 using Polo.Options;
-using Polo.Services;
+using Serilog;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -13,6 +12,8 @@ namespace Polo
 {
     internal class Program
     {
+        public static readonly string Version = "0.0.3";
+
         private static IConfiguration Configuration { get; } = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("settings.json", optional: false, reloadOnChange: false)
@@ -34,18 +35,17 @@ namespace Polo
         {
             services.AddOptions();
             services.Configure<ApplicationSettings>(Configuration);
+            var applicationSettings = Configuration.Get<ApplicationSettings>();
 
-            //var loggerSetings = new LoggerSettings();
-            // Configuration.GetSection("LoggerSettings").Bind(loggerSetings);
-            // var logger = new SimpleLogger(loggerSetings);
+            var logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .Enrich.WithProperty("Version", Version)
+                .WriteTo.Console()
+                .WriteTo.File(applicationSettings.LogFilePath, rollingInterval: RollingInterval.Day)
+                .CreateLogger();
 
-            // services.AddSingleton<ISimpleLogger>(logger);
-
-
+            services.AddSingleton<ILogger>(logger);
             services.AddSingleton<ICommandParser, CommandParser>();
-
-            services.AddSingleton<IConsoleService, ConsoleService>();
-
             services.AddSingleton<ICommand, VersionCommand>();
             services.AddSingleton<ICommand, HelpCommand>();
             services.AddSingleton<ICommand, MoveRawToJpegFolderCommand>();

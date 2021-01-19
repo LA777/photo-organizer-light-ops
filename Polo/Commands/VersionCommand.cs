@@ -1,5 +1,5 @@
 ﻿using Polo.Abstractions.Commands;
-using Polo.Abstractions.Services;
+using Serilog;
 using System;
 using System.Collections.Generic;
 
@@ -7,8 +7,7 @@ namespace Polo.Commands
 {
     public class VersionCommand : ICommand
     {
-        private readonly IConsoleService _consoleService;
-        private const string Version = "0.0.2";
+        private readonly ILogger _logger;
 
         public string Name => "version";
 
@@ -16,14 +15,14 @@ namespace Polo.Commands
 
         public string Description => "Shows application version.";
 
-        public VersionCommand(IConsoleService consoleService)
+        public VersionCommand(ILogger logger)
         {
-            _consoleService = consoleService ?? throw new ArgumentNullException(nameof(consoleService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public void Action(string[] arguments = null, IEnumerable<ICommand> commands = null)
         {
-            _consoleService.WriteLine(Version);
+            _logger.Information(Program.Version);
         }
     }
 }

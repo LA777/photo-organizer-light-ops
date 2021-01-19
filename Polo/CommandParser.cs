@@ -1,6 +1,6 @@
 ﻿using Polo.Abstractions;
 using Polo.Abstractions.Commands;
-using Polo.Abstractions.Services;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,13 +9,13 @@ namespace Polo
 {
     public class CommandParser : ICommandParser
     {
-        private readonly IConsoleService _consoleService;
+        private readonly ILogger _logger;
         private const string ShortCommandPrefix = "-";
         private const string CommandPrefix = "--";
 
-        public CommandParser(IConsoleService consoleService)
+        public CommandParser(ILogger logger)
         {
-            _consoleService = consoleService ?? throw new ArgumentNullException(nameof(consoleService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public void Parse(string[] arguments, IEnumerable<ICommand> commands)
@@ -36,7 +36,7 @@ namespace Polo
                 }
                 else
                 {
-                    _consoleService.WriteLine("ERROR: Unknown command. Please enter --help to see available commands list.");
+                    _logger.Information("ERROR: Unknown command. Please enter --help to see available commands list.");
                 }
             }
         }

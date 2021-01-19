@@ -1,5 +1,5 @@
 ﻿using Polo.Abstractions.Commands;
-using Polo.Abstractions.Services;
+using Serilog;
 using System;
 using System.Collections.Generic;
 
@@ -7,7 +7,7 @@ namespace Polo.Commands
 {
     public class HelpCommand : ICommand
     {
-        private readonly IConsoleService _consoleService;
+        private readonly ILogger _logger;
 
         public string Name => "help";
 
@@ -15,9 +15,9 @@ namespace Polo.Commands
 
         public string Description => "Shows list of available commands.";
 
-        public HelpCommand(IConsoleService consoleService)
+        public HelpCommand(ILogger logger)
         {
-            _consoleService = consoleService ?? throw new ArgumentNullException(nameof(consoleService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public void Action(string[] arguments = null, IEnumerable<ICommand> commands = null)
@@ -29,7 +29,7 @@ namespace Polo.Commands
 
             foreach (var command in commands)
             {
-                _consoleService.WriteLine($"-{command.ShortName}, --{command.Name}\t\t{command.Description}");
+                _logger.Information($"-{command.ShortName}, --{command.Name}\t\t{command.Description}");
             }
         }
     }
