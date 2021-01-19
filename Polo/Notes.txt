@@ -1,13 +1,18 @@
 ﻿
 TODO
 
-- add logging
+
+- add logging to file
 
 - delete files to Recycle bin
 
 - add resize JPEG files
 
 - add SIGN to JPEG files
+
+- add Sequence command to run several commands
+
+
 
 
 DONE
@@ -22,6 +27,7 @@ DONE
 
 + add Move videos to video sub-folder
 
++ Complete TODOs in code
 
 
 

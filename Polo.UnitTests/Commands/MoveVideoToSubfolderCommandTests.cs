@@ -18,12 +18,11 @@ namespace Polo.UnitTests.Commands
     [Collection("Sequential")]
     public class MoveVideoToSubfolderCommandTests : CommandTestBase
     {
-        private static readonly IEnumerable<string> videoFileExtensions = new List<string>() { "mkv", "avi", "m2ts", "ts", "mp4", "m4p", "m4v", "mpg", "mpeg" };
-        private static readonly IEnumerable<string> _emptyList = Enumerable.Empty<string>();
-        private static readonly ApplicationSettings _validApplicationSettings = new ApplicationSettings(string.Empty, _emptyList, _emptyList, videoFileExtensions);
+        private static readonly IEnumerable<string> _videoFileExtensions = new List<string>() { "mkv", "avi", "m2ts", "ts", "mp4", "m4p", "m4v", "mpg", "mpeg" };
+        private static readonly ApplicationSettings _validApplicationSettings = new ApplicationSettings(videoFileExtensions: _videoFileExtensions);
         private static readonly IOptions<ApplicationSettings> _mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(_validApplicationSettings);
-        private static readonly string VideoSubfolderName = "video";
-        private static readonly string AlbumName = "Album1";
+        private static readonly string _videoSubfolderName = "video";
+        private static readonly string _albumName = "Album1";
         private static readonly Mock<IConsoleService> _consoleServiceMock = new Mock<IConsoleService>();
         private readonly ICommand _sut = new MoveVideoToSubfolderCommand(_mockApplicationOptions, _consoleServiceMock.Object);
 
@@ -33,7 +32,7 @@ namespace Polo.UnitTests.Commands
             {
                 new Folder()
                 {
-                    Name = AlbumName,
+                    Name = _albumName,
                     Files = new List<string>()
                     {
                         "video-1.mp4",
@@ -50,7 +49,7 @@ namespace Polo.UnitTests.Commands
             {
                 new Folder()
                 {
-                    Name = AlbumName,
+                    Name = _albumName,
                     Files = new List<string>()
                     {
                         "UTP-1.ORF",
@@ -60,7 +59,7 @@ namespace Polo.UnitTests.Commands
                     {
                         new Folder()
                         {
-                            Name = VideoSubfolderName,
+                            Name = _videoSubfolderName,
                             Files = new List<string>()
                             {
                                 "video-1.mp4"
@@ -79,15 +78,15 @@ namespace Polo.UnitTests.Commands
         private void AddVideoFilesToFolderStructure()
         {
             var videoFiles = new List<string>();
-            foreach (var extension in videoFileExtensions)
+            foreach (var extension in _videoFileExtensions)
             {
                 var fileName = $"video-{extension}.{extension}";
                 videoFiles.Add(fileName);
             }
 
-            folderStructureInitial.SubFolders.Where(x => x.Name == AlbumName).ToList().ForEach(x => x.Files.AddRange(videoFiles));
-            folderStructureExpected.SubFolders.Where(x => x.Name == AlbumName).ToList()
-                .ForEach(x => x.SubFolders.Where(x => x.Name == VideoSubfolderName).ToList()
+            folderStructureInitial.SubFolders.Where(x => x.Name == _albumName).ToList().ForEach(x => x.Files.AddRange(videoFiles));
+            folderStructureExpected.SubFolders.Where(x => x.Name == _albumName).ToList()
+                .ForEach(x => x.SubFolders.Where(x => x.Name == _videoSubfolderName).ToList()
                     .ForEach(x => x.Files.AddRange(videoFiles)));
         }
 
@@ -96,7 +95,7 @@ namespace Polo.UnitTests.Commands
         {
             // Arrange
             var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(folderStructureInitial);
-            Environment.CurrentDirectory = Path.Combine(testFolderFullPath, AlbumName);
+            Environment.CurrentDirectory = Path.Combine(testFolderFullPath, _albumName);
 
             // Act
             _sut.Action();

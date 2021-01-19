@@ -1,5 +1,7 @@
-﻿using Polo.Abstractions.Commands;
+﻿using Microsoft.Extensions.Options;
+using Polo.Abstractions.Commands;
 using Polo.Abstractions.Services;
+using Polo.Options;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,29 +12,39 @@ namespace Polo.Commands
     public class MoveRawToJpegFolderCommand : ICommand
     {
         private readonly IConsoleService _consoleService;
-        public string Name => "moveraw";
+        private readonly ApplicationSettings _applicationSettings;
+
+        public string Name => "move-raw";
 
         public string ShortName => "mr";
 
         public string Description => "Move RAW files to the RAW sub-folder in the JPEG folder.";
-        public MoveRawToJpegFolderCommand(IConsoleService consoleService)
+
+        public MoveRawToJpegFolderCommand(IOptions<ApplicationSettings> applicationOptions, IConsoleService consoleService)
         {
+            _applicationSettings = applicationOptions.Value ?? throw new ArgumentNullException(nameof(applicationOptions));
             _consoleService = consoleService ?? throw new ArgumentNullException(nameof(consoleService));
         }
 
         public void Action(string[] arguments = null, IEnumerable<ICommand> commands = null)
         {
             var currentDirectory = Environment.CurrentDirectory;
-            var rawFolderPath = Path.Join(currentDirectory, "RAW");
+            var rawFolderPath = Path.Join(currentDirectory, _applicationSettings.RawFolderName);
 
-            // get all RAW files
-            var rawFiles = Directory.EnumerateFiles(rawFolderPath, "*.ORF", SearchOption.TopDirectoryOnly); // TODO - use settings file
+            var rawFiles = new List<string>();
+
+            _applicationSettings.RawFileExtensions.ToList()
+                .ForEach(x => rawFiles.AddRange(Directory.EnumerateFiles(rawFolderPath, $"*.{x}", SearchOption.TopDirectoryOnly)));
 
             foreach (var rawFilePath in rawFiles)
             {
                 var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(rawFilePath);
                 var allFotosFolder = Directory.GetParent(currentDirectory).FullName;
-                var jpegFiles = Directory.EnumerateFiles(allFotosFolder, $"{fileNameWithoutExtension}.jpg", SearchOption.AllDirectories); // TODO - use file extension
+
+                var jpegFiles = new List<string>();
+                _applicationSettings.JpegFileExtensions.ToList()
+                    .ForEach(x => jpegFiles.AddRange(Directory.EnumerateFiles(allFotosFolder, $"{fileNameWithoutExtension}.{x}", SearchOption.AllDirectories)));
+
                 if (jpegFiles.Count() > 1)
                 {
                     throw new Exception($"Files more than one. {jpegFiles.First()}");
@@ -41,12 +53,12 @@ namespace Polo.Commands
                 foreach (var jpegFile in jpegFiles)
                 {
                     var parentFolderFullPath = Directory.GetParent(jpegFile).FullName;
-                    var rawSubFolderPath = Path.Combine(parentFolderFullPath, "RAW");
+                    var rawSubFolderPath = Path.Combine(parentFolderFullPath, _applicationSettings.RawFolderName);
                     Directory.CreateDirectory(rawSubFolderPath);
 
                     var fileInfo = new FileInfo(rawFilePath);
                     var destinationFilePath = Path.Join(rawSubFolderPath, fileInfo.Name);
-                    File.Move(rawFilePath, destinationFilePath);
+                    fileInfo.MoveTo(destinationFilePath);
                     _consoleService.WriteLine($"Moved: {fileInfo.Name}");
                 }
             }

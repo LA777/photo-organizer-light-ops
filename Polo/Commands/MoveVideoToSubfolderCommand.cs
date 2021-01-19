@@ -15,17 +15,17 @@ namespace Polo.Commands
         private readonly ApplicationSettings _applicationSettings;
         private readonly string VideoSubfolderName = "video";
 
-        public MoveVideoToSubfolderCommand(IOptions<ApplicationSettings> applicationOptions, IConsoleService consoleService)
-        {
-            _applicationSettings = applicationOptions.Value ?? throw new ArgumentNullException(nameof(applicationOptions));
-            _consoleService = consoleService ?? throw new ArgumentNullException(nameof(consoleService));
-        }
-
         public string Name => "video";
 
         public string ShortName => "v";
 
         public string Description => "Creates Video sub-folder in the current folder and moves all video files to this sub-folder.";
+
+        public MoveVideoToSubfolderCommand(IOptions<ApplicationSettings> applicationOptions, IConsoleService consoleService)
+        {
+            _applicationSettings = applicationOptions.Value ?? throw new ArgumentNullException(nameof(applicationOptions));
+            _consoleService = consoleService ?? throw new ArgumentNullException(nameof(consoleService));
+        }
 
         public void Action(string[] arguments = null, IEnumerable<ICommand> commands = null)
         {
@@ -33,7 +33,7 @@ namespace Polo.Commands
             var videoFolderPath = Path.Join(currentDirectory, VideoSubfolderName);
             Directory.CreateDirectory(videoFolderPath);
 
-            List<string> videoFiles = new List<string>();
+            var videoFiles = new List<string>();
 
             _applicationSettings.VideoFileExtensions.ToList()
                 .ForEach(x => videoFiles.AddRange(Directory.EnumerateFiles(currentDirectory, $"*.{x}", SearchOption.TopDirectoryOnly)));

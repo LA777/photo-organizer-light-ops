@@ -1,32 +1,40 @@
-﻿using Polo.Abstractions.Commands;
+﻿using Microsoft.Extensions.Options;
+using Polo.Abstractions.Commands;
 using Polo.Abstractions.Services;
+using Polo.Options;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Polo.Commands
 {
     public class RawCommand : ICommand
     {
         private readonly IConsoleService _consoleService;
+        private readonly ApplicationSettings _applicationSettings;
+
         public string Name => "raw";
 
         public string ShortName => "r";
 
         public string Description => "Creates RAW sub-folder in the current folder and moves all RAW files to this sub-folder.";
 
-        public RawCommand(IConsoleService consoleService)
+        public RawCommand(IOptions<ApplicationSettings> applicationOptions, IConsoleService consoleService)
         {
+            _applicationSettings = applicationOptions.Value ?? throw new ArgumentNullException(nameof(applicationOptions));
             _consoleService = consoleService ?? throw new ArgumentNullException(nameof(consoleService));
         }
 
         public void Action(string[] arguments = null, IEnumerable<ICommand> commands = null)
         {
             var currentDirectory = Environment.CurrentDirectory;
-            var rawFolderPath = Path.Join(currentDirectory, "RAW");
+            var rawFolderPath = Path.Join(currentDirectory, _applicationSettings.RawFolderName);
             Directory.CreateDirectory(rawFolderPath);
 
-            var rawFiles = Directory.EnumerateFiles(currentDirectory, "*.ORF", SearchOption.TopDirectoryOnly); // TODO - add list of raw file extensions
+            var rawFiles = new List<string>();
+            _applicationSettings.RawFileExtensions.ToList()
+                .ForEach(x => rawFiles.AddRange(Directory.EnumerateFiles(currentDirectory, $"*.{x}", SearchOption.TopDirectoryOnly)));
 
             foreach (var rawFilePath in rawFiles)
             {
