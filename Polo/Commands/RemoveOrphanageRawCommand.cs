@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using Polo.Abstractions.Commands;
+using Polo.Extensions;
 using Polo.Options;
 using Serilog;
 using System;
@@ -55,8 +56,16 @@ namespace Polo.Commands
             foreach (var rawFile in orphanageRawFiles)
             {
                 var fileInfo = new FileInfo(rawFile);
-                fileInfo.Delete();
-                _logger.Information($"RAW file deleted: {fileInfo.Name}");
+                var isDeleted = fileInfo.DeleteToRecycleBin();
+
+                if (isDeleted)
+                {
+                    _logger.Information($"RAW file deleted: {fileInfo.Name}");
+                }
+                else
+                {
+                    _logger.Information($"RAW file not found: {fileInfo.Name}");
+                }
             }
         }
     }

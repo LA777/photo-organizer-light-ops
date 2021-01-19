@@ -1,8 +1,6 @@
 ﻿
 TODO
 
-- delete files to Recycle bin
-
 - add resize JPEG files
 
 - add SIGN to JPEG files
@@ -28,4 +26,5 @@ DONE
 
 + add logging to file
 
++ delete files to Recycle bin
 
