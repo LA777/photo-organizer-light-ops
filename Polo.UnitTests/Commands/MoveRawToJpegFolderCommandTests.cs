@@ -39,14 +39,14 @@ namespace Polo.UnitTests.Commands
                         new Folder()
                         {
                             Name = _rawFolderName,
-                            Files = new List<string>()
+                            Files = new List<FotoFile>()
                             {
-                                "UTP-1.ORF",
-                                "UTP-2.ORF",
-                                "UTP-3.ORF",
-                                "UTP-4.ORF",
-                                "UTP-5.ORF",
-                                "UTP-6.ORF"
+                                new FotoFile("UTP-1", "ORF"),
+                                new FotoFile("UTP-2", "ORF"),
+                                new FotoFile("UTP-3", "ORF"),
+                                new FotoFile("UTP-4", "ORF"),
+                                new FotoFile("UTP-5", "ORF"),
+                                new FotoFile("UTP-6", "ORF")
                             }
                         }
                     }
@@ -54,28 +54,28 @@ namespace Polo.UnitTests.Commands
                 new Folder()
                 {
                     Name = "Fotos 1",
-                    Files = new List<string>()
+                    Files = new List<FotoFile>()
                     {
-                        "UTP-1.jpg",
-                        "UTP-2.jpeg"
+                        new FotoFile("UTP-1", "jpg"),
+                        new FotoFile("UTP-2", "jpeg")
                     }
                 },
                 new Folder()
                 {
                     Name = "Fotos 2",
-                    Files = new List<string>()
+                    Files = new List<FotoFile>()
                     {
-                        "UTP-3.jpg",
-                        "UTP-4.jpeg"
+                        new FotoFile("UTP-3", "jpg"),
+                        new FotoFile("UTP-4", "jpeg")
                     }
                 },
                 new Folder()
                 {
                     Name = "Fotos 3",
-                    Files = new List<string>()
+                    Files = new List<FotoFile>()
                     {
-                        "UTP-5.jpg",
-                        "UTP-6.jpeg"
+                        new FotoFile("UTP-5", "jpg"),
+                        new FotoFile("UTP-6", "jpeg")
                     }
                 }
             }
@@ -99,20 +99,20 @@ namespace Polo.UnitTests.Commands
                 new Folder()
                 {
                     Name = "Fotos 1",
-                    Files = new List<string>()
+                    Files = new List<FotoFile>()
                     {
-                        "UTP-1.jpg",
-                        "UTP-2.jpeg"
+                        new FotoFile("UTP-1", "jpg"),
+                        new FotoFile("UTP-2", "jpeg")
                     },
                     SubFolders = new List<Folder>()
                     {
                         new Folder()
                         {
                             Name = _rawFolderName,
-                            Files = new List<string>()
+                            Files = new List<FotoFile>()
                             {
-                                "UTP-1.ORF",
-                                "UTP-2.ORF"
+                                new FotoFile("UTP-1", "ORF"),
+                                new FotoFile("UTP-2", "ORF")
                             }
                         }
                     }
@@ -120,20 +120,20 @@ namespace Polo.UnitTests.Commands
                 new Folder()
                 {
                     Name = "Fotos 2",
-                    Files = new List<string>()
+                    Files = new List<FotoFile>()
                     {
-                        "UTP-3.jpg",
-                        "UTP-4.jpeg"
+                        new FotoFile("UTP-3", "jpg"),
+                        new FotoFile("UTP-4", "jpeg")
                     },
                     SubFolders = new List<Folder>()
                     {
                         new Folder()
                         {
                             Name = _rawFolderName,
-                            Files = new List<string>()
+                            Files = new List<FotoFile>()
                             {
-                                "UTP-3.ORF",
-                                "UTP-4.ORF"
+                                new FotoFile("UTP-3", "ORF"),
+                                new FotoFile("UTP-4", "ORF")
                             }
                         }
                     }
@@ -141,20 +141,20 @@ namespace Polo.UnitTests.Commands
                 new Folder()
                 {
                     Name = "Fotos 3",
-                    Files = new List<string>()
+                    Files = new List<FotoFile>()
                     {
-                        "UTP-5.jpg",
-                        "UTP-6.jpeg"
+                        new FotoFile("UTP-5", "jpg"),
+                        new FotoFile("UTP-6", "jpeg")
                     },
                     SubFolders = new List<Folder>()
                     {
                         new Folder()
                         {
                             Name = _rawFolderName,
-                            Files = new List<string>()
+                            Files = new List<FotoFile>()
                             {
-                                "UTP-5.ORF",
-                                "UTP-6.ORF"
+                                new FotoFile("UTP-5", "ORF"),
+                                new FotoFile("UTP-6", "ORF")
                             }
                         }
                     }
@@ -169,14 +169,15 @@ namespace Polo.UnitTests.Commands
 
         private void AddRawFilesToStructure()
         {
-            var rawfiles = new List<string>();
-            var jpgfiles = new List<string>();
+            var rawfiles = new List<FotoFile>();
+            var jpgfiles = new List<FotoFile>();
+
             foreach (var extension in _rawFileExtensions)
             {
-                var rawFileName = $"image-{extension}.{extension}";
-                var jpgFileName = $"image-{extension}.jpg";
-                rawfiles.Add(rawFileName);
-                jpgfiles.Add(jpgFileName);
+                var rawFile = new FotoFile($"image-{extension}", extension);
+                var jpgFile = new FotoFile($"image-{extension}", "jpg");
+                rawfiles.Add(rawFile);
+                jpgfiles.Add(jpgFile);
             }
 
             folderStructureInitial.SubFolders.Where(x => x.Name == _albumName).ToList()

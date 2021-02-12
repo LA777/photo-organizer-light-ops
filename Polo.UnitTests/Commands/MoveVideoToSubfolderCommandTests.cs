@@ -33,11 +33,11 @@ namespace Polo.UnitTests.Commands
                 new Folder()
                 {
                     Name = _albumName,
-                    Files = new List<string>()
+                    Files = new List<FotoFile>()
                     {
-                        "video-1.mp4",
-                        "UTP-1.ORF",
-                        "UTP-1.jpg"
+                        new FotoFile("video-1", "mp4"),
+                        new FotoFile("UTP-1", "ORF"),
+                        new FotoFile("UTP-1", "jpg")
                     }
                 }
             }
@@ -50,19 +50,19 @@ namespace Polo.UnitTests.Commands
                 new Folder()
                 {
                     Name = _albumName,
-                    Files = new List<string>()
+                    Files = new List<FotoFile>()
                     {
-                        "UTP-1.ORF",
-                        "UTP-1.jpg"
+                        new FotoFile("UTP-1", "ORF"),
+                        new FotoFile("UTP-1", "jpg")
                     },
                     SubFolders = new List<Folder>()
                     {
                         new Folder()
                         {
                             Name = _videoSubfolderName,
-                            Files = new List<string>()
+                            Files = new List<FotoFile>()
                             {
-                                "video-1.mp4"
+                                new FotoFile("video-1", "mp4")
                             }
                         }
                     }
@@ -77,11 +77,11 @@ namespace Polo.UnitTests.Commands
 
         private void AddVideoFilesToFolderStructure()
         {
-            var videoFiles = new List<string>();
+            var videoFiles = new List<FotoFile>();
             foreach (var extension in _videoFileExtensions)
             {
-                var fileName = $"video-{extension}.{extension}";
-                videoFiles.Add(fileName);
+                var file = new FotoFile($"video-{extension}", extension);
+                videoFiles.Add(file);
             }
 
             folderStructureInitial.SubFolders.Where(x => x.Name == _albumName).ToList().ForEach(x => x.Files.AddRange(videoFiles));

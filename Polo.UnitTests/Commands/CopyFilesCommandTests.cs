@@ -32,20 +32,20 @@ namespace Polo.UnitTests.Commands
                 new Folder()
                 {
                     Name = _sourceFolderName,
-                    Files = new List<string>()
+                    Files = new List<FotoFile>()
                     {
-                        "UTP-1.ORF",
-                        "UTP-2.ORF",
-                        "UTP-3.ORF",
-                        "UTP-4.ORF",
-                        "UTP-5.ORF",
-                        "UTP-6.ORF",
-                        "UTP-1.jpg",
-                        "UTP-2.jpg",
-                        "UTP-3.jpg",
-                        "UTP-4.jpg",
-                        "UTP-5.jpg",
-                        "UTP-6.jpg"
+                        new FotoFile("UTP-1", "ORF"),
+                        new FotoFile("UTP-2", "ORF"),
+                        new FotoFile("UTP-3", "ORF"),
+                        new FotoFile("UTP-4", "ORF"),
+                        new FotoFile("UTP-5", "ORF"),
+                        new FotoFile("UTP-6", "ORF"),
+                        new FotoFile("UTP-1", "jpg"),
+                        new FotoFile("UTP-2", "jpg"),
+                        new FotoFile("UTP-3", "jpg"),
+                        new FotoFile("UTP-4", "jpg"),
+                        new FotoFile("UTP-5", "jpg"),
+                        new FotoFile("UTP-6", "jpg")
                     }
                 },
                 new Folder()
@@ -62,39 +62,39 @@ namespace Polo.UnitTests.Commands
                 new Folder()
                 {
                     Name = _sourceFolderName,
-                    Files = new List<string>()
+                    Files = new List<FotoFile>()
                     {
-                        "UTP-1.ORF",
-                        "UTP-2.ORF",
-                        "UTP-3.ORF",
-                        "UTP-4.ORF",
-                        "UTP-5.ORF",
-                        "UTP-6.ORF",
-                        "UTP-1.jpg",
-                        "UTP-2.jpg",
-                        "UTP-3.jpg",
-                        "UTP-4.jpg",
-                        "UTP-5.jpg",
-                        "UTP-6.jpg"
+                        new FotoFile("UTP-1", "ORF"),
+                        new FotoFile("UTP-2", "ORF"),
+                        new FotoFile("UTP-3", "ORF"),
+                        new FotoFile("UTP-4", "ORF"),
+                        new FotoFile("UTP-5", "ORF"),
+                        new FotoFile("UTP-6", "ORF"),
+                        new FotoFile("UTP-1", "jpg"),
+                        new FotoFile("UTP-2", "jpg"),
+                        new FotoFile("UTP-3", "jpg"),
+                        new FotoFile("UTP-4", "jpg"),
+                        new FotoFile("UTP-5", "jpg"),
+                        new FotoFile("UTP-6", "jpg")
                     }
                 },
                 new Folder()
                 {
                     Name = _destinationFolderName,
-                    Files = new List<string>()
+                    Files = new List<FotoFile>()
                     {
-                        "UTP-1.ORF",
-                        "UTP-2.ORF",
-                        "UTP-3.ORF",
-                        "UTP-4.ORF",
-                        "UTP-5.ORF",
-                        "UTP-6.ORF",
-                        "UTP-1.jpg",
-                        "UTP-2.jpg",
-                        "UTP-3.jpg",
-                        "UTP-4.jpg",
-                        "UTP-5.jpg",
-                        "UTP-6.jpg"
+                        new FotoFile("UTP-1", "ORF"),
+                        new FotoFile("UTP-2", "ORF"),
+                        new FotoFile("UTP-3", "ORF"),
+                        new FotoFile("UTP-4", "ORF"),
+                        new FotoFile("UTP-5", "ORF"),
+                        new FotoFile("UTP-6", "ORF"),
+                        new FotoFile("UTP-1", "jpg"),
+                        new FotoFile("UTP-2", "jpg"),
+                        new FotoFile("UTP-3", "jpg"),
+                        new FotoFile("UTP-4", "jpg"),
+                        new FotoFile("UTP-5", "jpg"),
+                        new FotoFile("UTP-6", "jpg")
                     }
                 }
             }

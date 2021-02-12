@@ -1,11 +1,15 @@
 ﻿
 TODO
 
-- add resize JPEG files
+- add argument for resize JPEG files (sizeLimit)
 
 - add SIGN to JPEG files
 
+- add argument for resize JPEG files (resize with watermark)
+
 - add Sequence command to run several commands
+
+- add setting - DeleteToRecycleBin
 
 
 
@@ -27,4 +31,6 @@ DONE
 + add logging to file
 
 + delete files to Recycle bin
+
++ add resize JPEG files
 
