@@ -115,10 +115,10 @@ namespace Polo.UnitTests.Commands
             var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(folderStructureInitial);
             Environment.CurrentDirectory = Path.Combine(testFolderFullPath, _albumName);
 
-            var jpegFileExtensions = new List<string>() { "jpeg", "jpg", "jpeg", "jpg" };
-            var validApplicationSettings = new ApplicationSettings(jpegFileExtensions: jpegFileExtensions,
+            var jpegFileExtensionsWithDuplicates = new List<string>() { "jpeg", "jpg", "jpeg", "jpg" };
+            var applicationSettings = new ApplicationSettings(jpegFileExtensions: jpegFileExtensionsWithDuplicates,
             imageResizeLongSide: _imageResizeLongSide, resizedImageSubfolderName: _resizedImageSubfolderName);
-            var mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(validApplicationSettings);
+            var mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(applicationSettings);
             var sut = new ResizeCommand(mockApplicationOptions, _loggerMock.Object);
 
             // Act

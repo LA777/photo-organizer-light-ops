@@ -33,7 +33,7 @@ namespace Polo.Commands
             Directory.CreateDirectory(rawFolderPath);
 
             var rawFiles = new List<string>();
-            _applicationSettings.RawFileExtensions.ToList()
+            _applicationSettings.RawFileExtensions.Distinct().ToList()
                 .ForEach(x => rawFiles.AddRange(Directory.EnumerateFiles(currentDirectory, $"*.{x}", SearchOption.TopDirectoryOnly)));
 
             foreach (var rawFilePath in rawFiles)

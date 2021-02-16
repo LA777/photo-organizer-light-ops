@@ -19,11 +19,11 @@ namespace Polo.Commands
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public string Name => "copy";
+        public string Name => "copy-all";
 
-        public string ShortName => "c";
+        public string ShortName => "ca";
 
-        public string Description => "Copy files.";
+        public string Description => $"Copy all files from source folder to the current folder. Setup path for the source folder in settings or in argument. Setup path to the destination folder in the argument. Example: polo.exe -{Name} 'e:\\\\DCIM' 'c:\\\\photo'";
 
         public void Action(string[] arguments = null, IEnumerable<ICommand> commands = null)
         {
@@ -32,8 +32,7 @@ namespace Polo.Commands
 
             if ((arguments == null || arguments.Length == 1) & string.IsNullOrWhiteSpace(sourceFolder))
             {
-                _logger.Information("Please provide additional arguments.");
-                //_consoleService.WriteLine("Please provide additional arguments.");
+                _logger.Information("Please provide additional arguments or setup settings.");
 
                 return;
             }

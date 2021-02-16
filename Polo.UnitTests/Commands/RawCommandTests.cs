@@ -127,6 +127,51 @@ namespace Polo.UnitTests.Commands
             folderStructureActual.Should().BeEquivalentTo(folderStructureExpected);
         }
 
+
+
+        [Fact]
+        public void Action_Should_Create_Raw_Folder_And_Move_Raw_Files_If_Setting_Have_Duplicate_JpegFileExtension_Test()
+        {
+            // Arrange
+            var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(folderStructureInitial);
+            Environment.CurrentDirectory = Path.Combine(testFolderFullPath, _albumName);
+
+            var jpegFileExtensionsWithDuplicates = new List<string>() { "jpeg", "jpg", "jpeg", "jpg" };
+            var applicationSettings = new ApplicationSettings(jpegFileExtensions: jpegFileExtensionsWithDuplicates, rawFileExtensions: _rawFileExtensions, rawFolderName: _rawFolderName);
+            var mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(applicationSettings);
+            var sut = new RawCommand(mockApplicationOptions, _loggerMock.Object);
+
+            // Act
+            sut.Action();
+
+            // Assert
+            var folderStructureActual = FileHelper.CreateFolderStructureByFolderAndFiles(testFolderFullPath);
+            folderStructureActual.Should().BeEquivalentTo(folderStructureExpected);
+        }
+
+        [Fact]
+        public void Action_Should_Create_Raw_Folder_And_Move_Raw_Files_If_Setting_Have_Duplicate_RawFileExtension_Test()
+        {
+            // Arrange
+            var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(folderStructureInitial);
+            Environment.CurrentDirectory = Path.Combine(testFolderFullPath, _albumName);
+
+            var rawFileExtensionsWithDuplicates = new List<string>() { "orf", "crw", "cr2", "cr3", "3fr", "mef", "nef", "nrw", "pef", "ptx", "rw2", "arw", "srf", "sr2", "gpr", "raf", "raw", "rwl", "dng", "srw", "x3f",
+                                                                       "orf", "crw", "cr2", "cr3", "3fr", "mef", "nef", "nrw", "pef", "ptx", "rw2", "arw", "srf", "sr2", "gpr", "raf", "raw", "rwl", "dng", "srw", "x3f" };
+            var applicationSettings = new ApplicationSettings(jpegFileExtensions: _jpegFileExtensions, rawFileExtensions: rawFileExtensionsWithDuplicates, rawFolderName: _rawFolderName);
+            var mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(applicationSettings);
+            var sut = new RawCommand(mockApplicationOptions, _loggerMock.Object);
+
+            // Act
+            sut.Action();
+
+            // Assert
+            var folderStructureActual = FileHelper.CreateFolderStructureByFolderAndFiles(testFolderFullPath);
+            folderStructureActual.Should().BeEquivalentTo(folderStructureExpected);
+        }
+
+
+
         ~RawCommandTests()
         {
             ReleaseUnmanagedResources();

@@ -33,7 +33,7 @@ namespace Polo.Commands
 
             var rawFiles = new List<string>();
 
-            _applicationSettings.RawFileExtensions.ToList()
+            _applicationSettings.RawFileExtensions.Distinct().ToList()
                 .ForEach(x => rawFiles.AddRange(Directory.EnumerateFiles(rawFolderPath, $"*.{x}", SearchOption.TopDirectoryOnly)));
 
             foreach (var rawFilePath in rawFiles)
@@ -42,7 +42,7 @@ namespace Polo.Commands
                 var allFotosFolder = Directory.GetParent(currentDirectory).FullName;
 
                 var jpegFiles = new List<string>();
-                _applicationSettings.JpegFileExtensions.ToList()
+                _applicationSettings.JpegFileExtensions.Distinct().ToList()
                     .ForEach(x => jpegFiles.AddRange(Directory.EnumerateFiles(allFotosFolder, $"{fileNameWithoutExtension}.{x}", SearchOption.AllDirectories)));
 
                 if (jpegFiles.Count() > 1)

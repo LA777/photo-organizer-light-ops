@@ -33,7 +33,7 @@ namespace Polo.Commands
             var rawFolderPath = Path.Join(currentDirectory, _applicationSettings.RawFolderName);
 
             var rawFiles = new List<string>();
-            _applicationSettings.RawFileExtensions.ToList()
+            _applicationSettings.RawFileExtensions.Distinct().ToList()
                 .ForEach(x => rawFiles.AddRange(Directory.EnumerateFiles(rawFolderPath, $"*.{x}", SearchOption.TopDirectoryOnly)));
 
             var orphanageRawFiles = new List<string>();
@@ -44,7 +44,7 @@ namespace Polo.Commands
                 var rawFileShortName = Path.GetFileNameWithoutExtension(rawFileInfo.Name);
 
                 var jpegFiles = new List<string>();
-                _applicationSettings.JpegFileExtensions.ToList()
+                _applicationSettings.JpegFileExtensions.Distinct().ToList()
                     .ForEach(x => jpegFiles.AddRange(Directory.EnumerateFiles(currentDirectory, $"{rawFileShortName}.{x}", SearchOption.TopDirectoryOnly)));
 
                 if (!jpegFiles.Any())
