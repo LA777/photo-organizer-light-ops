@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Polo": {
+      "commandName": "Project",
+      "commandLineArgs": "-c \"d:\\temp\\Test delete\\Source\" \"d:\\temp\\Test delete\\Destination\""
+    }
+  }
+}
