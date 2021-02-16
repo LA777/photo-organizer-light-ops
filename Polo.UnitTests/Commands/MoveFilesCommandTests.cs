@@ -17,7 +17,7 @@ namespace Polo.UnitTests.Commands
     [Collection("Sequential")]
     public class MoveFilesCommandTests : CommandTestBase
     {
-        private const string ShortCommand = "-m";
+        private const string ShortCommand = "-ma";
         private static readonly ApplicationSettings _validApplicationSettings = new ApplicationSettings(defaultSourceDriveName: "e://");
         private static readonly IOptions<ApplicationSettings> _mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(_validApplicationSettings);
         private static readonly string _sourceFolderName = "Source Fotos";
