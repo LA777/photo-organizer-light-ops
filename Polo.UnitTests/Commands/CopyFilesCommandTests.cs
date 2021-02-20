@@ -25,7 +25,7 @@ namespace Polo.UnitTests.Commands
         private static readonly string _sourceFolderName = "Source Fotos";
         private static readonly string _destinationFolderName = "Destination Fotos";
         private static readonly Mock<ILogger> _loggerMock = new Mock<ILogger>();
-        private readonly ICommand _sut = new CopyFilesCommand(_mockApplicationOptions, _loggerMock.Object);
+        private readonly ICommand _sut = new CopyAllFilesCommand(_mockApplicationOptions, _loggerMock.Object);
 
         private readonly Folder folderStructureInitial = new Folder()
         {
@@ -241,7 +241,7 @@ namespace Polo.UnitTests.Commands
 
             ApplicationSettings _validApplicationSettings = new ApplicationSettings(defaultSourceDriveName: sourceFolderPath);
             IOptions<ApplicationSettings> _mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(_validApplicationSettings);
-            var sut = new CopyFilesCommand(_mockApplicationOptions, _loggerMock.Object);
+            var sut = new CopyAllFilesCommand(_mockApplicationOptions, _loggerMock.Object);
 
             // Act
             sut.Action(arguments);
@@ -263,7 +263,7 @@ namespace Polo.UnitTests.Commands
 
             ApplicationSettings _validApplicationSettings = new ApplicationSettings(defaultSourceDriveName: sourceFolderPath);
             IOptions<ApplicationSettings> _mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(_validApplicationSettings);
-            var sut = new CopyFilesCommand(_mockApplicationOptions, _loggerMock.Object);
+            var sut = new CopyAllFilesCommand(_mockApplicationOptions, _loggerMock.Object);
 
             // Act
             var exception = Assert.Throws<DirectoryNotFoundException>(() => sut.Action(arguments));

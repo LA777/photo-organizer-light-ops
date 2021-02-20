@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Polo.Commands
 {
-    public class CopyFilesCommand : ICommand
+    public class CopyAllFilesCommand : ICommand
     {
         private readonly ILogger _logger;
         private readonly IOptions<ApplicationSettings> _applicationOptions;
@@ -17,7 +17,7 @@ namespace Polo.Commands
         public readonly string SourceFolderArgumentName = "source";
         public readonly string DestinationFolderArgumentName = "destination";
 
-        public CopyFilesCommand(IOptions<ApplicationSettings> applicationOptions, ILogger logger)
+        public CopyAllFilesCommand(IOptions<ApplicationSettings> applicationOptions, ILogger logger)
         {
             _applicationOptions = applicationOptions ?? throw new ArgumentNullException(nameof(applicationOptions));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));

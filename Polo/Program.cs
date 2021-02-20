@@ -63,8 +63,8 @@ namespace Polo
             services.AddSingleton<ICommand, MoveRawToJpegFolderCommand>();
             services.AddSingleton<ICommand, RawCommand>();
             services.AddSingleton<ICommand, RemoveOrphanageRawCommand>();
-            services.AddSingleton<ICommand, CopyFilesCommand>();
-            services.AddSingleton<ICommand, MoveFilesCommand>();
+            services.AddSingleton<ICommand, CopyAllFilesCommand>();
+            services.AddSingleton<ICommand, MoveAllFilesCommand>();
             services.AddSingleton<ICommand, MoveVideoToSubfolderCommand>();
         }
     }
