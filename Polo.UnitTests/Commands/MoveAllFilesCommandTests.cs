@@ -15,7 +15,7 @@ using Xunit;
 namespace Polo.UnitTests.Commands
 {
     [Collection("Sequential")]
-    public class MoveFilesCommandTests : CommandTestBase
+    public class MoveAllFilesCommandTests : CommandTestBase
     {
         private const string DefaultSourceDriveName = "e:\\\\";
         private readonly string SourceFolderArgumentName = "source";
@@ -236,7 +236,7 @@ namespace Polo.UnitTests.Commands
             Assert.Equal($"Directory {sourceFolderPath} does not exists.", exception.Message);
         }
 
-        ~MoveFilesCommandTests()
+        ~MoveAllFilesCommandTests()
         {
             ReleaseUnmanagedResources();
         }
