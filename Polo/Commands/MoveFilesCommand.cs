@@ -5,6 +5,7 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Polo.Commands
 {
@@ -13,39 +14,55 @@ namespace Polo.Commands
         private readonly ILogger _logger;
         private readonly IOptions<ApplicationSettings> _applicationOptions;
 
+        public readonly string SourceFolderArgumentName = "source";
+        public readonly string DestinationFolderArgumentName = "destination";
+
         public MoveFilesCommand(IOptions<ApplicationSettings> applicationOptions, ILogger logger)
         {
             _applicationOptions = applicationOptions ?? throw new ArgumentNullException(nameof(applicationOptions));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public string Name => "move-all";
+        public string Name => "move-all-files";
 
-        public string ShortName => "ma";
+        public string ShortName => "maf";
 
-        public string Description => $"Move all files from source folder to the current folder. Setup path for the source folder in settings or in argument. Setup path to the destination folder in the argument. Example: polo.exe -{Name} 'e:\\\\DCIM' 'c:\\\\photo'";
+        public string Description => $"Move all files from source folder to the current folder. Setup path for the source folder in settings or in argument. Setup path to the destination folder in the argument. Example: polo.exe {CommandParser.CommandPrefix}{Name} {CommandParser.ShortCommandPrefix}{SourceFolderArgumentName}:'e:\\\\DCIM' {CommandParser.ShortCommandPrefix}{DestinationFolderArgumentName}:'c:\\\\photo'";
 
-        public void Action(string[] arguments = null, IEnumerable<ICommand> commands = null)
+        public void Action(IReadOnlyDictionary<string, string> arguments = null, IEnumerable<ICommand> commands = null)
         {
             var sourceFolder = _applicationOptions.Value.DefaultSourceDriveName;
             var destinationDirectory = Environment.CurrentDirectory;
 
-            if ((arguments == null || arguments.Length == 1) & string.IsNullOrWhiteSpace(sourceFolder))
+            if ((arguments == null || !arguments.Any()) & string.IsNullOrWhiteSpace(sourceFolder)) // TODO LA - Check this with tests
             {
                 _logger.Information("Please provide additional arguments or setup settings.");
 
                 return;
             }
 
-            if (arguments.Length == 2)
+            if (arguments != null && arguments.Any()) // TODO LA - Check this with tests
             {
-                sourceFolder = arguments[1];
+                if (arguments.TryGetValue(SourceFolderArgumentName, out string sourceFolderPath))
+                {
+                    sourceFolder = sourceFolderPath;
+                }
+
+                if (arguments.TryGetValue(DestinationFolderArgumentName, out string destinationFolderPath))
+                {
+                    destinationDirectory = destinationFolderPath;
+                }
             }
-            else if (arguments.Length == 3)
-            {
-                sourceFolder = arguments[1];
-                destinationDirectory = arguments[2];
-            }
+
+            //if (arguments.Length == 2)
+            //{
+            //    sourceFolder = arguments[1];
+            //}
+            //else if (arguments.Length == 3)
+            //{
+            //    sourceFolder = arguments[1];
+            //    destinationDirectory = arguments[2];
+            //}
 
             if (!Directory.Exists(sourceFolder))
             {

@@ -18,10 +18,10 @@ namespace Polo.UnitTests.Commands
     public class ResizeCommandTests : CommandTestBase
     {
         private static readonly IEnumerable<string> _jpegFileExtensions = new List<string>() { "jpeg", "jpg" };
-        private static readonly int _imageResizeLongSide = 100;
+        private static readonly int _imageResizeLongSideLimit = 100;
         private static readonly string _resizedImageSubfolderName = "small";
         private static readonly ApplicationSettings _validApplicationSettings = new ApplicationSettings(jpegFileExtensions: _jpegFileExtensions,
-            imageResizeLongSide: _imageResizeLongSide, resizedImageSubfolderName: _resizedImageSubfolderName);
+            imageResizeLongSideLimit: _imageResizeLongSideLimit, resizedImageSubfolderName: _resizedImageSubfolderName);
         private static readonly IOptions<ApplicationSettings> _mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(_validApplicationSettings);
         private static readonly string _albumName = "Album1";
         private static readonly Mock<ILogger> _loggerMock = new Mock<ILogger>();
@@ -117,7 +117,7 @@ namespace Polo.UnitTests.Commands
 
             var jpegFileExtensionsWithDuplicates = new List<string>() { "jpeg", "jpg", "jpeg", "jpg" };
             var applicationSettings = new ApplicationSettings(jpegFileExtensions: jpegFileExtensionsWithDuplicates,
-            imageResizeLongSide: _imageResizeLongSide, resizedImageSubfolderName: _resizedImageSubfolderName);
+            imageResizeLongSideLimit: _imageResizeLongSideLimit, resizedImageSubfolderName: _resizedImageSubfolderName);
             var mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(applicationSettings);
             var sut = new ResizeCommand(mockApplicationOptions, _loggerMock.Object);
 

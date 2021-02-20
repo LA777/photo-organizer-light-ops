@@ -19,7 +19,9 @@ namespace Polo.Commands
 
         public string ShortName => "rs";
 
-        public string Description => "Resizes all JPEG images in the current folder and saves them to a sub-folder.";
+        public string LongSideLimitArgumentName => "long-side-limit";
+
+        public string Description => $"Resizes all JPEG images in the current folder and saves them to a sub-folder. Example: polo.exe {CommandParser.CommandPrefix}{Name} {CommandParser.ShortCommandPrefix}{LongSideLimitArgumentName}:1600";
 
         public ResizeCommand(IOptions<ApplicationSettings> applicationOptions, ILogger logger)
         {
@@ -27,12 +29,31 @@ namespace Polo.Commands
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public void Action(string[] arguments = null, IEnumerable<ICommand> commands = null)
+        public void Action(IReadOnlyDictionary<string, string> arguments = null, IEnumerable<ICommand> commands = null)
         {
             // TODO LA - add arguments
 
             var currentDirectory = Environment.CurrentDirectory;
             var destinationDirectory = Path.Combine(currentDirectory, _applicationSettings.ResizedImageSubfolderName);
+            var sizeLimit = _applicationSettings.ImageResizeLongSideLimit;
+
+            if (arguments != null && arguments.Any()) // TODO LA - Check all this in tests
+            {
+                if (arguments.TryGetValue(LongSideLimitArgumentName, out string sizeLimitValue))
+                {
+                    var isParseSuccesfull = Int32.TryParse(sizeLimitValue, out int number);
+                    if (isParseSuccesfull)
+                    {
+                        sizeLimit = number;
+                    }
+                    else
+                    {
+                        _logger.Information($"Argument is not a number");
+
+                        return;
+                    }
+                }
+            }
 
             var jpegFiles = new List<string>();
             _applicationSettings.JpegFileExtensions.Distinct().ToList()
@@ -53,7 +74,7 @@ namespace Polo.Commands
 
                 var width = info.Width;
                 var height = info.Height;
-                var sizeLimit = _applicationSettings.ImageResizeLongSide;
+
 
                 if (width >= height && width > sizeLimit)
                 {

@@ -17,8 +17,10 @@ namespace Polo.UnitTests.Commands
     [Collection("Sequential")]
     public class MoveFilesCommandTests : CommandTestBase
     {
-        private const string ShortCommand = "-ma";
-        private static readonly ApplicationSettings _validApplicationSettings = new ApplicationSettings(defaultSourceDriveName: "e://");
+        private const string DefaultSourceDriveName = "e:\\\\";
+        private readonly string SourceFolderArgumentName = "source";
+        private readonly string DestinationFolderArgumentName = "destination";
+        private static readonly ApplicationSettings _validApplicationSettings = new ApplicationSettings(defaultSourceDriveName: DefaultSourceDriveName);
         private static readonly IOptions<ApplicationSettings> _mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(_validApplicationSettings);
         private static readonly string _sourceFolderName = "Source Fotos";
         private static readonly string _destinationFolderName = "Destination Fotos";
@@ -87,66 +89,18 @@ namespace Polo.UnitTests.Commands
         };
 
         [Fact]
-        public void Action_Should_Move_Files_With_Three_Arguments_Test()
-        {
-            // Arrange
-            var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(folderStructureInitial);
-            var sourceFolderPath = Path.Combine(testFolderFullPath, _sourceFolderName);
-            var destinationFolderPath = Path.Combine(testFolderFullPath, _destinationFolderName);
-            Environment.CurrentDirectory = testFolderFullPath;
-            var arguments = new string[] { ShortCommand, sourceFolderPath, destinationFolderPath };
-
-            // Act
-            _sut.Action(arguments);
-
-            // Assert
-            var folderStructureActual = FileHelper.CreateFolderStructureByFolderAndFiles(testFolderFullPath);
-            folderStructureActual.Should().BeEquivalentTo(folderStructureExpected);
-        }
-
-        [Fact]
-        public void Action_Should_Throw_Exception_With_Three_Arguments_And_Fail_Source_Folder_Test()
-        {
-            // Arrange
-            var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(folderStructureInitial);
-            var sourceFolderPath = Path.Combine(testFolderFullPath, "no such folder");
-            var destinationFolderPath = Path.Combine(testFolderFullPath, _destinationFolderName);
-            Environment.CurrentDirectory = testFolderFullPath;
-            var arguments = new string[] { ShortCommand, sourceFolderPath, destinationFolderPath };
-
-            // Act
-            Exception exception = Assert.Throws<DirectoryNotFoundException>(() => _sut.Action(arguments));
-
-            // Assert
-            Assert.Equal($"Directory {sourceFolderPath} does not exists.", exception.Message);
-        }
-
-        [Fact]
-        public void Action_Should_Throw_Exception_With_Three_Arguments_And_Fail_Destination_Folder_Test()
-        {
-            // Arrange
-            var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(folderStructureInitial);
-            var sourceFolderPath = Path.Combine(testFolderFullPath, _sourceFolderName);
-            var destinationFolderPath = Path.Combine(testFolderFullPath, "no such folder");
-            Environment.CurrentDirectory = testFolderFullPath;
-            var arguments = new string[] { ShortCommand, sourceFolderPath, destinationFolderPath };
-
-            // Act
-            Exception exception = Assert.Throws<DirectoryNotFoundException>(() => _sut.Action(arguments));
-
-            // Assert
-            Assert.Equal($"Directory {destinationFolderPath} does not exists.", exception.Message);
-        }
-
-        [Fact]
         public void Action_Should_Move_Files_With_Two_Arguments_Test()
         {
             // Arrange
             var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(folderStructureInitial);
             var sourceFolderPath = Path.Combine(testFolderFullPath, _sourceFolderName);
             var destinationFolderPath = Path.Combine(testFolderFullPath, _destinationFolderName);
-            Environment.CurrentDirectory = destinationFolderPath;
-            var arguments = new string[] { ShortCommand, sourceFolderPath };
+            Environment.CurrentDirectory = testFolderFullPath;
+            var arguments = new Dictionary<string, string>
+            {
+                { SourceFolderArgumentName, sourceFolderPath },
+                { DestinationFolderArgumentName, destinationFolderPath }
+            };
 
             // Act
             _sut.Action(arguments);
@@ -163,25 +117,91 @@ namespace Polo.UnitTests.Commands
             var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(folderStructureInitial);
             var sourceFolderPath = Path.Combine(testFolderFullPath, "no such folder");
             var destinationFolderPath = Path.Combine(testFolderFullPath, _destinationFolderName);
-            Environment.CurrentDirectory = destinationFolderPath;
-            var arguments = new string[] { ShortCommand, sourceFolderPath };
+            Environment.CurrentDirectory = testFolderFullPath;
+            var arguments = new Dictionary<string, string>
+            {
+                { SourceFolderArgumentName, sourceFolderPath },
+                { DestinationFolderArgumentName, destinationFolderPath }
+            };
 
             // Act
-            Exception exception = Assert.Throws<DirectoryNotFoundException>(() => _sut.Action(arguments));
+            var exception = Assert.Throws<DirectoryNotFoundException>(() => _sut.Action(arguments));
 
             // Assert
             Assert.Equal($"Directory {sourceFolderPath} does not exists.", exception.Message);
         }
 
         [Fact]
-        public void Action_Should_Move_Files_With_One_Argument_Test()
+        public void Action_Should_Throw_Exception_With_Two_Arguments_And_Fail_Destination_Folder_Test()
+        {
+            // Arrange
+            var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(folderStructureInitial);
+            var sourceFolderPath = Path.Combine(testFolderFullPath, _sourceFolderName);
+            var destinationFolderPath = Path.Combine(testFolderFullPath, "no such folder");
+            Environment.CurrentDirectory = testFolderFullPath;
+            var arguments = new Dictionary<string, string>
+            {
+                { SourceFolderArgumentName, sourceFolderPath },
+                { DestinationFolderArgumentName, destinationFolderPath }
+            };
+
+            // Act
+            var exception = Assert.Throws<DirectoryNotFoundException>(() => _sut.Action(arguments));
+
+            // Assert
+            Assert.Equal($"Directory {destinationFolderPath} does not exists.", exception.Message);
+        }
+
+        [Fact]
+        public void Action_Should_Move_Files_With_One_Arguments_Test()
         {
             // Arrange
             var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(folderStructureInitial);
             var sourceFolderPath = Path.Combine(testFolderFullPath, _sourceFolderName);
             var destinationFolderPath = Path.Combine(testFolderFullPath, _destinationFolderName);
             Environment.CurrentDirectory = destinationFolderPath;
-            var arguments = new string[] { ShortCommand };
+            var arguments = new Dictionary<string, string>
+            {
+                { SourceFolderArgumentName, sourceFolderPath }
+            };
+
+            // Act
+            _sut.Action(arguments);
+
+            // Assert
+            var folderStructureActual = FileHelper.CreateFolderStructureByFolderAndFiles(testFolderFullPath);
+            folderStructureActual.Should().BeEquivalentTo(folderStructureExpected);
+        }
+
+        [Fact]
+        public void Action_Should_Throw_Exception_With_One_Arguments_And_Fail_Source_Folder_Test()
+        {
+            // Arrange
+            var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(folderStructureInitial);
+            var sourceFolderPath = Path.Combine(testFolderFullPath, "no such folder");
+            var destinationFolderPath = Path.Combine(testFolderFullPath, _destinationFolderName);
+            Environment.CurrentDirectory = destinationFolderPath;
+            var arguments = new Dictionary<string, string>
+            {
+                { SourceFolderArgumentName, sourceFolderPath }
+            };
+
+            // Act
+            var exception = Assert.Throws<DirectoryNotFoundException>(() => _sut.Action(arguments));
+
+            // Assert
+            Assert.Equal($"Directory {sourceFolderPath} does not exists.", exception.Message);
+        }
+
+        [Fact]
+        public void Action_Should_Move_Files_Without_Argument_Test()
+        {
+            // Arrange
+            var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(folderStructureInitial);
+            var sourceFolderPath = Path.Combine(testFolderFullPath, _sourceFolderName);
+            var destinationFolderPath = Path.Combine(testFolderFullPath, _destinationFolderName);
+            Environment.CurrentDirectory = destinationFolderPath;
+            var arguments = new Dictionary<string, string>();
 
             ApplicationSettings _validApplicationSettings = new ApplicationSettings(defaultSourceDriveName: sourceFolderPath);
             IOptions<ApplicationSettings> _mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(_validApplicationSettings);
@@ -196,21 +216,21 @@ namespace Polo.UnitTests.Commands
         }
 
         [Fact]
-        public void Action_Should_Throw_Exception_With_One_Argument_And_Fail_Source_Folder_Test()
+        public void Action_Should_Throw_Exception_Without_Argument_And_Fail_Source_Folder_Test()
         {
             // Arrange
             var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(folderStructureInitial);
             var sourceFolderPath = Path.Combine(testFolderFullPath, "no such folder");
             var destinationFolderPath = Path.Combine(testFolderFullPath, _destinationFolderName);
             Environment.CurrentDirectory = destinationFolderPath;
-            var arguments = new string[] { ShortCommand };
+            var arguments = new Dictionary<string, string>();
 
             ApplicationSettings _validApplicationSettings = new ApplicationSettings(defaultSourceDriveName: sourceFolderPath);
             IOptions<ApplicationSettings> _mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(_validApplicationSettings);
             var sut = new MoveFilesCommand(_mockApplicationOptions, _loggerMock.Object);
 
             // Act
-            Exception exception = Assert.Throws<DirectoryNotFoundException>(() => sut.Action(arguments));
+            var exception = Assert.Throws<DirectoryNotFoundException>(() => sut.Action(arguments));
 
             // Assert
             Assert.Equal($"Directory {sourceFolderPath} does not exists.", exception.Message);

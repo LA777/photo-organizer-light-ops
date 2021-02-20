@@ -11,6 +11,17 @@ TODO
 
 - add setting - DeleteToRecycleBin
 
+- copy\move files command - add argument - overwrite
+
+- change formatting for console logs - [2020-02-20 12-23 Message]
+- change formatting for console error logs - [2020-02-20 12-23 ERROR Message]
+
+- improve verbose logs via commands
+
+- update Help command to show commands with all possible parameters and examples
+
+- update MoveRawCommand to sync RAW files in the sub-folders of the current folder
+
 
 
 
@@ -34,3 +45,28 @@ DONE
 
 + add resize JPEG files
 
++ refactor command\argument parser
+
+
+
+
+
+Examples:
+
+polo --help
+polo -h
+
+polo -r
+polo --raw
+
+polo -mr
+polo --move-raw
+
+polo -ma
+polo --move-all
+
+polo --move-all 'e:\\DCIM' 'c:\\photo'
+polo --move-all -source:'e:\\DCIM' -destination:'c:\\photo'
+polo --move-all-files -source:'e:\\DCIM' -destination:'c:\\photo' -overwrite:true
+
+polo --resize -long-side-limit:1200

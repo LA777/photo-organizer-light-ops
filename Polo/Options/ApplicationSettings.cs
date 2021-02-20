@@ -8,7 +8,7 @@ namespace Polo.Options
         public string DefaultSourceDriveName { get; private set; } = string.Empty;
         public string RawFolderName { get; private set; } = "RAW";
         public string ResizedImageSubfolderName { get; private set; } = "small";
-        public int ImageResizeLongSide { get; private set; } = 1600;
+        public int ImageResizeLongSideLimit { get; private set; } = 1600;
         public List<string> JpegFileExtensions { get; private set; } = new List<string>();
         public List<string> RawFileExtensions { get; private set; } = new List<string>();
         public List<string> VideoFileExtensions { get; private set; } = new List<string>();
@@ -19,7 +19,7 @@ namespace Polo.Options
             string defaultSourceDriveName = null,
             string rawFolderName = null,
             string resizedImageSubfolderName = null,
-            int imageResizeLongSide = 0,
+            int imageResizeLongSideLimit = 0,
             IEnumerable<string> jpegFileExtensions = null,
             IEnumerable<string> rawFileExtensions = null,
             IEnumerable<string> videoFileExtensions = null)
@@ -28,7 +28,7 @@ namespace Polo.Options
             DefaultSourceDriveName = defaultSourceDriveName;
             RawFolderName = rawFolderName;
             ResizedImageSubfolderName = resizedImageSubfolderName;
-            ImageResizeLongSide = imageResizeLongSide;
+            ImageResizeLongSideLimit = imageResizeLongSideLimit;
 
             JpegFileExtensions = new List<string>();
             if (jpegFileExtensions != null)

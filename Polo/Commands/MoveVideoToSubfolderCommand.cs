@@ -27,7 +27,7 @@ namespace Polo.Commands
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public void Action(string[] arguments = null, IEnumerable<ICommand> commands = null)
+        public void Action(IReadOnlyDictionary<string, string> arguments = null, IEnumerable<ICommand> commands = null)
         {
             var currentDirectory = Environment.CurrentDirectory;
             var videoFolderPath = Path.Join(currentDirectory, VideoSubfolderName);
