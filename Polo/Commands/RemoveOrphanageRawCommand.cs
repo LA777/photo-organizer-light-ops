@@ -58,14 +58,9 @@ namespace Polo.Commands
                 var fileInfo = new FileInfo(rawFile);
                 var isDeleted = fileInfo.DeleteToRecycleBin();
 
-                if (isDeleted)
-                {
-                    _logger.Information($"RAW file deleted: {fileInfo.Name}");
-                }
-                else
-                {
-                    _logger.Information($"RAW file not found: {fileInfo.Name}");
-                }
+                _logger.Information(isDeleted
+                    ? $"RAW file deleted: {fileInfo.Name}"
+                    : $"RAW file not found: {fileInfo.Name}");
             }
         }
     }

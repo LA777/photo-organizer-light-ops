@@ -94,17 +94,11 @@ namespace Polo.UnitTests.Commands
 
         private void AddRawFilesToStructure()
         {
-            var rawfiles = new List<FotoFile>();
-
-            foreach (var extension in _rawFileExtensions)
-            {
-                var rawFile = new FotoFile($"image-{extension}", extension);
-                rawfiles.Add(rawFile);
-            }
+            var rawFiles = _rawFileExtensions.Select(extension => new FotoFile($"image-{extension}", extension)).ToList();
 
             _folderStructureInitial.SubFolders.Where(x => x.Name == _albumName).ToList()
                 .ForEach(x => x.SubFolders.Where(folder => folder.Name == _rawFolderName).ToList()
-                    .ForEach(folder => folder.Files.AddRange(rawfiles)));
+                    .ForEach(folder => folder.Files.AddRange(rawFiles)));
         }
 
         [Fact]

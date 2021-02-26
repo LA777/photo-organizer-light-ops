@@ -1,6 +1,7 @@
 ﻿using ImageMagick;
 using Microsoft.Extensions.Options;
 using Polo.Abstractions.Commands;
+using Polo.Extensions;
 using Polo.Options;
 using Serilog;
 using System;
@@ -19,7 +20,7 @@ namespace Polo.Commands
 
         public string ShortName => "rs";
 
-        public string LongSideLimitArgumentName => "long-side-limit";
+        public static readonly string LongSideLimitArgumentName = "long-side-limit";
 
         public string Description => $"Resizes all JPEG images in the current folder and saves them to a sub-folder. Example: polo.exe {CommandParser.CommandPrefix}{Name} {CommandParser.ShortCommandPrefix}{LongSideLimitArgumentName}:1600";
 
@@ -36,13 +37,14 @@ namespace Polo.Commands
             var currentDirectory = Environment.CurrentDirectory;
             var destinationDirectory = Path.Combine(currentDirectory, _applicationSettings.ResizedImageSubfolderName);
             var sizeLimit = _applicationSettings.ImageResizeLongSideLimit;
+            var parametersEmpty = parameters.IsNullOrEmpty();
 
-            if (parameters != null && parameters.Any()) // TODO LA - Check all this in tests
+            if (!parametersEmpty) // TODO LA - Check all this in tests
             {
-                if (parameters.TryGetValue(LongSideLimitArgumentName, out string sizeLimitValue))
+                if (parameters.TryGetValue(LongSideLimitArgumentName, out var sizeLimitValue))
                 {
-                    var isParseSuccesfull = Int32.TryParse(sizeLimitValue, out int number);
-                    if (isParseSuccesfull)
+                    var isParseSuccessful = int.TryParse(sizeLimitValue, out var number);
+                    if (isParseSuccessful)
                     {
                         sizeLimit = number;
                     }
