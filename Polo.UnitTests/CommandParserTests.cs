@@ -3,7 +3,7 @@ using FluentAssertions;
 using Moq;
 using Polo.Abstractions;
 using Polo.Abstractions.Commands;
-using Polo.Exceptions;
+using Polo.Abstractions.Exceptions;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -190,6 +190,28 @@ namespace Polo.UnitTests
             var parameterValue = ":c:\\\\fol:der:";
             var argumentLine = $"{CommandParser.CommandPrefix}{_commandMock.Object.Name} {CommandParser.ShortCommandPrefix}{parameterName}{CommandParser.ParameterDelimiter}{parameterValue}";
             var incomeArguments = argumentLine.Split(' ');
+            var parsedArguments = new Dictionary<string, string>
+            {
+                { parameterName, parameterValue }
+            };
+            _commandMock.Invocations.Clear();
+
+            // Act
+            _sut.Parse(incomeArguments, _commands);
+
+            // Assert
+            _commandMock.Verify(x => x.Action(It.IsAny<IReadOnlyDictionary<string, string>>(), It.IsAny<IEnumerable<ICommand>>()), Times.Once);
+            _argumentsPassed.Should().BeEquivalentTo(parsedArguments);
+            _commandsPassed.Should().BeEquivalentTo(_commands);
+        }
+
+        [Fact]
+        public void Parse_Should_Parse_Income_Arguments_To_Commands_And_DictionaryArguments_If_Parameter_Value_Contains_Quotation_Marks_Test()
+        {
+            // Arrange
+            var parameterName = "param";
+            var parameterValue = "'c:\\\\new folder'";
+            var incomeArguments = new[] { $"{CommandParser.CommandPrefix}{_commandMock.Object.Name}", $"{CommandParser.ShortCommandPrefix}{parameterName}{CommandParser.ParameterDelimiter}{parameterValue}" };
             var parsedArguments = new Dictionary<string, string>
             {
                 { parameterName, parameterValue }

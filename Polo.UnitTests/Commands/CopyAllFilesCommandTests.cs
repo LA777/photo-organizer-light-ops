@@ -110,14 +110,14 @@ namespace Polo.UnitTests.Commands
             var sourceFolderPath = Path.Combine(testFolderFullPath, _sourceFolderName);
             var destinationFolderPath = Path.Combine(testFolderFullPath, _destinationFolderName);
             Environment.CurrentDirectory = testFolderFullPath;
-            var arguments = new Dictionary<string, string>
+            var parameters = new Dictionary<string, string>
             {
                 { SourceFolderArgumentName, sourceFolderPath },
                 { DestinationFolderArgumentName, destinationFolderPath }
             };
 
             // Act
-            _sut.Action(arguments);
+            _sut.Action(parameters);
 
             // Assert
             var folderStructureActual = FileHelper.CreateFolderStructureByFolderAndFiles(testFolderFullPath);
@@ -132,14 +132,14 @@ namespace Polo.UnitTests.Commands
             var sourceFolderPath = Path.Combine(testFolderFullPath, _sourceFolderName);
             var destinationFolderPath = Path.Combine(testFolderFullPath, _destinationFolderName);
             Environment.CurrentDirectory = testFolderFullPath;
-            var arguments = new Dictionary<string, string>
+            var parameters = new Dictionary<string, string>
             {
                 { SourceFolderArgumentName, sourceFolderPath },
                 { DestinationFolderArgumentName, destinationFolderPath }
             };
 
             // Act
-            _sut.Action(arguments);
+            _sut.Action(parameters);
 
             // Assert
             var folderStructureActual = FileHelper.CreateFolderStructureByFolderAndFiles(testFolderFullPath);
@@ -154,14 +154,14 @@ namespace Polo.UnitTests.Commands
             var sourceFolderPath = Path.Combine(testFolderFullPath, "no such folder");
             var destinationFolderPath = Path.Combine(testFolderFullPath, _destinationFolderName);
             Environment.CurrentDirectory = testFolderFullPath;
-            var arguments = new Dictionary<string, string>
+            var parameters = new Dictionary<string, string>
             {
                 { SourceFolderArgumentName, sourceFolderPath },
                 { DestinationFolderArgumentName, destinationFolderPath }
             };
 
             // Act
-            var exception = Assert.Throws<DirectoryNotFoundException>(() => _sut.Action(arguments));
+            var exception = Assert.Throws<DirectoryNotFoundException>(() => _sut.Action(parameters));
 
             // Assert
             Assert.Equal($"Directory {sourceFolderPath} does not exists.", exception.Message);
@@ -175,14 +175,14 @@ namespace Polo.UnitTests.Commands
             var sourceFolderPath = Path.Combine(testFolderFullPath, _sourceFolderName);
             var destinationFolderPath = Path.Combine(testFolderFullPath, "no such folder");
             Environment.CurrentDirectory = testFolderFullPath;
-            var arguments = new Dictionary<string, string>
+            var parameters = new Dictionary<string, string>
             {
                 { SourceFolderArgumentName, sourceFolderPath },
                 { DestinationFolderArgumentName, destinationFolderPath }
             };
 
             // Act
-            var exception = Assert.Throws<DirectoryNotFoundException>(() => _sut.Action(arguments));
+            var exception = Assert.Throws<DirectoryNotFoundException>(() => _sut.Action(parameters));
 
             // Assert
             Assert.Equal($"Directory {destinationFolderPath} does not exists.", exception.Message);
@@ -196,13 +196,13 @@ namespace Polo.UnitTests.Commands
             var sourceFolderPath = Path.Combine(testFolderFullPath, _sourceFolderName);
             var destinationFolderPath = Path.Combine(testFolderFullPath, _destinationFolderName);
             Environment.CurrentDirectory = destinationFolderPath;
-            var arguments = new Dictionary<string, string>
+            var parameters = new Dictionary<string, string>
             {
                 { SourceFolderArgumentName, sourceFolderPath }
             };
 
             // Act
-            _sut.Action(arguments);
+            _sut.Action(parameters);
 
             // Assert
             var folderStructureActual = FileHelper.CreateFolderStructureByFolderAndFiles(testFolderFullPath);
@@ -217,13 +217,13 @@ namespace Polo.UnitTests.Commands
             var sourceFolderPath = Path.Combine(testFolderFullPath, "no such folder");
             var destinationFolderPath = Path.Combine(testFolderFullPath, _destinationFolderName);
             Environment.CurrentDirectory = destinationFolderPath;
-            var arguments = new Dictionary<string, string>
+            var parameters = new Dictionary<string, string>
             {
                 { SourceFolderArgumentName, sourceFolderPath }
             };
 
             // Act
-            var exception = Assert.Throws<DirectoryNotFoundException>(() => _sut.Action(arguments));
+            var exception = Assert.Throws<DirectoryNotFoundException>(() => _sut.Action(parameters));
 
             // Assert
             Assert.Equal($"Directory {sourceFolderPath} does not exists.", exception.Message);
@@ -237,14 +237,14 @@ namespace Polo.UnitTests.Commands
             var sourceFolderPath = Path.Combine(testFolderFullPath, _sourceFolderName);
             var destinationFolderPath = Path.Combine(testFolderFullPath, _destinationFolderName);
             Environment.CurrentDirectory = destinationFolderPath;
-            var arguments = new Dictionary<string, string>();
+            var parameters = new Dictionary<string, string>();
 
             ApplicationSettings _validApplicationSettings = new ApplicationSettings(defaultSourceDriveName: sourceFolderPath);
             IOptions<ApplicationSettings> _mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(_validApplicationSettings);
             var sut = new CopyAllFilesCommand(_mockApplicationOptions, _loggerMock.Object);
 
             // Act
-            sut.Action(arguments);
+            sut.Action(parameters);
 
             // Assert
             var folderStructureActual = FileHelper.CreateFolderStructureByFolderAndFiles(testFolderFullPath);
@@ -259,14 +259,14 @@ namespace Polo.UnitTests.Commands
             var sourceFolderPath = Path.Combine(testFolderFullPath, "no such folder");
             var destinationFolderPath = Path.Combine(testFolderFullPath, _destinationFolderName);
             Environment.CurrentDirectory = destinationFolderPath;
-            var arguments = new Dictionary<string, string>();
+            var parameters = new Dictionary<string, string>();
 
             ApplicationSettings _validApplicationSettings = new ApplicationSettings(defaultSourceDriveName: sourceFolderPath);
             IOptions<ApplicationSettings> _mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(_validApplicationSettings);
             var sut = new CopyAllFilesCommand(_mockApplicationOptions, _loggerMock.Object);
 
             // Act
-            var exception = Assert.Throws<DirectoryNotFoundException>(() => sut.Action(arguments));
+            var exception = Assert.Throws<DirectoryNotFoundException>(() => sut.Action(parameters));
 
             // Assert
             Assert.Equal($"Directory {sourceFolderPath} does not exists.", exception.Message);

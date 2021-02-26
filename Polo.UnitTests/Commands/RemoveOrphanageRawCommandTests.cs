@@ -27,7 +27,7 @@ namespace Polo.UnitTests.Commands
         private static readonly Mock<ILogger> _loggerMock = new Mock<ILogger>();
         private readonly ICommand _sut = new RemoveOrphanageRawCommand(_mockApplicationOptions, _loggerMock.Object);
 
-        private readonly Folder folderStructureInitial = new Folder()
+        private readonly Folder _folderStructureInitial = new Folder()
         {
             SubFolders = new List<Folder>()
             {
@@ -59,7 +59,7 @@ namespace Polo.UnitTests.Commands
             }
         };
 
-        private readonly Folder folderStructureExpected = new Folder()
+        private readonly Folder _folderStructureExpected = new Folder()
         {
             SubFolders = new List<Folder>()
             {
@@ -102,16 +102,16 @@ namespace Polo.UnitTests.Commands
                 rawfiles.Add(rawFile);
             }
 
-            folderStructureInitial.SubFolders.Where(x => x.Name == _albumName).ToList()
-                .ForEach(x => x.SubFolders.Where(x => x.Name == _rawFolderName).ToList()
-                    .ForEach(x => x.Files.AddRange(rawfiles)));
+            _folderStructureInitial.SubFolders.Where(x => x.Name == _albumName).ToList()
+                .ForEach(x => x.SubFolders.Where(folder => folder.Name == _rawFolderName).ToList()
+                    .ForEach(folder => folder.Files.AddRange(rawfiles)));
         }
 
         [Fact]
         public void Action_Should_Create_Raw_Folder_And_Move_Raw_Files_Test()
         {
             // Arrange
-            var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(folderStructureInitial);
+            var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
             Environment.CurrentDirectory = Path.Combine(testFolderFullPath, _albumName);
 
             // Act
@@ -119,7 +119,7 @@ namespace Polo.UnitTests.Commands
 
             // Assert
             var folderStructureActual = FileHelper.CreateFolderStructureByFolderAndFiles(testFolderFullPath);
-            folderStructureActual.Should().BeEquivalentTo(folderStructureExpected);
+            folderStructureActual.Should().BeEquivalentTo(_folderStructureExpected);
         }
 
 
@@ -131,7 +131,7 @@ namespace Polo.UnitTests.Commands
         public void Action_Should_Create_Raw_Folder_And_Move_Raw_Files_If_Setting_Have_Duplicate_JpegFileExtension_Test()
         {
             // Arrange
-            var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(folderStructureInitial);
+            var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
             Environment.CurrentDirectory = Path.Combine(testFolderFullPath, _albumName);
 
             var jpegFileExtensionsWithDuplicates = new List<string>() { "jpeg", "jpg", "jpeg", "jpg" };
@@ -144,14 +144,14 @@ namespace Polo.UnitTests.Commands
 
             // Assert
             var folderStructureActual = FileHelper.CreateFolderStructureByFolderAndFiles(testFolderFullPath);
-            folderStructureActual.Should().BeEquivalentTo(folderStructureExpected);
+            folderStructureActual.Should().BeEquivalentTo(_folderStructureExpected);
         }
 
         [Fact]
         public void AAction_Should_Create_Raw_Folder_And_Move_Raw_Files_If_Setting_Have_Duplicate_RawFileExtension_Test()
         {
             // Arrange
-            var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(folderStructureInitial);
+            var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
             Environment.CurrentDirectory = Path.Combine(testFolderFullPath, _albumName);
 
             var rawFileExtensionsWithDuplicates = new List<string>() { "orf", "crw", "cr2", "cr3", "3fr", "mef", "nef", "nrw", "pef", "ptx", "rw2", "arw", "srf", "sr2", "gpr", "raf", "raw", "rwl", "dng", "srw", "x3f",
@@ -165,7 +165,7 @@ namespace Polo.UnitTests.Commands
 
             // Assert
             var folderStructureActual = FileHelper.CreateFolderStructureByFolderAndFiles(testFolderFullPath);
-            folderStructureActual.Should().BeEquivalentTo(folderStructureExpected);
+            folderStructureActual.Should().BeEquivalentTo(_folderStructureExpected);
         }
 
 

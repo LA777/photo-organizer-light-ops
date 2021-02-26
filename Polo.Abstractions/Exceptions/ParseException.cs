@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Polo.Exceptions
+namespace Polo.Abstractions.Exceptions
 {
     public class ParseException : Exception
     {

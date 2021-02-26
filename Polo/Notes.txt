@@ -1,6 +1,8 @@
 ﻿
 TODO
 
+- add license https://docs.github.com/en/github/building-a-strong-community/adding-a-license-to-a-repository
+
 - add argument for resize JPEG files (sizeLimit)
 
 - add SIGN to JPEG files
@@ -70,3 +72,46 @@ polo --move-all -source:'e:\\DCIM' -destination:'c:\\photo'
 polo --move-all-files -source:'e:\\DCIM' -destination:'c:\\photo' -overwrite:true
 
 polo --resize -long-side-limit:1200
+
+
+
+
+
+
+
+
+MoveAllFiles
+Params		Settings	Expected	Exists
+SFv DFv		SFv			OK			y
+			SFv			OK			y
+SFv			SFv			OK			y
+	DFv		SFv			OK			y
+SFv 		SFi			OK			y
+
+
+
+			SFi			Error		y
+SFi 		SFv			Error		y
+SFi 		SFi			Error		y
+SFv DFi		SFv			Error		y
+SFi DFi		SFi			Error		y
+SFi DFv		SFv			Error		y
+SFi DFv		SFv			Error		y
+	DFi		SFi			Error		y
+	DFv		SFi			Error		y
+	DFi		SFv			Error		y
+
+params are null
+
+
+
+
+
+
+
+
+
+
+
+
+

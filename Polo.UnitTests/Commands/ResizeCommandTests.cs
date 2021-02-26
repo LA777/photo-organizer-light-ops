@@ -27,7 +27,7 @@ namespace Polo.UnitTests.Commands
         private static readonly Mock<ILogger> _loggerMock = new Mock<ILogger>();
         private readonly ICommand _sut = new ResizeCommand(_mockApplicationOptions, _loggerMock.Object);
 
-        private readonly Folder folderStructureInitial = new Folder()
+        private readonly Folder _folderStructureInitial = new Folder()
         {
             SubFolders = new List<Folder>()
             {
@@ -51,7 +51,7 @@ namespace Polo.UnitTests.Commands
             }
         };
 
-        private readonly Folder folderStructureExpected = new Folder()
+        private readonly Folder _folderStructureExpected = new Folder()
         {
             SubFolders = new List<Folder>()
             {
@@ -97,7 +97,7 @@ namespace Polo.UnitTests.Commands
         public void Action_Should_Resize_Jpeg_Files_And_Copy_To_Output_Folder_Test()
         {
             // Arrange
-            var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(folderStructureInitial);
+            var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
             Environment.CurrentDirectory = Path.Combine(testFolderFullPath, _albumName);
 
             // Act
@@ -105,14 +105,14 @@ namespace Polo.UnitTests.Commands
 
             // Assert
             var folderStructureActual = FileHelper.CreateFolderStructureByFolderAndFiles(testFolderFullPath);
-            folderStructureActual.Should().BeEquivalentTo(folderStructureExpected);
+            folderStructureActual.Should().BeEquivalentTo(_folderStructureExpected);
         }
 
         [Fact]
         public void Action_Should_Resize_Jpeg_Files_And_Copy_To_Output_Folder_If_Setting_Have_Duplicate_Extension_Test()
         {
             // Arrange
-            var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(folderStructureInitial);
+            var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
             Environment.CurrentDirectory = Path.Combine(testFolderFullPath, _albumName);
 
             var jpegFileExtensionsWithDuplicates = new List<string>() { "jpeg", "jpg", "jpeg", "jpg" };
@@ -126,7 +126,7 @@ namespace Polo.UnitTests.Commands
 
             // Assert
             var folderStructureActual = FileHelper.CreateFolderStructureByFolderAndFiles(testFolderFullPath);
-            folderStructureActual.Should().BeEquivalentTo(folderStructureExpected);
+            folderStructureActual.Should().BeEquivalentTo(_folderStructureExpected);
         }
 
         ~ResizeCommandTests()

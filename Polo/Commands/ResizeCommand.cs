@@ -29,17 +29,17 @@ namespace Polo.Commands
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public void Action(IReadOnlyDictionary<string, string> arguments = null, IEnumerable<ICommand> commands = null)
+        public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
         {
-            // TODO LA - add arguments
+            // TODO LA - add parameters
 
             var currentDirectory = Environment.CurrentDirectory;
             var destinationDirectory = Path.Combine(currentDirectory, _applicationSettings.ResizedImageSubfolderName);
             var sizeLimit = _applicationSettings.ImageResizeLongSideLimit;
 
-            if (arguments != null && arguments.Any()) // TODO LA - Check all this in tests
+            if (parameters != null && parameters.Any()) // TODO LA - Check all this in tests
             {
-                if (arguments.TryGetValue(LongSideLimitArgumentName, out string sizeLimitValue))
+                if (parameters.TryGetValue(LongSideLimitArgumentName, out string sizeLimitValue))
                 {
                     var isParseSuccesfull = Int32.TryParse(sizeLimitValue, out int number);
                     if (isParseSuccesfull)
@@ -48,7 +48,8 @@ namespace Polo.Commands
                     }
                     else
                     {
-                        _logger.Information($"Argument is not a number");
+                        // TODO LA - Add exception
+                        _logger.Information($"Parameters is not a number");
 
                         return;
                     }

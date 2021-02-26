@@ -29,40 +29,30 @@ namespace Polo.Commands
 
         public string Description => $"Copy all files from source folder to the current folder. Setup path for the source folder in settings or in argument. Setup path to the destination folder in the argument. Example: polo.exe {CommandParser.CommandPrefix}{Name} {CommandParser.ShortCommandPrefix}{SourceFolderArgumentName}:'e:\\\\DCIM' {CommandParser.ShortCommandPrefix}{DestinationFolderArgumentName}:'c:\\\\photo'";
 
-        public void Action(IReadOnlyDictionary<string, string> arguments = null, IEnumerable<ICommand> commands = null)
+        public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
         {
             var sourceFolder = _applicationOptions.Value.DefaultSourceDriveName;
             var destinationDirectory = Environment.CurrentDirectory;
 
-            if ((arguments == null || !arguments.Any()) & string.IsNullOrWhiteSpace(sourceFolder)) // TODO LA - Check this with tests
+            if ((parameters == null || !parameters.Any()) & string.IsNullOrWhiteSpace(sourceFolder)) // TODO LA - Check this with tests
             {
-                _logger.Information("Please provide additional arguments or setup settings for source folder path argument.");
+                _logger.Information("Please provide additional parameters or setup settings for source folder path argument.");
 
                 return;
             }
 
-            if (arguments != null && arguments.Any()) // TODO LA - Check this with tests
+            if (parameters != null && parameters.Any()) // TODO LA - Check this with tests
             {
-                if (arguments.TryGetValue(SourceFolderArgumentName, out string sourceFolderPath))
+                if (parameters.TryGetValue(SourceFolderArgumentName, out string sourceFolderPath))
                 {
                     sourceFolder = sourceFolderPath;
                 }
 
-                if (arguments.TryGetValue(DestinationFolderArgumentName, out string destinationFolderPath))
+                if (parameters.TryGetValue(DestinationFolderArgumentName, out string destinationFolderPath))
                 {
                     destinationDirectory = destinationFolderPath;
                 }
             }
-
-            //if (arguments.Count == 1)
-            //{
-            //    sourceFolder = arguments[1];
-            //}
-            //else if (arguments.Count == 2)
-            //{
-            //    sourceFolder = arguments[1];
-            //    destinationDirectory = arguments[2];
-            //}
 
             if (!Directory.Exists(sourceFolder))
             {

@@ -2,10 +2,10 @@
 
 namespace Polo.Options
 {
-    public class ApplicationSettings
+    public class ApplicationSettings // TODO LA - Move to Abstractions
     {
         public string LogFilePath { get; private set; } = "logs\\polo-log-.txt";
-        public string DefaultSourceDriveName { get; private set; } = string.Empty;
+        public string DefaultSourceDriveName { get; private set; } = string.Empty; // TODO LA - Make folder path instead of DriveName
         public string RawFolderName { get; private set; } = "RAW";
         public string ResizedImageSubfolderName { get; private set; } = "small";
         public int ImageResizeLongSideLimit { get; private set; } = 1600;

@@ -1,11 +1,12 @@
 ﻿using Microsoft.Extensions.Options;
 using Polo.Abstractions.Commands;
+using Polo.Abstractions.Exceptions;
+using Polo.Extensions;
 using Polo.Options;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace Polo.Commands
 {
@@ -13,9 +14,8 @@ namespace Polo.Commands
     {
         private readonly ILogger _logger;
         private readonly IOptions<ApplicationSettings> _applicationOptions;
-
-        public readonly string SourceFolderArgumentName = "source";
-        public readonly string DestinationFolderArgumentName = "destination";
+        public static readonly string SourceFolderParameterName = "source";
+        public static readonly string DestinationFolderParameterName = "destination";
 
         public MoveAllFilesCommand(IOptions<ApplicationSettings> applicationOptions, ILogger logger)
         {
@@ -27,51 +27,40 @@ namespace Polo.Commands
 
         public string ShortName => "maf";
 
-        public string Description => $"Move all files from source folder to the current folder. Setup path for the source folder in settings or in argument. Setup path to the destination folder in the argument. Example: polo.exe {CommandParser.CommandPrefix}{Name} {CommandParser.ShortCommandPrefix}{SourceFolderArgumentName}:'e:\\\\DCIM' {CommandParser.ShortCommandPrefix}{DestinationFolderArgumentName}:'c:\\\\photo'";
+        public string Description => $"Move all files from source folder to the current folder. Setup path for the source folder in settings or in the parameter. Setup path to the destination folder in the parameter. Example: polo.exe {CommandParser.CommandPrefix}{Name} {CommandParser.ShortCommandPrefix}{SourceFolderParameterName}:'e:\\\\DCIM' {CommandParser.ShortCommandPrefix}{DestinationFolderParameterName}:'c:\\\\photo'";
 
-        public void Action(IReadOnlyDictionary<string, string> arguments = null, IEnumerable<ICommand> commands = null)
+        public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
         {
             var sourceFolder = _applicationOptions.Value.DefaultSourceDriveName;
             var destinationDirectory = Environment.CurrentDirectory;
+            var parametersEmpty = parameters.IsNullOrEmpty(); // TODO LA - Check this with tests
 
-            if ((arguments == null || !arguments.Any()) & string.IsNullOrWhiteSpace(sourceFolder)) // TODO LA - Check this with tests
+            if (parametersEmpty && string.IsNullOrWhiteSpace(sourceFolder))
             {
-                _logger.Information("Please provide additional arguments or setup settings.");
-
-                return;
+                throw new ParameterAbsentException($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{SourceFolderParameterName}' parameters or setup setting value '{nameof(ApplicationSettings.DefaultSourceDriveName)}'.");
             }
 
-            if (arguments != null && arguments.Any()) // TODO LA - Check this with tests
+            if (!parametersEmpty) // TODO LA - Check this with tests
             {
-                if (arguments.TryGetValue(SourceFolderArgumentName, out string sourceFolderPath))
+                if (parameters.TryGetValue(SourceFolderParameterName, out var sourceFolderPath))
                 {
                     sourceFolder = sourceFolderPath;
                 }
 
-                if (arguments.TryGetValue(DestinationFolderArgumentName, out string destinationFolderPath))
+                if (parameters.TryGetValue(DestinationFolderParameterName, out var destinationFolderPath))
                 {
                     destinationDirectory = destinationFolderPath;
                 }
             }
 
-            //if (arguments.Length == 2)
-            //{
-            //    sourceFolder = arguments[1];
-            //}
-            //else if (arguments.Length == 3)
-            //{
-            //    sourceFolder = arguments[1];
-            //    destinationDirectory = arguments[2];
-            //}
-
             if (!Directory.Exists(sourceFolder))
             {
-                throw new DirectoryNotFoundException($"Directory {sourceFolder} does not exists.");
+                throw new DirectoryNotFoundException($"ERROR: Directory '{sourceFolder}' does not exists.");
             }
 
             if (!Directory.Exists(destinationDirectory))
             {
-                throw new DirectoryNotFoundException($"Directory {destinationDirectory} does not exists.");
+                throw new DirectoryNotFoundException($"ERROR: Directory '{destinationDirectory}' does not exists.");
             }
 
             var allFiles = Directory.EnumerateFiles(sourceFolder, "*.*", SearchOption.TopDirectoryOnly);

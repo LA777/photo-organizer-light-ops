@@ -1,6 +1,6 @@
 ﻿using Polo.Abstractions;
 using Polo.Abstractions.Commands;
-using Polo.Exceptions;
+using Polo.Abstractions.Exceptions;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -28,27 +28,28 @@ namespace Polo
             }
 
             var commandArgument = arguments.First();
-            Dictionary<string, string> parameters = new Dictionary<string, string>();
+            var parameters = new Dictionary<string, string>();
+            var commandsList = commands.ToList();
 
             if (arguments.Length > 1)
             {
                 parameters = ParseParameters(arguments.Skip(1).ToArray());
             }
 
-            var matchedCommand = commands.FirstOrDefault(x => $"{CommandPrefix}{x.Name}" == commandArgument);
+            var matchedCommand = commandsList.FirstOrDefault(x => $"{CommandPrefix}{x.Name}" == commandArgument);
             if (matchedCommand != null)
             {
                 _logger.Verbose($"Argument '{commandArgument}' matched to command '{matchedCommand.Name}'");
-                matchedCommand.Action(parameters, commands);
+                matchedCommand.Action(parameters, commandsList);
             }
             else
             {
-                var matchedShortCommand = commands.FirstOrDefault(x => $"{ShortCommandPrefix}{x.ShortName}" == commandArgument);
+                var matchedShortCommand = commandsList.FirstOrDefault(x => $"{ShortCommandPrefix}{x.ShortName}" == commandArgument);
 
                 if (matchedShortCommand != null)
                 {
                     _logger.Verbose($"Argument '{commandArgument}' matched to command '{matchedShortCommand.Name}'");
-                    matchedShortCommand.Action(parameters, commands);
+                    matchedShortCommand.Action(parameters, commandsList);
                 }
                 else
                 {
@@ -57,7 +58,7 @@ namespace Polo
             }
         }
 
-        private Dictionary<string, string> ParseParameters(string[] arguments)
+        private Dictionary<string, string> ParseParameters(IEnumerable<string> arguments)
         {
             var dictionary = new Dictionary<string, string>();
 
@@ -67,29 +68,19 @@ namespace Polo
                 {
                     throw new ParseException("ERROR: Unknown parameter. Please enter --help to see available parameters list.");
                 }
-                else
+
+                var argumentWithoutPrefix = argument.TrimStart(ShortCommandPrefix.ToCharArray().First());
+                var split = argumentWithoutPrefix.Split(ParameterDelimiter);
+
+                if (split.Length < 2)
                 {
-                    var argumetWithoutPrefix = argument.TrimStart(ShortCommandPrefix.ToCharArray().First());
-                    var split = argumetWithoutPrefix.Split(ParameterDelimiter);
-                    string value;
-
-                    if (split.Count() < 2)
-                    {
-                        throw new ParseException("ERROR: Parameter delimiter missed. Please enter --help to see correct parameter syntax.");
-                    }
-
-                    if (split.Count() > 2)
-                    {
-                        value = string.Join(ParameterDelimiter, split.Skip(1));
-                    }
-                    else
-                    {
-                        value = split[1];
-                    }
-
-                    _logger.Verbose($"Parameter name: '{split[0]}' value: '{value}'");
-                    dictionary.Add(split[0], value);
+                    throw new ParseException("ERROR: Parameter delimiter missed. Please enter --help to see correct parameter syntax.");
                 }
+
+                var value = split.Length > 2 ? string.Join(ParameterDelimiter, split.Skip(1)) : split[1];
+
+                _logger.Verbose($"Parameter name: '{split[0]}' value: '{value}'");
+                dictionary.Add(split[0], value);
             }
 
             return dictionary;
