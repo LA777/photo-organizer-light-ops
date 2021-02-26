@@ -26,7 +26,7 @@ namespace Polo.UnitTests.Commands
         private static readonly Mock<ILogger> _loggerMock = new Mock<ILogger>();
         private readonly ICommand _sut = new MoveVideoToSubfolderCommand(_mockApplicationOptions, _loggerMock.Object);
 
-        private readonly Folder folderStructureInitial = new Folder()
+        private readonly Folder _folderStructureInitial = new Folder()
         {
             SubFolders = new List<Folder>()
             {
@@ -43,7 +43,7 @@ namespace Polo.UnitTests.Commands
             }
         };
 
-        private readonly Folder folderStructureExpected = new Folder()
+        private readonly Folder _folderStructureExpected = new Folder()
         {
             SubFolders = new List<Folder>()
             {
@@ -77,24 +77,19 @@ namespace Polo.UnitTests.Commands
 
         private void AddVideoFilesToFolderStructure()
         {
-            var videoFiles = new List<FotoFile>();
-            foreach (var extension in _videoFileExtensions)
-            {
-                var file = new FotoFile($"video-{extension}", extension);
-                videoFiles.Add(file);
-            }
+            var videoFiles = _videoFileExtensions.Select(extension => new FotoFile($"video-{extension}", extension)).ToList();
 
-            folderStructureInitial.SubFolders.Where(x => x.Name == _albumName).ToList().ForEach(x => x.Files.AddRange(videoFiles));
-            folderStructureExpected.SubFolders.Where(x => x.Name == _albumName).ToList()
-                .ForEach(x => x.SubFolders.Where(x => x.Name == _videoSubfolderName).ToList()
-                    .ForEach(x => x.Files.AddRange(videoFiles)));
+            _folderStructureInitial.SubFolders.Where(x => x.Name == _albumName).ToList().ForEach(x => x.Files.AddRange(videoFiles));
+            _folderStructureExpected.SubFolders.Where(x => x.Name == _albumName).ToList()
+                .ForEach(x => x.SubFolders.Where(folder => folder.Name == _videoSubfolderName).ToList()
+                    .ForEach(folder => folder.Files.AddRange(videoFiles)));
         }
 
         [Fact]
         public void Action_Should_Create_Video_Folder_And_Move_Video_Files_Test()
         {
             // Arrange
-            var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(folderStructureInitial);
+            var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
             Environment.CurrentDirectory = Path.Combine(testFolderFullPath, _albumName);
 
             // Act
@@ -102,7 +97,7 @@ namespace Polo.UnitTests.Commands
 
             // Assert
             var folderStructureActual = FileHelper.CreateFolderStructureByFolderAndFiles(testFolderFullPath);
-            folderStructureActual.Should().BeEquivalentTo(folderStructureExpected);
+            folderStructureActual.Should().BeEquivalentTo(_folderStructureExpected);
         }
 
         ~MoveVideoToSubfolderCommandTests()

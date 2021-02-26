@@ -1,6 +1,8 @@
 ﻿using ImageMagick;
 using Microsoft.Extensions.Options;
 using Polo.Abstractions.Commands;
+using Polo.Abstractions.Exceptions;
+using Polo.Extensions;
 using Polo.Options;
 using Serilog;
 using System;
@@ -19,7 +21,9 @@ namespace Polo.Commands
 
         public string ShortName => "rs";
 
-        public string Description => "Resizes all JPEG images in the current folder and saves them to a sub-folder.";
+        public static readonly string LongSideLimitParameterName = "long-side-limit";
+
+        public string Description => $"Resizes all JPEG images in the current folder and saves them to a sub-folder. Example: polo.exe {CommandParser.CommandPrefix}{Name} {CommandParser.ShortCommandPrefix}{LongSideLimitParameterName}:1600";
 
         public ResizeCommand(IOptions<ApplicationSettings> applicationOptions, ILogger logger)
         {
@@ -27,12 +31,39 @@ namespace Polo.Commands
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public void Action(string[] arguments = null, IEnumerable<ICommand> commands = null)
+        public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
         {
-            // TODO LA - add arguments
+            // TODO LA - add parameters
 
             var currentDirectory = Environment.CurrentDirectory;
             var destinationDirectory = Path.Combine(currentDirectory, _applicationSettings.ResizedImageSubfolderName);
+            var sizeLimit = _applicationSettings.ImageResizeLongSideLimit;
+            var parametersEmpty = parameters.IsNullOrEmpty();
+
+            if (parametersEmpty && sizeLimit == 0) // TODO LA - Check all this in tests
+            {
+                throw new ParameterAbsentException($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{LongSideLimitParameterName}' parameter or setup setting value '{nameof(ApplicationSettings.ImageResizeLongSideLimit)}'.");
+            }
+
+            if (!parametersEmpty) // TODO LA - Check all this in tests
+            {
+                if (parameters.TryGetValue(LongSideLimitParameterName, out var sizeLimitValue))
+                {
+                    if (int.TryParse(sizeLimitValue, out var number))
+                    {
+                        sizeLimit = number;
+
+                        if (number == 0)
+                        {
+                            throw new ArgumentOutOfRangeException($"{CommandParser.ShortCommandPrefix}{LongSideLimitParameterName}", $"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{LongSideLimitParameterName}' should be higher than 0.");
+                        }
+                    }
+                    else
+                    {
+                        throw new ParseException($"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{LongSideLimitParameterName}' is not a number.");
+                    }
+                }
+            }
 
             var jpegFiles = new List<string>();
             _applicationSettings.JpegFileExtensions.Distinct().ToList()
@@ -53,7 +84,7 @@ namespace Polo.Commands
 
                 var width = info.Width;
                 var height = info.Height;
-                var sizeLimit = _applicationSettings.ImageResizeLongSide;
+
 
                 if (width >= height && width > sizeLimit)
                 {

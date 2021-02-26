@@ -27,7 +27,7 @@ namespace Polo.Commands
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public void Action(string[] arguments = null, IEnumerable<ICommand> commands = null)
+        public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
         {
             var currentDirectory = Environment.CurrentDirectory;
             var rawFolderPath = Path.Join(currentDirectory, _applicationSettings.RawFolderName);
@@ -58,14 +58,9 @@ namespace Polo.Commands
                 var fileInfo = new FileInfo(rawFile);
                 var isDeleted = fileInfo.DeleteToRecycleBin();
 
-                if (isDeleted)
-                {
-                    _logger.Information($"RAW file deleted: {fileInfo.Name}");
-                }
-                else
-                {
-                    _logger.Information($"RAW file not found: {fileInfo.Name}");
-                }
+                _logger.Information(isDeleted
+                    ? $"RAW file deleted: {fileInfo.Name}"
+                    : $"RAW file not found: {fileInfo.Name}");
             }
         }
     }

@@ -7,6 +7,6 @@ namespace Polo.Abstractions.Commands
         public string Name { get; }
         public string ShortName { get; }
         public string Description { get; }
-        public void Action(string[] arguments = null, IEnumerable<ICommand> commands = null);
+        public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null);
     }
 }

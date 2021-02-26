@@ -5,14 +5,16 @@ using Polo.Abstractions.Commands;
 using Polo.Commands;
 using Polo.Options;
 using Serilog;
+using Serilog.Events;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 
 namespace Polo
 {
-    internal class Program
+    internal static class Program
     {
-        public static readonly string Version = "0.0.3";
+        public const string Version = "0.0.5";
 
         private static IConfiguration Configuration { get; } = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
@@ -27,8 +29,18 @@ namespace Polo
             var serviceProvider = services.BuildServiceProvider();
             var commandParser = serviceProvider.GetRequiredService<ICommandParser>();
             var commands = serviceProvider.GetServices<ICommand>();
+            var logger = serviceProvider.GetService<ILogger>();
 
-            Task.Run(() => commandParser.Parse(args, commands)).Wait();
+            var task = Task.Run(() => commandParser.Parse(args, commands));
+
+            try
+            {
+                task.Wait();
+            }
+            catch (Exception exception)
+            {
+                logger?.Error(exception.Message);
+            }
         }
 
         private static void ConfigureServices(IServiceCollection services)
@@ -38,9 +50,9 @@ namespace Polo
             var applicationSettings = Configuration.Get<ApplicationSettings>();
 
             var logger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
+                .MinimumLevel.Verbose()
                 .Enrich.WithProperty("Version", Version)
-                .WriteTo.Console()
+                .WriteTo.Console(LogEventLevel.Information)
                 .WriteTo.File(applicationSettings.LogFilePath, rollingInterval: RollingInterval.Day)
                 .CreateLogger();
 
@@ -51,8 +63,8 @@ namespace Polo
             services.AddSingleton<ICommand, MoveRawToJpegFolderCommand>();
             services.AddSingleton<ICommand, RawCommand>();
             services.AddSingleton<ICommand, RemoveOrphanageRawCommand>();
-            services.AddSingleton<ICommand, CopyFilesCommand>();
-            services.AddSingleton<ICommand, MoveFilesCommand>();
+            services.AddSingleton<ICommand, CopyAllFilesCommand>();
+            services.AddSingleton<ICommand, MoveAllFilesCommand>();
             services.AddSingleton<ICommand, MoveVideoToSubfolderCommand>();
         }
     }
