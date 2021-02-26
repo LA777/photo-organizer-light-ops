@@ -12,9 +12,9 @@ using System.Threading.Tasks;
 
 namespace Polo
 {
-    internal class Program
+    internal static class Program
     {
-        public static readonly string Version = "0.0.4";
+        public static readonly string Version = "0.0.5";
 
         private static IConfiguration Configuration { get; } = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
@@ -39,7 +39,7 @@ namespace Polo
             }
             catch (Exception exception)
             {
-                logger.Error(exception.Message);
+                logger?.Error(exception.Message);
             }
         }
 
