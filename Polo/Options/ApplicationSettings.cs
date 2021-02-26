@@ -2,7 +2,7 @@
 
 namespace Polo.Options
 {
-    public class ApplicationSettings // TODO LA - Move to Abstractions
+    public class ApplicationSettings // TODO LA - Move to Abstractions?
     {
         public string LogFilePath { get; private set; } = "logs\\polo-log-.txt";
         public string DefaultSourceFolderName { get; private set; } = string.Empty;

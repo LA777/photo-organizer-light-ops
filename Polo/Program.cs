@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Polo
 {
-    internal static class Program
+    public static class Program
     {
         public const string Version = "0.0.5";
 

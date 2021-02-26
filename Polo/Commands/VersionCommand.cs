@@ -22,7 +22,6 @@ namespace Polo.Commands
 
         public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
         {
-            // TODO LA - Cover with UT
             _logger.Information(Program.Version);
         }
     }

@@ -127,8 +127,6 @@ namespace Polo.UnitTests.Commands
             folderStructureActual.Should().BeEquivalentTo(_folderStructureExpected);
         }
 
-
-
         [Fact]
         public void Action_Should_Create_Raw_Folder_And_Move_Raw_Files_If_Setting_Have_Duplicate_JpegFileExtension_Test()
         {
