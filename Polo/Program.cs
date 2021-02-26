@@ -14,7 +14,7 @@ namespace Polo
 {
     internal static class Program
     {
-        public static readonly string Version = "0.0.5";
+        public const string Version = "0.0.5";
 
         private static IConfiguration Configuration { get; } = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
