@@ -33,19 +33,17 @@ namespace Polo.Commands
 
         public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
         {
-            // TODO LA - add parameters
-
             var currentDirectory = Environment.CurrentDirectory;
             var destinationDirectory = Path.Combine(currentDirectory, _applicationSettings.ResizedImageSubfolderName);
             var sizeLimit = _applicationSettings.ImageResizeLongSideLimit;
             var parametersEmpty = parameters.IsNullOrEmpty();
 
-            if (parametersEmpty && sizeLimit == 0) // TODO LA - Check all this in tests
+            if (parametersEmpty && sizeLimit == 0)
             {
                 throw new ParameterAbsentException($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{LongSideLimitParameterName}' parameter or setup setting value '{nameof(ApplicationSettings.ImageResizeLongSideLimit)}'.");
             }
 
-            if (!parametersEmpty) // TODO LA - Check all this in tests
+            if (!parametersEmpty)
             {
                 if (parameters.TryGetValue(LongSideLimitParameterName, out var sizeLimitValue))
                 {

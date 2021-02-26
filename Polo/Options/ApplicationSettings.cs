@@ -5,7 +5,7 @@ namespace Polo.Options
     public class ApplicationSettings // TODO LA - Move to Abstractions
     {
         public string LogFilePath { get; private set; } = "logs\\polo-log-.txt";
-        public string DefaultSourceDriveName { get; private set; } = string.Empty; // TODO LA - Make folder path instead of DriveName
+        public string DefaultSourceFolderName { get; private set; } = string.Empty;
         public string RawFolderName { get; private set; } = "RAW";
         public string ResizedImageSubfolderName { get; private set; } = "small";
         public int ImageResizeLongSideLimit { get; private set; } = 1600;
@@ -16,7 +16,7 @@ namespace Polo.Options
         public ApplicationSettings() { }
 
         public ApplicationSettings(string logFilePath = null,
-            string defaultSourceDriveName = null,
+            string defaultSourceFolderName = null,
             string rawFolderName = null,
             string resizedImageSubfolderName = null,
             int imageResizeLongSideLimit = 0,
@@ -25,7 +25,7 @@ namespace Polo.Options
             IEnumerable<string> videoFileExtensions = null)
         {
             LogFilePath = logFilePath;
-            DefaultSourceDriveName = defaultSourceDriveName;
+            DefaultSourceFolderName = defaultSourceFolderName;
             RawFolderName = rawFolderName;
             ResizedImageSubfolderName = resizedImageSubfolderName;
             ImageResizeLongSideLimit = imageResizeLongSideLimit;

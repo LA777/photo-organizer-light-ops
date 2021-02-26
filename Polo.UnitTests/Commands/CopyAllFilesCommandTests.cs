@@ -17,8 +17,8 @@ namespace Polo.UnitTests.Commands
     [Collection("Sequential")]
     public class CopyAllFilesCommandTests : CommandTestBase
     {
-        private const string DefaultSourceDriveName = "c:\\\\";
-        private static readonly ApplicationSettings _validApplicationSettings = new ApplicationSettings(defaultSourceDriveName: DefaultSourceDriveName);
+        private const string DefaultSourceFolderName = "c:\\\\";
+        private static readonly ApplicationSettings _validApplicationSettings = new ApplicationSettings(defaultSourceFolderName: DefaultSourceFolderName);
         private static readonly IOptions<ApplicationSettings> _mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(_validApplicationSettings);
         private static readonly string _sourceFolderName = "Source Fotos";
         private static readonly string _destinationFolderName = "Destination Fotos";
@@ -215,7 +215,7 @@ namespace Polo.UnitTests.Commands
             Environment.CurrentDirectory = destinationFolderPath;
             var parameters = new Dictionary<string, string>();
 
-            var validApplicationSettings = new ApplicationSettings(defaultSourceDriveName: sourceFolderPath);
+            var validApplicationSettings = new ApplicationSettings(defaultSourceFolderName: sourceFolderPath);
             var mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(validApplicationSettings);
             var sut = new CopyAllFilesCommand(mockApplicationOptions, _loggerMock.Object);
 
@@ -236,7 +236,7 @@ namespace Polo.UnitTests.Commands
             var destinationFolderPath = Path.Combine(testFolderFullPath, _destinationFolderName);
             Environment.CurrentDirectory = destinationFolderPath;
 
-            var validApplicationSettings = new ApplicationSettings(defaultSourceDriveName: sourceFolderPath);
+            var validApplicationSettings = new ApplicationSettings(defaultSourceFolderName: sourceFolderPath);
             var mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(validApplicationSettings);
             var sut = new CopyAllFilesCommand(mockApplicationOptions, _loggerMock.Object);
 
@@ -260,7 +260,7 @@ namespace Polo.UnitTests.Commands
                 { CopyAllFilesCommand.DestinationFolderParameterName, destinationFolderPath }
             };
 
-            var validApplicationSettings = new ApplicationSettings(defaultSourceDriveName: sourceFolderPath);
+            var validApplicationSettings = new ApplicationSettings(defaultSourceFolderName: sourceFolderPath);
             var mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(validApplicationSettings);
             var sut = new CopyAllFilesCommand(mockApplicationOptions, _loggerMock.Object);
 
@@ -286,7 +286,7 @@ namespace Polo.UnitTests.Commands
                 { CopyAllFilesCommand.SourceFolderParameterName, sourceFolderPath }
             };
 
-            var invalidApplicationSettings = new ApplicationSettings(defaultSourceDriveName: invalidSourceFolderPath);
+            var invalidApplicationSettings = new ApplicationSettings(defaultSourceFolderName: invalidSourceFolderPath);
             var mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(invalidApplicationSettings);
             var sut = new CopyAllFilesCommand(mockApplicationOptions, _loggerMock.Object);
 
@@ -308,7 +308,7 @@ namespace Polo.UnitTests.Commands
             Environment.CurrentDirectory = destinationFolderPath;
             var parameters = new Dictionary<string, string>();
 
-            var validApplicationSettings = new ApplicationSettings(defaultSourceDriveName: sourceFolderPath);
+            var validApplicationSettings = new ApplicationSettings(defaultSourceFolderName: sourceFolderPath);
             var mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(validApplicationSettings);
             var sut = new CopyAllFilesCommand(mockApplicationOptions, _loggerMock.Object);
 
@@ -335,7 +335,7 @@ namespace Polo.UnitTests.Commands
                 { CopyAllFilesCommand.DestinationFolderParameterName, invalidDestinationFolderPath }
             };
 
-            var validApplicationSettings = new ApplicationSettings(defaultSourceDriveName: invalidSourceFolderPath);
+            var validApplicationSettings = new ApplicationSettings(defaultSourceFolderName: invalidSourceFolderPath);
             var mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(validApplicationSettings);
             var sut = new CopyAllFilesCommand(mockApplicationOptions, _loggerMock.Object);
 
@@ -356,7 +356,7 @@ namespace Polo.UnitTests.Commands
             Environment.CurrentDirectory = destinationFolderPath;
             var parameters = new Dictionary<string, string>();
 
-            var validApplicationSettings = new ApplicationSettings(defaultSourceDriveName: sourceFolderPath);
+            var validApplicationSettings = new ApplicationSettings(defaultSourceFolderName: sourceFolderPath);
             var mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(validApplicationSettings);
             var sut = new CopyAllFilesCommand(mockApplicationOptions, _loggerMock.Object);
 
@@ -379,7 +379,7 @@ namespace Polo.UnitTests.Commands
                 { CopyAllFilesCommand.DestinationFolderParameterName, destinationFolderPath }
             };
 
-            var applicationSettings = new ApplicationSettings(defaultSourceDriveName: string.Empty);
+            var applicationSettings = new ApplicationSettings(defaultSourceFolderName: string.Empty);
             var mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(applicationSettings);
             var sut = new CopyAllFilesCommand(mockApplicationOptions, _loggerMock.Object);
 
@@ -424,7 +424,7 @@ namespace Polo.UnitTests.Commands
                 { CopyAllFilesCommand.DestinationFolderParameterName, invalidDestinationFolderPath }
             };
 
-            var applicationSettings = new ApplicationSettings(defaultSourceDriveName: string.Empty);
+            var applicationSettings = new ApplicationSettings(defaultSourceFolderName: string.Empty);
             var mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(applicationSettings);
             var sut = new CopyAllFilesCommand(mockApplicationOptions, _loggerMock.Object);
 

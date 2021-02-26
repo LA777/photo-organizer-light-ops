@@ -1,6 +1,6 @@
 {
   "LogFilePath": "logs\\polo-log-.txt",
-  "DefaultSourceDriveName": "j:\\",
+  "DefaultSourceFolderName": "j:\\DCIM",
   "RawFolderName": "RAW",
   "ResizedImageSubfolderName": "small",
   "ImageResizeLongSideLimit": 1600,

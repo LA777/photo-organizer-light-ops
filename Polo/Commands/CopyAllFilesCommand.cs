@@ -32,13 +32,13 @@ namespace Polo.Commands
 
         public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
         {
-            var sourceFolder = _applicationOptions.Value.DefaultSourceDriveName;
+            var sourceFolder = _applicationOptions.Value.DefaultSourceFolderName;
             var destinationDirectory = Environment.CurrentDirectory;
             var parametersEmpty = parameters.IsNullOrEmpty();
 
             if (parametersEmpty && string.IsNullOrWhiteSpace(sourceFolder))
             {
-                throw new ParameterAbsentException($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{SourceFolderParameterName}' parameter or setup setting value '{nameof(ApplicationSettings.DefaultSourceDriveName)}'.");
+                throw new ParameterAbsentException($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{SourceFolderParameterName}' parameter or setup setting value '{nameof(ApplicationSettings.DefaultSourceFolderName)}'.");
             }
 
             if (!parametersEmpty)
