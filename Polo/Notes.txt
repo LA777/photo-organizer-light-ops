@@ -101,14 +101,22 @@ SFi DFv		SFv			Error		y
 	DFv		SFi			Error		y
 	DFi		SFv			Error		y
 
-params are null
+params are null						y
 
 
 
+Resize
 
+Params		Settings	Expected	Exists
+			SLv			OK			y
+SLv			SLv			OK			y
+SLi			SLv			Error		y
+SLi			SLi			Error		y
+SLv			SLi			OK			y
+			SLi			Error		y
 
-
-
+params are null						y
+unknown parameter					y
 
 
 

@@ -38,7 +38,7 @@ namespace Polo.Commands
 
             if (parametersEmpty && string.IsNullOrWhiteSpace(sourceFolder))
             {
-                throw new ParameterAbsentException($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{SourceFolderParameterName}' parameters or setup setting value '{nameof(ApplicationSettings.DefaultSourceDriveName)}'.");
+                throw new ParameterAbsentException($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{SourceFolderParameterName}' parameter or setup setting value '{nameof(ApplicationSettings.DefaultSourceDriveName)}'.");
             }
 
             if (!parametersEmpty)

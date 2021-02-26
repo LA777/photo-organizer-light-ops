@@ -1,6 +1,7 @@
 ﻿using ImageMagick;
 using Microsoft.Extensions.Options;
 using Polo.Abstractions.Commands;
+using Polo.Abstractions.Exceptions;
 using Polo.Extensions;
 using Polo.Options;
 using Serilog;
@@ -20,9 +21,9 @@ namespace Polo.Commands
 
         public string ShortName => "rs";
 
-        public static readonly string LongSideLimitArgumentName = "long-side-limit";
+        public static readonly string LongSideLimitParameterName = "long-side-limit";
 
-        public string Description => $"Resizes all JPEG images in the current folder and saves them to a sub-folder. Example: polo.exe {CommandParser.CommandPrefix}{Name} {CommandParser.ShortCommandPrefix}{LongSideLimitArgumentName}:1600";
+        public string Description => $"Resizes all JPEG images in the current folder and saves them to a sub-folder. Example: polo.exe {CommandParser.CommandPrefix}{Name} {CommandParser.ShortCommandPrefix}{LongSideLimitParameterName}:1600";
 
         public ResizeCommand(IOptions<ApplicationSettings> applicationOptions, ILogger logger)
         {
@@ -39,21 +40,27 @@ namespace Polo.Commands
             var sizeLimit = _applicationSettings.ImageResizeLongSideLimit;
             var parametersEmpty = parameters.IsNullOrEmpty();
 
+            if (parametersEmpty && sizeLimit == 0) // TODO LA - Check all this in tests
+            {
+                throw new ParameterAbsentException($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{LongSideLimitParameterName}' parameter or setup setting value '{nameof(ApplicationSettings.ImageResizeLongSideLimit)}'.");
+            }
+
             if (!parametersEmpty) // TODO LA - Check all this in tests
             {
-                if (parameters.TryGetValue(LongSideLimitArgumentName, out var sizeLimitValue))
+                if (parameters.TryGetValue(LongSideLimitParameterName, out var sizeLimitValue))
                 {
-                    var isParseSuccessful = int.TryParse(sizeLimitValue, out var number);
-                    if (isParseSuccessful)
+                    if (int.TryParse(sizeLimitValue, out var number))
                     {
                         sizeLimit = number;
+
+                        if (number == 0)
+                        {
+                            throw new ArgumentOutOfRangeException($"{CommandParser.ShortCommandPrefix}{LongSideLimitParameterName}", $"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{LongSideLimitParameterName}' should be higher than 0.");
+                        }
                     }
                     else
                     {
-                        // TODO LA - Add exception
-                        _logger.Information($"Parameters is not a number");
-
-                        return;
+                        throw new ParseException($"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{LongSideLimitParameterName}' is not a number.");
                     }
                 }
             }
