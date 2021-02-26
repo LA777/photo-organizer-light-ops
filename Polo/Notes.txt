@@ -1,8 +1,6 @@
 ﻿
 TODO
 
-- add license https://docs.github.com/en/github/building-a-strong-community/adding-a-license-to-a-repository
-
 - add SIGN to JPEG files
 
 - add argument for resize JPEG files (resize with watermark)
@@ -48,6 +46,8 @@ DONE
 + refactor command\argument parser
 
 + add argument for resize JPEG files (sizeLimit)
+
++ add license https://docs.github.com/en/github/building-a-strong-community/adding-a-license-to-a-repository
 
 
 
