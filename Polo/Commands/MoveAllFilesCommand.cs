@@ -33,14 +33,14 @@ namespace Polo.Commands
         {
             var sourceFolder = _applicationOptions.Value.DefaultSourceDriveName;
             var destinationDirectory = Environment.CurrentDirectory;
-            var parametersEmpty = parameters.IsNullOrEmpty(); // TODO LA - Check this with tests
+            var parametersEmpty = parameters.IsNullOrEmpty();
 
             if (parametersEmpty && string.IsNullOrWhiteSpace(sourceFolder))
             {
                 throw new ParameterAbsentException($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{SourceFolderParameterName}' parameters or setup setting value '{nameof(ApplicationSettings.DefaultSourceDriveName)}'.");
             }
 
-            if (!parametersEmpty) // TODO LA - Check this with tests
+            if (!parametersEmpty)
             {
                 if (parameters.TryGetValue(SourceFolderParameterName, out var sourceFolderPath))
                 {
