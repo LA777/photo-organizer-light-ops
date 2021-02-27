@@ -5,6 +5,8 @@ TODO
 
 - add argument for resize JPEG files (resize with watermark)
 
+- add overwrite-file parameter
+
 - add Sequence command to run several commands
 
 - add setting - DeleteToRecycleBin
@@ -119,15 +121,26 @@ unknown parameter					y
 
 
 
-left top
-left center
-left bottom
-right top
-right center
-right bottom
-center top
-center center
-center bottom
+left top		9
+left center		24
+left bottom		12
+right top		3
+right center	18
+right bottom	5
+center top		17
+center center	32
+center bottom	20
+
+
+Northwest = 1,
+North = 2,
+Northeast = 3,
+West = 4,
+Center = 5,
+East = 6,
+Southwest = 7,
+South = 8,
+Southeast = 9
 
 
 -c "d:\temp\Test delete\Source" "d:\temp\Test delete\Destination"

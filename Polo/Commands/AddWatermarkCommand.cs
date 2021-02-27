@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using Polo.Abstractions.Commands;
 using Polo.Abstractions.Exceptions;
+using Polo.Extensions;
 using Polo.Options;
 using Serilog;
 using System;
@@ -36,10 +37,7 @@ namespace Polo.Commands
 
         public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
         {
-            // TODO LA - Add output folder parameter
-            // TODO LA - Add watermark position parameter
-            // TODO LA - Add watermark transparency parameter
-            // TODO LA - Add source folder parameter
+            // TODO LA - Add overwrite file parameter
 
             var sourceFolderPath = Environment.CurrentDirectory;
 
@@ -63,13 +61,8 @@ namespace Polo.Commands
             var watermarkOutputFolderName = GetValidStringParameterOrSetting(parameters, OutputFolderNameParameterName, _applicationSettings.WatermarkOutputFolderName);
             var destinationDirectory = Path.Combine(sourceFolderPath, watermarkOutputFolderName);
 
-            if (!Directory.Exists(destinationDirectory))
-            {
-                Directory.CreateDirectory(destinationDirectory);
-            }
-
             var watermarkPosition = GetValidStringParameterOrSetting(parameters, WatermarkPositionParameterName, _applicationSettings.WatermarkPosition);
-            //var watermarkPositionMagick = ParsePosition(); // TODO LA - Complete
+            var watermarkPositionMagick = watermarkPosition.ParsePosition();
 
             var watermarkTransparencyPercent = GetValidIntParameterOrSetting(parameters, WatermarkTransparencyParameterName, _applicationSettings.WatermarkTransparencyPercent, 1, 100);
 
@@ -91,25 +84,10 @@ namespace Polo.Commands
                 var destinationImagePath = Path.Combine(destinationDirectory, jpegFileInfo.Name);
 
                 using var image = new MagickImage(jpegFile);
-
-                using (var watermark = new MagickImage(watermarkPath))
-                {
-
-                    watermark.Evaluate(Channels.Alpha, EvaluateOperator.Subtract, new Percentage(100 - watermarkTransparencyPercent));
-                    //watermark.Evaluate(Channels.Alpha, EvaluateOperator.Divide, 4);
-
-
-                    // Draw the watermark in the bottom right corner
-                    image.Composite(watermark, Gravity.Southwest, CompositeOperator.Over);
-
-                    // Optionally make the watermark more transparent
-                    //watermark.Evaluate(Channels.Alpha, EvaluateOperator.Set, new Percentage(watermarkTransparencyPercent));
-                    // watermark.Evaluate(Channels.Alpha, EvaluateOperator.Set, 50);
-
-
-                    // Or draw the watermark at a specific location
-                    //image.Composite(watermark, 200, 50, CompositeOperator.Over);
-                }
+                using var watermark = new MagickImage(watermarkPath);
+                const int maxPercentValue = 100;
+                watermark.Evaluate(Channels.Alpha, EvaluateOperator.Subtract, new Percentage(maxPercentValue - watermarkTransparencyPercent));
+                image.Composite(watermark, Gravity.Southwest, CompositeOperator.Over);
 
                 image.Write(destinationImagePath);
                 _logger.Information($"Watermark added: {destinationImagePath}");
