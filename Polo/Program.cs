@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Polo.Abstractions;
 using Polo.Abstractions.Commands;
 using Polo.Commands;
@@ -35,6 +36,7 @@ namespace Polo
 
             try
             {
+                ValidateApplicationSettings(serviceProvider);
                 task.Wait();
             }
             catch (Exception exception)
@@ -43,11 +45,25 @@ namespace Polo
             }
         }
 
+        private static void ValidateApplicationSettings(ServiceProvider serviceProvider)
+        {
+            var applicationSettings = serviceProvider.GetService<IOptions<ApplicationSettings>>().Value;
+
+            if (applicationSettings == null)
+            {
+                throw new ArgumentNullException(nameof(applicationSettings), "ERROR: Application settings are absent.");
+            }
+        }
+
         private static void ConfigureServices(IServiceCollection services)
         {
-            services.AddOptions();
-            services.Configure<ApplicationSettings>(Configuration);
+            services.AddOptions<ApplicationSettings>()
+                .Bind(Configuration)
+                .ValidateDataAnnotations();
+
             var applicationSettings = Configuration.Get<ApplicationSettings>();
+            var applicationSettingsReadOnly = new ApplicationSettingsReadOnly(applicationSettings);
+            IOptions<ApplicationSettingsReadOnly> applicationSettingsReadOnlyOptions = Microsoft.Extensions.Options.Options.Create(applicationSettingsReadOnly);
 
             var logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
@@ -57,6 +73,7 @@ namespace Polo
                 .CreateLogger();
 
             services.AddSingleton<ILogger>(logger);
+            services.AddSingleton(applicationSettingsReadOnlyOptions);
             services.AddSingleton<ICommandParser, CommandParser>();
             services.AddSingleton<ICommand, VersionCommand>();
             services.AddSingleton<ICommand, HelpCommand>();
@@ -66,6 +83,7 @@ namespace Polo
             services.AddSingleton<ICommand, CopyAllFilesCommand>();
             services.AddSingleton<ICommand, MoveAllFilesCommand>();
             services.AddSingleton<ICommand, MoveVideoToSubfolderCommand>();
+            services.AddSingleton<ICommand, AddWatermarkCommand>();
         }
     }
 }

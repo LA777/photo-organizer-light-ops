@@ -1,5 +1,4 @@
 using FluentAssertions;
-using Microsoft.Extensions.Options;
 using Moq;
 using Polo.Abstractions.Commands;
 using Polo.Commands;
@@ -17,13 +16,12 @@ namespace Polo.UnitTests.Commands
     [Collection("Sequential")]
     public class CopyAllFilesCommandTests : CommandTestBase
     {
-        private const string DefaultSourceFolderName = "c:\\\\";
-        private static readonly ApplicationSettings _validApplicationSettings = new ApplicationSettings(defaultSourceFolderName: DefaultSourceFolderName);
-        private static readonly IOptions<ApplicationSettings> _mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(_validApplicationSettings);
+        private const string DefaultSourceFolderPath = "c:\\";
+        private static readonly ApplicationSettings _validApplicationSettings = new ApplicationSettings() { DefaultSourceFolderPath = DefaultSourceFolderPath };
         private static readonly string _sourceFolderName = "Source Fotos";
         private static readonly string _destinationFolderName = "Destination Fotos";
         private static readonly Mock<ILogger> _loggerMock = new Mock<ILogger>();
-        private readonly ICommand _sut = new CopyAllFilesCommand(_mockApplicationOptions, _loggerMock.Object);
+        private readonly ICommand _sut = new CopyAllFilesCommand(GetOptions(_validApplicationSettings), _loggerMock.Object);
 
         private readonly Folder _folderStructureInitial = new Folder()
         {
@@ -215,9 +213,11 @@ namespace Polo.UnitTests.Commands
             Environment.CurrentDirectory = destinationFolderPath;
             var parameters = new Dictionary<string, string>();
 
-            var validApplicationSettings = new ApplicationSettings(defaultSourceFolderName: sourceFolderPath);
-            var mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(validApplicationSettings);
-            var sut = new CopyAllFilesCommand(mockApplicationOptions, _loggerMock.Object);
+            var validApplicationSettings = new ApplicationSettings()
+            {
+                DefaultSourceFolderPath = sourceFolderPath
+            };
+            var sut = new CopyAllFilesCommand(GetOptions(validApplicationSettings), _loggerMock.Object);
 
             // Act
             sut.Action(parameters);
@@ -236,9 +236,11 @@ namespace Polo.UnitTests.Commands
             var destinationFolderPath = Path.Combine(testFolderFullPath, _destinationFolderName);
             Environment.CurrentDirectory = destinationFolderPath;
 
-            var validApplicationSettings = new ApplicationSettings(defaultSourceFolderName: sourceFolderPath);
-            var mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(validApplicationSettings);
-            var sut = new CopyAllFilesCommand(mockApplicationOptions, _loggerMock.Object);
+            var validApplicationSettings = new ApplicationSettings()
+            {
+                DefaultSourceFolderPath = sourceFolderPath
+            };
+            var sut = new CopyAllFilesCommand(GetOptions(validApplicationSettings), _loggerMock.Object);
 
             // Act
             sut.Action();
@@ -260,9 +262,11 @@ namespace Polo.UnitTests.Commands
                 { CopyAllFilesCommand.DestinationFolderParameterName, destinationFolderPath }
             };
 
-            var validApplicationSettings = new ApplicationSettings(defaultSourceFolderName: sourceFolderPath);
-            var mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(validApplicationSettings);
-            var sut = new CopyAllFilesCommand(mockApplicationOptions, _loggerMock.Object);
+            var validApplicationSettings = new ApplicationSettings()
+            {
+                DefaultSourceFolderPath = sourceFolderPath
+            };
+            var sut = new CopyAllFilesCommand(GetOptions(validApplicationSettings), _loggerMock.Object);
 
             // Act
             sut.Action(parameters);
@@ -286,9 +290,11 @@ namespace Polo.UnitTests.Commands
                 { CopyAllFilesCommand.SourceFolderParameterName, sourceFolderPath }
             };
 
-            var invalidApplicationSettings = new ApplicationSettings(defaultSourceFolderName: invalidSourceFolderPath);
-            var mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(invalidApplicationSettings);
-            var sut = new CopyAllFilesCommand(mockApplicationOptions, _loggerMock.Object);
+            var invalidApplicationSettings = new ApplicationSettings()
+            {
+                DefaultSourceFolderPath = invalidSourceFolderPath
+            };
+            var sut = new CopyAllFilesCommand(GetOptions(invalidApplicationSettings), _loggerMock.Object);
 
             // Act
             sut.Action(parameters);
@@ -308,9 +314,11 @@ namespace Polo.UnitTests.Commands
             Environment.CurrentDirectory = destinationFolderPath;
             var parameters = new Dictionary<string, string>();
 
-            var validApplicationSettings = new ApplicationSettings(defaultSourceFolderName: sourceFolderPath);
-            var mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(validApplicationSettings);
-            var sut = new CopyAllFilesCommand(mockApplicationOptions, _loggerMock.Object);
+            var validApplicationSettings = new ApplicationSettings()
+            {
+                DefaultSourceFolderPath = sourceFolderPath
+            };
+            var sut = new CopyAllFilesCommand(GetOptions(validApplicationSettings), _loggerMock.Object);
 
             // Act
             var exception = Assert.Throws<DirectoryNotFoundException>(() => sut.Action(parameters));
@@ -335,9 +343,11 @@ namespace Polo.UnitTests.Commands
                 { CopyAllFilesCommand.DestinationFolderParameterName, invalidDestinationFolderPath }
             };
 
-            var validApplicationSettings = new ApplicationSettings(defaultSourceFolderName: invalidSourceFolderPath);
-            var mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(validApplicationSettings);
-            var sut = new CopyAllFilesCommand(mockApplicationOptions, _loggerMock.Object);
+            var invalidApplicationSettings = new ApplicationSettings()
+            {
+                DefaultSourceFolderPath = invalidSourceFolderPath
+            };
+            var sut = new CopyAllFilesCommand(GetOptions(invalidApplicationSettings), _loggerMock.Object);
 
             // Act
             var exception = Assert.Throws<DirectoryNotFoundException>(() => sut.Action(parameters));
@@ -356,9 +366,11 @@ namespace Polo.UnitTests.Commands
             Environment.CurrentDirectory = destinationFolderPath;
             var parameters = new Dictionary<string, string>();
 
-            var validApplicationSettings = new ApplicationSettings(defaultSourceFolderName: sourceFolderPath);
-            var mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(validApplicationSettings);
-            var sut = new CopyAllFilesCommand(mockApplicationOptions, _loggerMock.Object);
+            var validApplicationSettings = new ApplicationSettings()
+            {
+                DefaultSourceFolderPath = sourceFolderPath
+            };
+            var sut = new CopyAllFilesCommand(GetOptions(validApplicationSettings), _loggerMock.Object);
 
             // Act
             var exception = Assert.Throws<DirectoryNotFoundException>(() => sut.Action(parameters));
@@ -379,9 +391,11 @@ namespace Polo.UnitTests.Commands
                 { CopyAllFilesCommand.DestinationFolderParameterName, destinationFolderPath }
             };
 
-            var applicationSettings = new ApplicationSettings(defaultSourceFolderName: string.Empty);
-            var mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(applicationSettings);
-            var sut = new CopyAllFilesCommand(mockApplicationOptions, _loggerMock.Object);
+            var invalidApplicationSettings = new ApplicationSettings()
+            {
+                DefaultSourceFolderPath = string.Empty
+            };
+            var sut = new CopyAllFilesCommand(GetOptions(invalidApplicationSettings), _loggerMock.Object);
 
             // Act
             var exception = Assert.Throws<DirectoryNotFoundException>(() => sut.Action(parameters));
@@ -424,9 +438,11 @@ namespace Polo.UnitTests.Commands
                 { CopyAllFilesCommand.DestinationFolderParameterName, invalidDestinationFolderPath }
             };
 
-            var applicationSettings = new ApplicationSettings(defaultSourceFolderName: string.Empty);
-            var mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(applicationSettings);
-            var sut = new CopyAllFilesCommand(mockApplicationOptions, _loggerMock.Object);
+            var invalidApplicationSettings = new ApplicationSettings()
+            {
+                DefaultSourceFolderPath = string.Empty
+            };
+            var sut = new CopyAllFilesCommand(GetOptions(invalidApplicationSettings), _loggerMock.Object);
 
             // Act
             var exception = Assert.Throws<DirectoryNotFoundException>(() => sut.Action(parameters));

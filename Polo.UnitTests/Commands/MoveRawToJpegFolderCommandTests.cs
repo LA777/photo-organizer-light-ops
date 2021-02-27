@@ -1,5 +1,4 @@
 using FluentAssertions;
-using Microsoft.Extensions.Options;
 using Moq;
 using Polo.Abstractions.Commands;
 using Polo.Commands;
@@ -20,12 +19,16 @@ namespace Polo.UnitTests.Commands
     {
         private static readonly string _albumName = "Album1";
         private static readonly string _rawFolderName = "RAW";
-        private static readonly IEnumerable<string> _rawFileExtensions = new List<string>() { "orf", "crw", "cr2", "cr3", "3fr", "mef", "nef", "nrw", "pef", "ptx", "rw2", "arw", "srf", "sr2", "gpr", "raf", "raw", "rwl", "dng", "srw", "x3f" };
-        private static readonly IEnumerable<string> _jpegFileExtensions = new List<string>() { "jpg", "jpeg" };
-        private static readonly ApplicationSettings _validApplicationSettings = new ApplicationSettings(jpegFileExtensions: _jpegFileExtensions, rawFileExtensions: _rawFileExtensions, rawFolderName: _rawFolderName);
-        private static readonly IOptions<ApplicationSettings> _mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(_validApplicationSettings);
+        private static readonly ICollection<string> _rawFileExtensions = new List<string>() { "orf", "crw", "cr2", "cr3", "3fr", "mef", "nef", "nrw", "pef", "ptx", "rw2", "arw", "srf", "sr2", "gpr", "raf", "raw", "rwl", "dng", "srw", "x3f" };
+        private static readonly ICollection<string> _jpegFileExtensions = new List<string>() { "jpg", "jpeg" };
+        private static readonly ApplicationSettings _validApplicationSettings = new ApplicationSettings()
+        {
+            JpegFileExtensions = _jpegFileExtensions,
+            RawFileExtensions = _rawFileExtensions,
+            RawFolderName = _rawFolderName
+        };
         private static readonly Mock<ILogger> _loggerMock = new Mock<ILogger>();
-        private readonly ICommand _sut = new MoveRawToJpegFolderCommand(_mockApplicationOptions, _loggerMock.Object);
+        private readonly ICommand _sut = new MoveRawToJpegFolderCommand(GetOptions(_validApplicationSettings), _loggerMock.Object);
 
         private readonly Folder _folderStructureInitial = new Folder()
         {
@@ -217,9 +220,8 @@ namespace Polo.UnitTests.Commands
             Environment.CurrentDirectory = Path.Combine(testFolderFullPath, _albumName);
 
             var jpegFileExtensionsWithDuplicates = new List<string>() { "jpeg", "jpg", "jpeg", "jpg" };
-            var applicationSettings = new ApplicationSettings(jpegFileExtensions: jpegFileExtensionsWithDuplicates, rawFileExtensions: _rawFileExtensions, rawFolderName: _rawFolderName);
-            var mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(applicationSettings);
-            var sut = new MoveRawToJpegFolderCommand(mockApplicationOptions, _loggerMock.Object);
+            var applicationSettings = new ApplicationSettings() { JpegFileExtensions = jpegFileExtensionsWithDuplicates, RawFileExtensions = _rawFileExtensions, RawFolderName = _rawFolderName };
+            var sut = new MoveRawToJpegFolderCommand(GetOptions(applicationSettings), _loggerMock.Object);
 
             // Act
             sut.Action();
@@ -238,9 +240,13 @@ namespace Polo.UnitTests.Commands
 
             var rawFileExtensionsWithDuplicates = new List<string>() { "orf", "crw", "cr2", "cr3", "3fr", "mef", "nef", "nrw", "pef", "ptx", "rw2", "arw", "srf", "sr2", "gpr", "raf", "raw", "rwl", "dng", "srw", "x3f",
                                                                        "orf", "crw", "cr2", "cr3", "3fr", "mef", "nef", "nrw", "pef", "ptx", "rw2", "arw", "srf", "sr2", "gpr", "raf", "raw", "rwl", "dng", "srw", "x3f" };
-            var applicationSettings = new ApplicationSettings(jpegFileExtensions: _jpegFileExtensions, rawFileExtensions: rawFileExtensionsWithDuplicates, rawFolderName: _rawFolderName);
-            var mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(applicationSettings);
-            var sut = new MoveRawToJpegFolderCommand(mockApplicationOptions, _loggerMock.Object);
+            var applicationSettings = new ApplicationSettings()
+            {
+                JpegFileExtensions = _jpegFileExtensions,
+                RawFileExtensions = rawFileExtensionsWithDuplicates,
+                RawFolderName = _rawFolderName
+            };
+            var sut = new MoveRawToJpegFolderCommand(GetOptions(applicationSettings), _loggerMock.Object);
 
             // Act
             sut.Action();

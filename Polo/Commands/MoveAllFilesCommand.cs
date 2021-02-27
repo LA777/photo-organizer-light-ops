@@ -13,11 +13,11 @@ namespace Polo.Commands
     public class MoveAllFilesCommand : ICommand
     {
         private readonly ILogger _logger;
-        private readonly IOptions<ApplicationSettings> _applicationOptions;
+        private readonly IOptions<ApplicationSettingsReadOnly> _applicationOptions;
         public static readonly string SourceFolderParameterName = "source";
         public static readonly string DestinationFolderParameterName = "destination";
 
-        public MoveAllFilesCommand(IOptions<ApplicationSettings> applicationOptions, ILogger logger)
+        public MoveAllFilesCommand(IOptions<ApplicationSettingsReadOnly> applicationOptions, ILogger logger)
         {
             _applicationOptions = applicationOptions ?? throw new ArgumentNullException(nameof(applicationOptions));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -27,17 +27,17 @@ namespace Polo.Commands
 
         public string ShortName => "maf";
 
-        public string Description => $"Move all files from source folder to the current folder. Setup path for the source folder in settings or in the parameter. Setup path to the destination folder in the parameter. Example: polo.exe {CommandParser.CommandPrefix}{Name} {CommandParser.ShortCommandPrefix}{SourceFolderParameterName}:'e:\\\\DCIM' {CommandParser.ShortCommandPrefix}{DestinationFolderParameterName}:'c:\\\\photo'";
+        public string Description => $"Move all files from source folder to the current folder. Setup path for the source folder in settings or in the parameter. Setup path to the destination folder in the parameter. Example: polo.exe {CommandParser.CommandPrefix}{Name} {CommandParser.ShortCommandPrefix}{SourceFolderParameterName}:'e:\\DCIM' {CommandParser.ShortCommandPrefix}{DestinationFolderParameterName}:'c:\\photo'";
 
         public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
         {
-            var sourceFolder = _applicationOptions.Value.DefaultSourceFolderName;
+            var sourceFolder = _applicationOptions.Value.DefaultSourceFolderPath;
             var destinationDirectory = Environment.CurrentDirectory;
             var parametersEmpty = parameters.IsNullOrEmpty();
 
             if (parametersEmpty && string.IsNullOrWhiteSpace(sourceFolder))
             {
-                throw new ParameterAbsentException($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{SourceFolderParameterName}' parameter or setup setting value '{nameof(ApplicationSettings.DefaultSourceFolderName)}'.");
+                throw new ParameterAbsentException($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{SourceFolderParameterName}' parameter or setup setting value '{nameof(ApplicationSettings.DefaultSourceFolderPath)}'.");
             }
 
             if (!parametersEmpty)

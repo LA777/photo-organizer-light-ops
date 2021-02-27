@@ -1,9 +1,13 @@
 {
   "LogFilePath": "logs\\polo-log-.txt",
-  "DefaultSourceFolderName": "j:\\DCIM",
+  "DefaultSourceFolderPath": "j:\\DCIM",
   "RawFolderName": "RAW",
-  "ResizedImageSubfolderName": "small",
+  "ResizedImageSubfolderName": "small", // TODO LA - Rename
   "ImageResizeLongSideLimit": 1600,
+  "WatermarkPath": "c:\\watemark.png",
+  "WatermarkOutputFolderName": "watermark",
+  "WatermarkPosition": "left bottom",
+  "WatermarkTransparencyPercent": 80,
   "JpegFileExtensions": [ "jpg", "jpeg" ],
   "RawFileExtensions": [ "orf", "crw", "cr2", "cr3", "3fr", "mef", "nef", "nrw", "pef", "ptx", "rw2", "arw", "srf", "sr2", "gpr", "raf", "raw", "rwl", "dng", "srw", "x3f" ],
   "VideoFileExtensions": [ "mkv", "avi", "m2ts", "ts", "mp4", "m4p", "m4v", "mpg", "mpeg" ]

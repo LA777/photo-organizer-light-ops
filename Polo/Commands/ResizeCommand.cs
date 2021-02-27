@@ -15,7 +15,7 @@ namespace Polo.Commands
     public class ResizeCommand : ICommand
     {
         private readonly ILogger _logger;
-        private readonly ApplicationSettings _applicationSettings;
+        private readonly ApplicationSettingsReadOnly _applicationSettings;
 
         public string Name => "resize";
 
@@ -25,7 +25,7 @@ namespace Polo.Commands
 
         public string Description => $"Resizes all JPEG images in the current folder and saves them to a sub-folder. Example: polo.exe {CommandParser.CommandPrefix}{Name} {CommandParser.ShortCommandPrefix}{LongSideLimitParameterName}:1600";
 
-        public ResizeCommand(IOptions<ApplicationSettings> applicationOptions, ILogger logger)
+        public ResizeCommand(IOptions<ApplicationSettingsReadOnly> applicationOptions, ILogger logger)
         {
             _applicationSettings = applicationOptions.Value ?? throw new ArgumentNullException(nameof(applicationOptions));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -33,6 +33,7 @@ namespace Polo.Commands
 
         public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
         {
+            // TODO LA - Add output folder parameter
             var currentDirectory = Environment.CurrentDirectory;
             var destinationDirectory = Path.Combine(currentDirectory, _applicationSettings.ResizedImageSubfolderName);
             var sizeLimit = _applicationSettings.ImageResizeLongSideLimit;
@@ -40,7 +41,7 @@ namespace Polo.Commands
 
             if (parametersEmpty && sizeLimit == 0)
             {
-                throw new ParameterAbsentException($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{LongSideLimitParameterName}' parameter or setup setting value '{nameof(ApplicationSettings.ImageResizeLongSideLimit)}'.");
+                throw new ParameterAbsentException($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{LongSideLimitParameterName}' parameter or setup setting value '{nameof(ApplicationSettingsReadOnly.ImageResizeLongSideLimit)}'.");
             }
 
             if (!parametersEmpty)
@@ -51,7 +52,7 @@ namespace Polo.Commands
                     {
                         sizeLimit = number;
 
-                        if (number == 0)
+                        if (number < 1)
                         {
                             throw new ArgumentOutOfRangeException($"{CommandParser.ShortCommandPrefix}{LongSideLimitParameterName}", $"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{LongSideLimitParameterName}' should be higher than 0.");
                         }

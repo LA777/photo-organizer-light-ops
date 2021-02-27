@@ -119,5 +119,23 @@ unknown parameter					y
 
 
 
+left top
+left center
+left bottom
+right top
+right center
+right bottom
+center top
+center center
+center bottom
+
+
+-c "d:\temp\Test delete\Source" "d:\temp\Test delete\Destination"
+
+
+polo.exe --add-watermark -source:'d:\tmp dev\images\' -watermark-path:'d:\tmp dev\images\sign\Sign v3.5sl - 64% - FSviewer.png' -output-folder-name:'watermark-output' -transparency:34
+
+--add-watermark -source:"d:\tmp dev\images" -watermark-path:"d:\tmp dev\images\sign\Sign v3.5sl - 64% - FSviewer.png" -output-folder-name:"watermark-output" -transparency:34
+
 
 

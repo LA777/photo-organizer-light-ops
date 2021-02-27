@@ -12,7 +12,7 @@ namespace Polo.Commands
     public class MoveVideoToSubfolderCommand : ICommand
     {
         private readonly ILogger _logger;
-        private readonly ApplicationSettings _applicationSettings;
+        private readonly ApplicationSettingsReadOnly _applicationSettings;
         private readonly string VideoSubfolderName = "video";
 
         public string Name => "video";
@@ -21,7 +21,7 @@ namespace Polo.Commands
 
         public string Description => "Creates Video sub-folder in the current folder and moves all video files to this sub-folder.";
 
-        public MoveVideoToSubfolderCommand(IOptions<ApplicationSettings> applicationOptions, ILogger logger)
+        public MoveVideoToSubfolderCommand(IOptions<ApplicationSettingsReadOnly> applicationOptions, ILogger logger)
         {
             _applicationSettings = applicationOptions.Value ?? throw new ArgumentNullException(nameof(applicationOptions));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));

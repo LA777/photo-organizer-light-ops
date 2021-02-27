@@ -2,7 +2,8 @@
   "profiles": {
     "Polo": {
       "commandName": "Project",
-      "commandLineArgs": "-c \"d:\\temp\\Test delete\\Source\" \"d:\\temp\\Test delete\\Destination\""
+      "commandLineArgs": "--add-watermark -source:\"d:\\tmp dev\\images\" -watermark-path:\"d:\\tmp dev\\images\\sign\\Sign v3.5sl - 64% - FSviewer.png\" -output-folder-name:\"watermark-output\" -transparency:64",
+      "nativeDebugging": false
     }
   }
 }

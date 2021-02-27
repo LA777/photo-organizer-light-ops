@@ -1,4 +1,6 @@
-﻿using Polo.UnitTests.FileUtils;
+﻿using Microsoft.Extensions.Options;
+using Polo.Options;
+using Polo.UnitTests.FileUtils;
 using System;
 
 namespace Polo.UnitTests.Commands
@@ -19,6 +21,14 @@ namespace Polo.UnitTests.Commands
         {
             ReleaseUnmanagedResources();
             GC.SuppressFinalize(this);
+        }
+
+        internal static IOptions<ApplicationSettingsReadOnly> GetOptions(ApplicationSettings applicationSettings)
+        {
+            var validApplicationSettingsReadOnly = new ApplicationSettingsReadOnly(applicationSettings);
+            var mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(validApplicationSettingsReadOnly);
+
+            return mockApplicationOptions;
         }
 
         ~CommandTestBase()

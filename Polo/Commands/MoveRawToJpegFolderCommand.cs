@@ -12,7 +12,7 @@ namespace Polo.Commands
     public class MoveRawToJpegFolderCommand : ICommand
     {
         private readonly ILogger _logger;
-        private readonly ApplicationSettings _applicationSettings;
+        private readonly ApplicationSettingsReadOnly _applicationSettings;
 
         public string Name => "move-raw";
 
@@ -20,7 +20,7 @@ namespace Polo.Commands
 
         public string Description => "Move RAW files to the RAW sub-folder in the JPEG folder.";
 
-        public MoveRawToJpegFolderCommand(IOptions<ApplicationSettings> applicationOptions, ILogger logger)
+        public MoveRawToJpegFolderCommand(IOptions<ApplicationSettingsReadOnly> applicationOptions, ILogger logger)
         {
             _applicationSettings = applicationOptions.Value ?? throw new ArgumentNullException(nameof(applicationOptions));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
