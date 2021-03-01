@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Polo.Options
+namespace Polo.Abstractions.Options
 {
-    public class ApplicationSettings // TODO LA - Move to Abstractions?
+    public class ApplicationSettings
     {
         public string LogFilePath { get; set; }
 
@@ -40,38 +40,5 @@ namespace Polo.Options
 
         [MinLength(1, ErrorMessage = "ERROR: Value for {0} should contain some data.")]
         public ICollection<string> VideoFileExtensions { get; set; } = new List<string>();
-
-        //public ApplicationSettings()
-        //{
-
-        //}
-
-        //public ApplicationSettings(string logFilePath = null,
-        //    string defaultSourceFolderPath = null,
-        //    string rawFolderName = null,
-        //    string resizedImageSubfolderName = null,
-        //    int imageResizeLongSideLimit = 0,
-        //    string watermarkPath = null,
-        //    string watermarkOutputFolderName = null,
-        //    string watermarkPosition = null,
-        //    int watermarkTransparencyPercent = 0,
-        //    IEnumerable<string> jpegFileExtensions = null,
-        //    IEnumerable<string> rawFileExtensions = null,
-        //    IEnumerable<string> videoFileExtensions = null)
-        //{
-        //    LogFilePath = logFilePath;
-        //    DefaultSourceFolderPath = defaultSourceFolderPath;
-        //    RawFolderName = rawFolderName;
-        //    ResizedImageSubfolderName = resizedImageSubfolderName;
-        //    ImageResizeLongSideLimit = imageResizeLongSideLimit;
-        //    WatermarkPath = watermarkPath;
-        //    WatermarkOutputFolderName = watermarkOutputFolderName;
-        //    WatermarkPosition = watermarkPosition;
-        //    WatermarkTransparencyPercent = watermarkTransparencyPercent;
-
-        //    JpegFileExtensions = new List<string>(jpegFileExtensions ?? throw new ArgumentNullException(nameof(jpegFileExtensions)));
-        //    RawFileExtensions = new List<string>(rawFileExtensions ?? throw new ArgumentNullException(nameof(rawFileExtensions)));
-        //    VideoFileExtensions = new List<string>(videoFileExtensions ?? throw new ArgumentNullException(nameof(videoFileExtensions)));
-        //}
     }
 }

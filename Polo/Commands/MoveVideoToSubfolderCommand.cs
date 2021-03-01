@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using Polo.Abstractions.Commands;
-using Polo.Options;
+using Polo.Abstractions.Options;
 using Serilog;
 using System;
 using System.Collections.Generic;

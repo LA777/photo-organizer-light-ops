@@ -1,9 +1,9 @@
 ﻿using ImageMagick;
 using Microsoft.Extensions.Options;
 using Polo.Abstractions.Commands;
-using Polo.Abstractions.Exceptions;
+using Polo.Abstractions.Options;
 using Polo.Extensions;
-using Polo.Options;
+using Polo.Parameters;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -17,17 +17,20 @@ namespace Polo.Commands
         private readonly ILogger _logger;
         private readonly ApplicationSettingsReadOnly _applicationSettings;
 
+        public readonly ParameterHandler ParameterHandler = new ParameterHandler()
+        {
+            SourceParameter = new SourceParameter(),
+            WatermarkPathParameter = new WatermarkPathParameter(),
+            OutputFolderNameParameter = new OutputFolderNameParameter(),
+            PositionParameter = new PositionParameter(),
+            TransparencyParameter = new TransparencyParameter()
+        };
+
         public string Name => "add-watermark";
 
         public string ShortName => "aw";
 
-        public static readonly string SourceFolderParameterName = "source";
-        public static readonly string WatermarkPathParameterName = "watermark-path";
-        public static readonly string OutputFolderNameParameterName = "output-folder-name";
-        public static readonly string WatermarkPositionParameterName = "position";
-        public static readonly string WatermarkTransparencyParameterName = "transparency";
-
-        public string Description => $"Adds watermarks to all JPG files and copies to the output folder. Example: polo.exe {CommandParser.CommandPrefix}{Name} {CommandParser.ShortCommandPrefix}{WatermarkPathParameterName}:'c:\\watermark.png'";
+        public string Description => $"Adds watermarks to all JPG files and copies to the output folder. Example: polo.exe {CommandParser.CommandPrefix}{Name}";
 
         public AddWatermarkCommand(IOptions<ApplicationSettingsReadOnly> applicationOptions, ILogger logger)
         {
@@ -39,33 +42,18 @@ namespace Polo.Commands
         {
             // TODO LA - Add overwrite file parameter
 
-            var sourceFolderPath = Environment.CurrentDirectory;
+            var sourceFolderPath = ParameterHandler.SourceParameter.Initialize(parameters, Environment.CurrentDirectory);
 
-            if (parameters.TryGetValue(SourceFolderParameterName, out var sourceFolderValue))
-            {
-                sourceFolderPath = sourceFolderValue;
+            var watermarkPath = ParameterHandler.WatermarkPathParameter.Initialize(parameters, _applicationSettings.WatermarkPath);
 
-                if (!Directory.Exists(sourceFolderPath))
-                {
-                    throw new DirectoryNotFoundException($"ERROR: Directory '{sourceFolderPath}' does not exists.");
-                }
-            }
+            var watermarkOutputFolderName = ParameterHandler.OutputFolderNameParameter.Initialize(parameters, _applicationSettings.WatermarkOutputFolderName);
 
-            var watermarkPath = GetValidStringParameterOrSetting(parameters, WatermarkPathParameterName, _applicationSettings.WatermarkPath);
-
-            if (!File.Exists(watermarkPath))
-            {
-                throw new FileNotFoundException("ERROR: Watermark file not found.", watermarkPath);
-            }
-
-            var watermarkOutputFolderName = GetValidStringParameterOrSetting(parameters, OutputFolderNameParameterName, _applicationSettings.WatermarkOutputFolderName);
             var destinationDirectory = Path.Combine(sourceFolderPath, watermarkOutputFolderName);
 
-            var watermarkPosition = GetValidStringParameterOrSetting(parameters, WatermarkPositionParameterName, _applicationSettings.WatermarkPosition);
+            var watermarkPosition = ParameterHandler.PositionParameter.Initialize(parameters, _applicationSettings.WatermarkPosition);
             var watermarkPositionMagick = watermarkPosition.ParsePosition();
 
-            var watermarkTransparencyPercent = GetValidIntParameterOrSetting(parameters, WatermarkTransparencyParameterName, _applicationSettings.WatermarkTransparencyPercent, 1, 100);
-
+            var watermarkTransparencyPercent = ParameterHandler.TransparencyParameter.Initialize(parameters, _applicationSettings.WatermarkTransparencyPercent);
 
 
             // TODO LA - Check in UTs duplicates
@@ -92,46 +80,6 @@ namespace Polo.Commands
                 image.Write(destinationImagePath);
                 _logger.Information($"Watermark added: {destinationImagePath}");
             }
-        }
-
-        private string GetValidStringParameterOrSetting(IReadOnlyDictionary<string, string> parameters, string parameterName, string settingValue)
-        {
-            var outputValue = parameters.TryGetValue(parameterName, out var parameterValue)
-                ? parameterValue : settingValue;
-
-            if (string.IsNullOrEmpty(outputValue))
-            {
-                throw new ParameterAbsentException($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{parameterName}' parameter.");
-            }
-
-            return outputValue;
-        }
-
-        private int GetValidIntParameterOrSetting(IReadOnlyDictionary<string, string> parameters, string parameterName, int settingValue, int min, int max)
-        {
-            int outputValue;
-            if (parameters.TryGetValue(parameterName, out var parameterValue))
-            {
-                if (int.TryParse(parameterValue, out var number))
-                {
-                    outputValue = number;
-
-                    if (outputValue < min || outputValue > max)
-                    {
-                        throw new ArgumentOutOfRangeException($"{CommandParser.ShortCommandPrefix}{parameterName}", $"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{parameterName}' should be higher than {min} and smaller than {max}.");
-                    }
-                }
-                else
-                {
-                    throw new ParseException($"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{parameterName}' is not a number.");
-                }
-            }
-            else
-            {
-                outputValue = settingValue;
-            }
-
-            return outputValue;
         }
     }
 }

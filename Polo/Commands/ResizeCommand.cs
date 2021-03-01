@@ -2,8 +2,8 @@
 using Microsoft.Extensions.Options;
 using Polo.Abstractions.Commands;
 using Polo.Abstractions.Exceptions;
+using Polo.Abstractions.Options;
 using Polo.Extensions;
-using Polo.Options;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -33,7 +33,8 @@ namespace Polo.Commands
 
         public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
         {
-            // TODO LA - Add output folder parameter
+            // TODO LA - Add source folder parameter
+            // TODO LA - Add destination folder parameter
             var currentDirectory = Environment.CurrentDirectory;
             var destinationDirectory = Path.Combine(currentDirectory, _applicationSettings.ResizedImageSubfolderName);
             var sizeLimit = _applicationSettings.ImageResizeLongSideLimit;

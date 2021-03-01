@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Options;
 using Polo.Abstractions.Commands;
 using Polo.Abstractions.Exceptions;
+using Polo.Abstractions.Options;
 using Polo.Extensions;
-using Polo.Options;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -56,12 +56,12 @@ namespace Polo.Commands
 
             if (!Directory.Exists(sourceFolder))
             {
-                throw new DirectoryNotFoundException($"ERROR: Directory '{sourceFolder}' does not exists.");
+                throw new DirectoryNotFoundException($"ERROR: Directory '{sourceFolder}' does not exist.");
             }
 
             if (!Directory.Exists(destinationDirectory))
             {
-                throw new DirectoryNotFoundException($"ERROR: Directory '{destinationDirectory}' does not exists.");
+                throw new DirectoryNotFoundException($"ERROR: Directory '{destinationDirectory}' does not exist.");
             }
 
             var allFiles = Directory.EnumerateFiles(sourceFolder, "*.*", SearchOption.TopDirectoryOnly);

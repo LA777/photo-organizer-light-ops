@@ -1,7 +1,7 @@
 ﻿
 TODO
 
-- add SIGN to JPEG files
+- add watermark to JPEG files
 
 - add argument for resize JPEG files (resize with watermark)
 
@@ -22,6 +22,7 @@ TODO
 
 - update MoveRawCommand to sync RAW files in the sub-folders of the current folder
 
+- ApplicationSettingsReadOnly make readonly struct
 
 
 

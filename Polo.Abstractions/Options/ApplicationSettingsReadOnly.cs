@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Polo.Options
+namespace Polo.Abstractions.Options
 {
     public class ApplicationSettingsReadOnly
     {

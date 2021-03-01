@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
-using Polo.Options;
+using Polo.Abstractions.Options;
 using Polo.UnitTests.FileUtils;
 using System;
 
