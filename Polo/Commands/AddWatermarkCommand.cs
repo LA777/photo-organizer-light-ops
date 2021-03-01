@@ -55,7 +55,6 @@ namespace Polo.Commands
 
             var watermarkTransparencyPercent = ParameterHandler.TransparencyParameter.Initialize(parameters, _applicationSettings.WatermarkTransparencyPercent);
 
-
             // TODO LA - Check in UTs duplicates
             var jpegFiles = new List<string>();
             _applicationSettings.JpegFileExtensions.Distinct().ToList()
@@ -75,7 +74,7 @@ namespace Polo.Commands
                 using var watermark = new MagickImage(watermarkPath);
                 const int maxPercentValue = 100;
                 watermark.Evaluate(Channels.Alpha, EvaluateOperator.Subtract, new Percentage(maxPercentValue - watermarkTransparencyPercent));
-                image.Composite(watermark, Gravity.Southwest, CompositeOperator.Over);
+                image.Composite(watermark, watermarkPositionMagick, CompositeOperator.Over);
 
                 image.Write(destinationImagePath);
                 _logger.Information($"Watermark added: {destinationImagePath}");

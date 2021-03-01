@@ -1,8 +1,8 @@
 using FluentAssertions;
 using Moq;
 using Polo.Abstractions.Commands;
+using Polo.Abstractions.Options;
 using Polo.Commands;
-using Polo.Options;
 using Polo.UnitTests.FileUtils;
 using Polo.UnitTests.Models;
 using Serilog;

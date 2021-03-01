@@ -1,5 +1,6 @@
 ﻿using Polo.Abstractions.Exceptions;
 using Polo.Abstractions.Parameters;
+using Polo.Extensions;
 using System.Collections.Generic;
 using System.IO;
 
@@ -16,9 +17,13 @@ namespace Polo.Parameters
         public string Initialize(IReadOnlyDictionary<string, string> incomeParameters, string defaultValue)
         {
             // TODO LA - Cover with UTs
+            var outputValue = defaultValue;
+            var parametersEmpty = incomeParameters.IsNullOrEmpty();
 
-            var outputValue = incomeParameters.TryGetValue(Name, out var parameterValue)
-                ? parameterValue : defaultValue;
+            if (!parametersEmpty && incomeParameters.TryGetValue(Name, out var parameterValue))
+            {
+                outputValue = parameterValue;
+            }
 
             if (string.IsNullOrEmpty(outputValue))
             {

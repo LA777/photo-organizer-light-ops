@@ -1,6 +1,7 @@
 ﻿using Polo.Abstractions.Exceptions;
 using Polo.Abstractions.Options;
 using Polo.Abstractions.Parameters;
+using Polo.Extensions;
 using System.Collections.Generic;
 
 namespace Polo.Parameters
@@ -10,15 +11,15 @@ namespace Polo.Parameters
         public static string Name => "position";
 
         public static IReadOnlyCollection<string> PossibleValues => new List<string>() {
-            "right bottom",
-            "right center",
-            "right top",
-            "left top",
-            "left center",
-            "left bottom",
-            "center top",
-            "center center",
-            "center bottom"
+            "right-bottom",
+            "right-center",
+            "right-top",
+            "left-top",
+            "left-center",
+            "left-bottom",
+            "center-top",
+            "center-center",
+            "center-bottom"
         };
 
         public static string Description => "Describes position.";
@@ -27,12 +28,22 @@ namespace Polo.Parameters
         {
             // TODO LA - Cover with UTs
 
-            var outputValue = incomeParameters.TryGetValue(Name, out var parameterValue)
-                ? parameterValue : defaultValue;
+            var outputValue = defaultValue;
+            var parametersEmpty = incomeParameters.IsNullOrEmpty();
+
+            if (parametersEmpty && string.IsNullOrWhiteSpace(defaultValue))
+            {
+                throw new ParameterAbsentException($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{Name}' parameter or setup setting value '{nameof(ApplicationSettingsReadOnly.WatermarkPosition)}'.");  // TODO LA - Refactor
+            }
+
+            if (!parametersEmpty && incomeParameters.TryGetValue(Name, out var parameterValue))
+            {
+                outputValue = parameterValue;
+            }
 
             if (string.IsNullOrWhiteSpace(outputValue))
             {
-                throw new ParameterAbsentException($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{Name}' parameter or setup setting value '{nameof(ApplicationSettingsReadOnly.WatermarkPosition)}'.");
+                throw new ParameterAbsentException($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{Name}' parameter or setup setting value '{nameof(ApplicationSettingsReadOnly.WatermarkPosition)}'."); // TODO LA - Refactor
             }
 
             return outputValue;

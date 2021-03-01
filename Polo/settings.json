@@ -6,7 +6,7 @@
   "ImageResizeLongSideLimit": 1600, // TODO LA - Rename
   "WatermarkPath": "d:\\tmp dev\\images\\sign\\Sign v3.5sl - 64% - FSviewer.png",
   "WatermarkOutputFolderName": "watermark-output",
-  "WatermarkPosition": "left bottom",
+  "WatermarkPosition": "left-bottom",
   "WatermarkTransparencyPercent": 64,
   "JpegFileExtensions": [ "jpg", "jpeg" ],
   "RawFileExtensions": [ "orf", "crw", "cr2", "cr3", "3fr", "mef", "nef", "nrw", "pef", "ptx", "rw2", "arw", "srf", "sr2", "gpr", "raf", "raw", "rwl", "dng", "srw", "x3f" ],

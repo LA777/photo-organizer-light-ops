@@ -1,5 +1,6 @@
 ﻿using Polo.Abstractions.Exceptions;
 using Polo.Abstractions.Parameters;
+using Polo.Extensions;
 using System;
 using System.Collections.Generic;
 
@@ -20,8 +21,10 @@ namespace Polo.Parameters
         {
             // TODO LA - Cover with UTs
 
-            int outputValue;
-            if (incomeParameters.TryGetValue(Name, out var parameterValue))
+            var outputValue = defaultValue;
+            var parametersEmpty = incomeParameters.IsNullOrEmpty();
+
+            if (!parametersEmpty && incomeParameters.TryGetValue(Name, out var parameterValue))
             {
                 if (int.TryParse(parameterValue, out var number))
                 {
@@ -31,10 +34,6 @@ namespace Polo.Parameters
                 {
                     throw new ParseException($"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{Name}' is not a number.");
                 }
-            }
-            else
-            {
-                outputValue = defaultValue;
             }
 
             if (outputValue < _min || outputValue > _max)

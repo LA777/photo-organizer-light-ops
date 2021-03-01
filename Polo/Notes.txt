@@ -3,13 +3,15 @@ TODO
 
 - add watermark to JPEG files
 
+- migrate to .Net 5
+
 - add argument for resize JPEG files (resize with watermark)
 
 - add overwrite-file parameter
 
 - add Sequence command to run several commands
 
-- add setting - DeleteToRecycleBin
+- add parameter/setting - DeleteToRecycleBin
 
 - copy\move files command - add argument - overwrite
 
@@ -22,7 +24,7 @@ TODO
 
 - update MoveRawCommand to sync RAW files in the sub-folders of the current folder
 
-- ApplicationSettingsReadOnly make readonly struct
+- ApplicationSettingsReadOnly make readonly record
 
 
 
