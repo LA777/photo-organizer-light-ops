@@ -56,6 +56,8 @@ namespace Polo
                     throw new ParseException("ERROR: Unknown command. Please enter --help to see available commands list."); // TODO LA - Refactor
                 }
             }
+
+            _logger.Information($"Command '{commandArgument}' DONE!");
         }
 
         private Dictionary<string, string> ParseParameters(IEnumerable<string> arguments)

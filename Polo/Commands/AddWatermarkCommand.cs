@@ -65,20 +65,37 @@ namespace Polo.Commands
                 Directory.CreateDirectory(destinationDirectory);
             }
 
+            using var watermark = new MagickImage(watermarkPath);
+            //const int maxPercentValue = 100;
+            //watermark.Evaluate(Channels.Alpha, EvaluateOperator.Subtract, new Percentage(watermarkTransparencyPercent));
+            //watermark.Evaluate(Channels.Alpha, EvaluateOperator.Divide, 4);
+
+            var transparentWatermark = watermark.ConvertToTransparentMagickImage(watermarkTransparencyPercent);
+
             foreach (var jpegFile in jpegFiles)
             {
-                var jpegFileInfo = new FileInfo(jpegFile);
-                var destinationImagePath = Path.Combine(destinationDirectory, jpegFileInfo.Name);
-
+                var fileName = Path.GetFileName(jpegFile);
+                var destinationImagePath = Path.Combine(destinationDirectory, fileName);
                 using var image = new MagickImage(jpegFile);
-                using var watermark = new MagickImage(watermarkPath);
-                const int maxPercentValue = 100;
-                watermark.Evaluate(Channels.Alpha, EvaluateOperator.Subtract, new Percentage(maxPercentValue - watermarkTransparencyPercent));
-                image.Composite(watermark, watermarkPositionMagick, CompositeOperator.Over);
-
+                image.Composite(transparentWatermark, watermarkPositionMagick, CompositeOperator.Over);
                 image.Write(destinationImagePath);
                 _logger.Information($"Watermark added: {destinationImagePath}");
             }
         }
+
+        //private Bitmap ChangeOpacity(Image image, float opacityValue)
+        //{
+        //    var bitmap = new Bitmap(image.Width, image.Height);
+        //    using var graphics = Graphics.FromImage(bitmap);
+        //    var colormatrix = new ColorMatrix
+        //    {
+        //        Matrix33 = opacityValue
+        //    };
+        //    var imagegAttribute = new ImageAttributes();
+        //    imagegAttribute.SetColorMatrix(colormatrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+        //    graphics.DrawImage(image, new Rectangle(0, 0, bitmap.Width, bitmap.Height), 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, imagegAttribute);
+
+        //    return bitmap;
+        //}
     }
 }

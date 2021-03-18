@@ -8,14 +8,14 @@ namespace Polo.Parameters
 {
     public class TransparencyParameter : IParameter<int>, IParameterInfo
     {
-        private static readonly int _min = 1;// TODO LA - Combine min and max with Settings
+        private static readonly int _min = 0;// TODO LA - Combine min and max with Settings
         private static readonly int _max = 100;
 
-        public static string Name => "watermark-path";
+        public static string Name => "transparency";
 
         public static IReadOnlyCollection<int> PossibleValues => new List<int>() { _min, 42, _max };
 
-        public static string Description => "Watermark image full path.";
+        public static string Description => "Watermark transparency percent.";
 
         public int Initialize(IReadOnlyDictionary<string, string> incomeParameters, int defaultValue)
         {

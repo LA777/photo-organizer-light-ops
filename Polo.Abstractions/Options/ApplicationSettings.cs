@@ -29,7 +29,7 @@ namespace Polo.Abstractions.Options
         [Required(ErrorMessage = "ERROR: Value for {0} should contain some data.")]
         public string WatermarkPosition { get; set; } = string.Empty;
 
-        [Range(1, 100, ErrorMessage = "ERROR: Value for {0} should be between {1} and {2}.")]
+        [Range(0, 100, ErrorMessage = "ERROR: Value for {0} should be between {1} and {2}.")]
         public int WatermarkTransparencyPercent { get; set; } = 0;
 
         [MinLength(1, ErrorMessage = "ERROR: Value for {0} should contain some data.")]
