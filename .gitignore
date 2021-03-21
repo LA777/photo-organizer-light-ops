@@ -351,4 +351,6 @@ MigrationBackup/
 <<<<<<< Updated upstream
 /local.runsettings
 =======
+.vscode/launch.json
+.vscode/tasks.json
 >>>>>>> Stashed changes
