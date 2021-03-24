@@ -5,6 +5,12 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <StartupObject>Polo.Program</StartupObject>
     <ApplicationIcon>Icon\multimediaphotoviewer.ico</ApplicationIcon>
+    <Version>0.0.5</Version>
+    <Description>Photo organizer</Description>
+    <PackageProjectUrl>https://github.com/LA777/photo-organizer-light-ops</PackageProjectUrl>
+    <PackageIcon>multimediaphotoviewer.ico</PackageIcon>
+    <RepositoryUrl>https://github.com/LA777/photo-organizer-light-ops</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
@@ -28,6 +34,10 @@
   <ItemGroup>
     <None Update="settings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Icon\multimediaphotoviewer.ico">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
     </None>
   </ItemGroup>
 

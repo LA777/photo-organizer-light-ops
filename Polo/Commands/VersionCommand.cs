@@ -2,6 +2,7 @@
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace Polo.Commands
 {
@@ -22,7 +23,8 @@ namespace Polo.Commands
 
         public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
         {
-            _logger.Information(Program.Version);
+            var version = Assembly.GetExecutingAssembly().GetName().Version;
+            _logger.Information(version.ToString());
         }
     }
 }

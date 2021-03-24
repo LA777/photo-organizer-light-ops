@@ -9,14 +9,13 @@ using Serilog;
 using Serilog.Events;
 using System;
 using System.IO;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Polo
 {
     public static class Program
     {
-        public const string Version = "0.0.5";
-
         private static IConfiguration Configuration { get; } = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("settings.json", optional: false, reloadOnChange: false)
@@ -65,9 +64,11 @@ namespace Polo
             var applicationSettingsReadOnly = new ApplicationSettingsReadOnly(applicationSettings);
             IOptions<ApplicationSettingsReadOnly> applicationSettingsReadOnlyOptions = Microsoft.Extensions.Options.Options.Create(applicationSettingsReadOnly);
 
+            var version = Assembly.GetExecutingAssembly().GetName().Version;
+
             var logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
-                .Enrich.WithProperty("Version", Version)
+                .Enrich.WithProperty("Version", version)
                 .WriteTo.Console(LogEventLevel.Information)
                 .WriteTo.File(applicationSettings.LogFilePath, rollingInterval: RollingInterval.Day)
                 .CreateLogger();
