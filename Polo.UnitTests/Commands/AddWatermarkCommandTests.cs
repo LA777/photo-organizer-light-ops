@@ -29,7 +29,7 @@ namespace Polo.UnitTests.Commands
             WatermarkPath = "",
             WatermarkOutputFolderName = _watermarkOutputFolderName,
             WatermarkPosition = "center-center",
-            WatermarkTransparencyPercent = 40
+            WatermarkTransparencyPercent = 20
         };
 
         private static readonly string _albumName = "Album1";

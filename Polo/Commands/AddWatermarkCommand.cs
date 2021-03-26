@@ -66,11 +66,7 @@ namespace Polo.Commands
             }
 
             using var watermark = new MagickImage(watermarkPath);
-            //const int maxPercentValue = 100;
-            //watermark.Evaluate(Channels.Alpha, EvaluateOperator.Subtract, new Percentage(watermarkTransparencyPercent));
-            //watermark.Evaluate(Channels.Alpha, EvaluateOperator.Divide, 4);
-
-            var transparentWatermark = watermark.ConvertToTransparentMagickImage(watermarkTransparencyPercent);
+            using var transparentWatermark = watermark.ConvertToTransparentMagickImage(watermarkTransparencyPercent);
 
             foreach (var jpegFile in jpegFiles)
             {
@@ -82,20 +78,5 @@ namespace Polo.Commands
                 _logger.Information($"Watermark added: {destinationImagePath}");
             }
         }
-
-        //private Bitmap ChangeOpacity(Image image, float opacityValue)
-        //{
-        //    var bitmap = new Bitmap(image.Width, image.Height);
-        //    using var graphics = Graphics.FromImage(bitmap);
-        //    var colormatrix = new ColorMatrix
-        //    {
-        //        Matrix33 = opacityValue
-        //    };
-        //    var imagegAttribute = new ImageAttributes();
-        //    imagegAttribute.SetColorMatrix(colormatrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
-        //    graphics.DrawImage(image, new Rectangle(0, 0, bitmap.Width, bitmap.Height), 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, imagegAttribute);
-
-        //    return bitmap;
-        //}
     }
 }
