@@ -7,7 +7,7 @@ namespace Polo.Extensions
     public static class StringExtension
     {
         public static Gravity ParsePosition(this string position)
-        {
+        {// TODO LA - Move this extension to MagickImage extensions
             var split = position.Split(CommandParser.ShortCommandPrefix);
             if (split.Length != 2)
             {

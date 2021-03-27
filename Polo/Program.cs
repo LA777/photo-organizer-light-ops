@@ -85,6 +85,7 @@ namespace Polo
             services.AddSingleton<ICommand, MoveAllFilesCommand>();
             services.AddSingleton<ICommand, MoveVideoToSubfolderCommand>();
             services.AddSingleton<ICommand, AddWatermarkCommand>();
+            services.AddSingleton<ICommand, ResizeWithWatermarkCommand>();
         }
     }
 }

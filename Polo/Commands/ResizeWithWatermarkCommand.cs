@@ -12,7 +12,7 @@ using System.Linq;
 
 namespace Polo.Commands
 {
-    public class AddWatermarkCommand : ICommand
+    public class ResizeWithWatermarkCommand : ICommand
     {
         private readonly ILogger _logger;
         private readonly ApplicationSettingsReadOnly _applicationSettings;
@@ -23,16 +23,17 @@ namespace Polo.Commands
             WatermarkPathParameter = new WatermarkPathParameter(),
             OutputFolderNameParameter = new OutputFolderNameParameter(),
             PositionParameter = new PositionParameter(),
-            TransparencyParameter = new TransparencyParameter()
+            TransparencyParameter = new TransparencyParameter(),
+            LongSideLimitParameter = new LongSideLimitParameter()
         };
 
-        public string Name => "add-watermark";
+        public string Name => "resize-with-watermark";
 
-        public string ShortName => "aw";
+        public string ShortName => "rw";
 
-        public string Description => $"Adds watermarks to all JPG files and copies to the output folder. Example: polo.exe {CommandParser.CommandPrefix}{Name}";
+        public string Description => $"Resizes all JPEG images in the current folder, adds watermark and saves them to a sub-folder. Example: polo.exe {CommandParser.CommandPrefix}{Name} {CommandParser.ShortCommandPrefix}{LongSideLimitParameter.Name}:1600"; // TODO LA - Show all possible parameters
 
-        public AddWatermarkCommand(IOptions<ApplicationSettingsReadOnly> applicationOptions, ILogger logger)
+        public ResizeWithWatermarkCommand(IOptions<ApplicationSettingsReadOnly> applicationOptions, ILogger logger)
         {
             _applicationSettings = applicationOptions.Value ?? throw new ArgumentNullException(nameof(applicationOptions));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -40,19 +41,17 @@ namespace Polo.Commands
 
         public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
         {
+            // TODO LA - Add source folder parameter
+            // TODO LA - Add destination folder parameter
             // TODO LA - Add overwrite file parameter
 
             var sourceFolderPath = ParameterHandler.SourceParameter.Initialize(parameters, Environment.CurrentDirectory);
-
             var watermarkPath = ParameterHandler.WatermarkPathParameter.Initialize(parameters, _applicationSettings.WatermarkPath);
-
-            var watermarkOutputFolderName = ParameterHandler.OutputFolderNameParameter.Initialize(parameters, _applicationSettings.WatermarkOutputFolderName);
-
-            var destinationDirectory = Path.Combine(sourceFolderPath, watermarkOutputFolderName);
-
+            var outputFolderName = ParameterHandler.OutputFolderNameParameter.Initialize(parameters, _applicationSettings.WatermarkOutputFolderName);
+            var destinationDirectory = Path.Combine(sourceFolderPath, outputFolderName);
+            var sizeLimit = ParameterHandler.LongSideLimitParameter.Initialize(parameters, _applicationSettings.ImageResizeLongSideLimit);
             var watermarkPosition = ParameterHandler.PositionParameter.Initialize(parameters, _applicationSettings.WatermarkPosition);
             var watermarkPositionMagick = watermarkPosition.ParsePosition();
-
             var watermarkTransparencyPercent = ParameterHandler.TransparencyParameter.Initialize(parameters, _applicationSettings.WatermarkTransparencyPercent);
 
             // TODO LA - Check in UTs duplicates
@@ -72,10 +71,32 @@ namespace Polo.Commands
             {
                 var fileName = Path.GetFileName(jpegFile);
                 var destinationImagePath = Path.Combine(destinationDirectory, fileName);
+
                 using var image = new MagickImage(jpegFile);
+                var info = new MagickImageInfo(jpegFile);
+                var width = info.Width;
+                var height = info.Height;
+
+                if (width >= height && width > sizeLimit)
+                {
+                    image.Resize(sizeLimit, 0);
+                }
+                else if (height > width && height > sizeLimit)
+                {
+                    image.Resize(0, sizeLimit);
+                }
+                else
+                {
+                    image.Composite(transparentWatermark, watermarkPositionMagick, CompositeOperator.Over);
+                    image.Write(destinationImagePath);
+                    _logger.Information($"File copied with watermark and without resize: {destinationImagePath}");
+
+                    continue;
+                }
+
                 image.Composite(transparentWatermark, watermarkPositionMagick, CompositeOperator.Over);
                 image.Write(destinationImagePath);
-                _logger.Information($"Watermark added: {destinationImagePath}");
+                _logger.Information($"File resized with watermark: {destinationImagePath}");
             }
         }
     }

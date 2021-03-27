@@ -10,6 +10,7 @@ namespace Polo.Parameters
         public OutputFolderNameParameter OutputFolderNameParameter { get; set; } = null;
         public PositionParameter PositionParameter { get; set; } = null;
         public TransparencyParameter TransparencyParameter { get; set; } = null;
+        public LongSideLimitParameter LongSideLimitParameter { get; set; } = null;
 
         public IReadOnlyCollection<IParameterInfo> GetStringParameters()
         {
@@ -20,6 +21,7 @@ namespace Polo.Parameters
             if (OutputFolderNameParameter != null) parameters.Add(OutputFolderNameParameter);
             if (PositionParameter != null) parameters.Add(PositionParameter);
             if (TransparencyParameter != null) parameters.Add(TransparencyParameter);
+            if (LongSideLimitParameter != null) parameters.Add(LongSideLimitParameter);
 
             return parameters;
         }
