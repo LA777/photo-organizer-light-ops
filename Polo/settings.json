@@ -3,11 +3,11 @@
   "DefaultSourceFolderPath": "j:\\DCIM",
   "RawFolderName": "RAW",
   "ResizedImageSubfolderName": "small", // TODO LA - Rename
-  "ImageResizeLongSideLimit": 1600, // TODO LA - Rename
+  "ImageResizeLongSideLimit": 1600, // Min - 1; // TODO LA - Rename
   "WatermarkPath": "d:\\tmp dev\\images\\sign\\Sign v3.5 small.png",
   "WatermarkOutputFolderName": "watermark-output",
   "WatermarkPosition": "left-bottom",
-  "WatermarkTransparencyPercent": 50,
+  "WatermarkTransparencyPercent": 50, // Min - 0; Max - 100;
   "FileForProcessExtensions": [ "jpg", "jpeg" ],
   "RawFileExtensions": [ "orf", "crw", "cr2", "cr3", "3fr", "mef", "nef", "nrw", "pef", "ptx", "rw2", "arw", "srf", "sr2", "gpr", "raf", "raw", "rwl", "dng", "srw", "x3f" ],
   "VideoFileExtensions": [ "mkv", "avi", "m2ts", "ts", "mp4", "m4p", "m4v", "mpg", "mpeg" ]

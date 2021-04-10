@@ -8,12 +8,12 @@ namespace Polo.Parameters
 {
     public class TransparencyParameter : IParameter<int>, IParameterInfo
     {
-        private static readonly int _min = 0;// TODO LA - Combine min and max with Settings
-        private static readonly int _max = 100;
+        public static int Min => 0;// TODO LA - Combine min and max with Options validation
+        public static int Max => 100;
 
         public static string Name => "transparency";
 
-        public static IReadOnlyCollection<int> PossibleValues => new List<int>() { _min, 42, _max };
+        public static IReadOnlyCollection<int> PossibleValues => new List<int>() { Min, 42, Max };
 
         public static string Description => "Watermark transparency percent.";
 
@@ -36,9 +36,9 @@ namespace Polo.Parameters
                 }
             }
 
-            if (outputValue < _min || outputValue > _max)
+            if (outputValue < Min || outputValue > Max)
             {
-                throw new ArgumentOutOfRangeException($"{CommandParser.ShortCommandPrefix}{Name}", $"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{Name}' should be in the range from {_min} to {_max}."); // TODO LA - Refactor
+                throw new ArgumentOutOfRangeException($"{CommandParser.ShortCommandPrefix}{Name}", $"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{Name}' should be in the range from '{Min}' to '{Max}'.");
             }
 
             return outputValue;
