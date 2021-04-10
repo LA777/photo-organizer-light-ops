@@ -29,7 +29,7 @@ namespace Polo.Commands
         public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
         {
             var currentDirectory = Environment.CurrentDirectory;
-            var rawFolderPath = Path.Join(currentDirectory, _applicationSettings.RawFolderName);
+            var rawFolderPath = Path.Join(currentDirectory, _applicationSettings.RawFolderName);// TODO LA - Create RAW input parameter
 
             var rawFiles = new List<string>();
 

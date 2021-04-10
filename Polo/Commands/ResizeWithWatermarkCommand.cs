@@ -42,14 +42,12 @@ namespace Polo.Commands
 
         public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
         {
-            // TODO LA - Add source folder parameter
-            // TODO LA - Add destination folder parameter
-            // TODO LA - Add overwrite file parameter
+            // TODO LA - Add OverwriteFile parameter and setting
 
             var sourceFolderPath = ParameterHandler.SourceParameter.Initialize(parameters, Environment.CurrentDirectory);
             var watermarkPath = ParameterHandler.WatermarkPathParameter.Initialize(parameters, _applicationSettings.WatermarkPath);
             var outputFolderName = ParameterHandler.OutputFolderNameParameter.Initialize(parameters, _applicationSettings.WatermarkOutputFolderName);
-            var destinationDirectory = Path.Combine(sourceFolderPath, outputFolderName);
+            var destinationFolder = Path.Combine(sourceFolderPath, outputFolderName);
             var sizeLimit = ParameterHandler.LongSideLimitParameter.Initialize(parameters, _applicationSettings.ImageResizeLongSideLimit);
             var watermarkPosition = ParameterHandler.PositionParameter.Initialize(parameters, _applicationSettings.WatermarkPosition);
             var watermarkPositionMagick = watermarkPosition.ParsePosition();
@@ -60,9 +58,9 @@ namespace Polo.Commands
             _applicationSettings.FileForProcessExtensions.Distinct().ToList()// TODO LA - Move this Select to some extension
                 .ForEach(x => jpegFiles.AddRange(Directory.EnumerateFiles(sourceFolderPath, $"*.{x}", SearchOption.TopDirectoryOnly)));
 
-            if (jpegFiles.Any() && !Directory.Exists(destinationDirectory))
+            if (jpegFiles.Any() && !Directory.Exists(destinationFolder))
             {
-                Directory.CreateDirectory(destinationDirectory);
+                Directory.CreateDirectory(destinationFolder);
             }
 
             using var watermark = new MagickImage(watermarkPath);
@@ -71,7 +69,7 @@ namespace Polo.Commands
             foreach (var jpegFile in jpegFiles)
             {
                 var fileName = Path.GetFileName(jpegFile);
-                var destinationImagePath = Path.Combine(destinationDirectory, fileName);
+                var destinationImagePath = Path.Combine(destinationFolder, fileName);
 
                 using var image = new MagickImage(jpegFile);
                 var info = new MagickImageInfo(jpegFile);

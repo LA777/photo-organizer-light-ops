@@ -20,7 +20,7 @@ namespace Polo.UnitTests.Commands
     {
         private static readonly ICollection<string> _jpegFileExtensions = new List<string>() { "jpeg", "jpg" };
         private static readonly string _watermarkOutputFolderName = "watermark-output";
-        private static readonly string _watermarkFolderName = "sign";
+        private static readonly string _watermarkFolderName = "watermark";
         private static readonly ApplicationSettings _validApplicationSettings = new ApplicationSettings()
         {
             FileForProcessExtensions = _jpegFileExtensions,
@@ -98,7 +98,6 @@ namespace Polo.UnitTests.Commands
             }
         };
 
-        [Fact]
         public void Action_Should_Add_Watermark_And_Copy_To_Output_Folder_Test()
         {
             // TODO LA - Complete

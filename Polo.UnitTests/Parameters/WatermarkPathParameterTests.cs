@@ -5,7 +5,6 @@ using Polo.Abstractions.Parameters;
 using Polo.Parameters;
 using Polo.UnitTests.Commands;
 using Polo.UnitTests.FileUtils;
-using Polo.UnitTests.Models;
 using System.Collections.Generic;
 using System.IO;
 using Xunit;
@@ -16,30 +15,18 @@ namespace Polo.UnitTests.Parameters
     public class WatermarkPathParameterTests : CommandTestBase
     {
         private readonly IParameter<string> _sut = new WatermarkPathParameter();
-        private static readonly FotoFile _watermarkFile = new FotoFile("watermark", "png");
-        private const string WatermarkFolderName = "watermark";
+        private readonly string _watermarkFileFullPath;
 
-        private readonly Folder _folderStructureInitial = new Folder()
+        public WatermarkPathParameterTests()
         {
-            SubFolders = new List<Folder>()
-            {
-                new Folder()
-                {
-                    Name = WatermarkFolderName,
-                    Files = new List<FotoFile>()
-                    {
-                        _watermarkFile
-                    }
-                }
-            }
-        };
+            _watermarkFileFullPath = FileHelper.CreateWatermark();
+        }
 
         [Fact]
         public void Initialize_Should_Return_Input_Parameter_Test()
         {
             // Arrange
-            FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
-            var inputParameter = _watermarkFile.FullFilePath;
+            var inputParameter = _watermarkFileFullPath;
             const string defaultValue = nameof(defaultValue);
             var inputParameters = new Dictionary<string, string>
             {
@@ -57,8 +44,7 @@ namespace Polo.UnitTests.Parameters
         public void Initialize_Should_Return_Default_Parameter_Test()
         {
             // Arrange
-            FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
-            var defaultValue = _watermarkFile.FullFilePath;
+            var defaultValue = _watermarkFileFullPath;
             var inputParameters = new Dictionary<string, string>();
 
             // Act

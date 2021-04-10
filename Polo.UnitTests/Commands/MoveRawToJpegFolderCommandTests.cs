@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using Xunit;
 
 namespace Polo.UnitTests.Commands
@@ -209,6 +210,13 @@ namespace Polo.UnitTests.Commands
 
             // Assert
             var folderStructureActual = FileHelper.CreateFolderStructureByFolderAndFiles(testFolderFullPath);
+            var json1 = JsonSerializer.Serialize(_folderStructureExpected);
+            var json2 = JsonSerializer.Serialize(folderStructureActual);
+
+
+
+
+
             folderStructureActual.Should().BeEquivalentTo(_folderStructureExpected);
         }
 

@@ -1,9 +1,9 @@
 ﻿using ImageMagick;
 using Microsoft.Extensions.Options;
 using Polo.Abstractions.Commands;
-using Polo.Abstractions.Exceptions;
 using Polo.Abstractions.Options;
-using Polo.Extensions;
+using Polo.Parameters;
+using Polo.Parameters.Handler;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -17,13 +17,18 @@ namespace Polo.Commands
         private readonly ILogger _logger;
         private readonly ApplicationSettingsReadOnly _applicationSettings;
 
+        public readonly ParameterHandler ParameterHandler = new ParameterHandler()
+        {
+            SourceParameter = new SourceParameter(),
+            LongSideLimitParameter = new LongSideLimitParameter(),
+            OutputFolderNameParameter = new OutputFolderNameParameter()
+        };
+
         public string Name => "resize";
 
         public string ShortName => "rs";
 
-        public static readonly string LongSideLimitParameterName = "long-side-limit";
-
-        public string Description => $"Resizes all JPEG images in the current folder and saves them to a sub-folder. Example: polo.exe {CommandParser.CommandPrefix}{Name} {CommandParser.ShortCommandPrefix}{LongSideLimitParameterName}:1600";
+        public string Description => $"Resizes all JPEG images in the current folder and saves them to a sub-folder. Example: polo.exe {CommandParser.CommandPrefix}{Name} {CommandParser.ShortCommandPrefix}{LongSideLimitParameter.Name}:1600";
 
         public ResizeCommand(IOptions<ApplicationSettingsReadOnly> applicationOptions, ILogger logger)
         {
@@ -33,51 +38,25 @@ namespace Polo.Commands
 
         public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
         {
-            // TODO LA - Add source folder parameter
-            // TODO LA - Add destination folder parameter
             var currentDirectory = Environment.CurrentDirectory;
-            var destinationDirectory = Path.Combine(currentDirectory, _applicationSettings.ResizedImageSubfolderName);
-            var sizeLimit = _applicationSettings.ImageResizeLongSideLimit;
-            var parametersEmpty = parameters.IsNullOrEmpty();
-
-            if (parametersEmpty && sizeLimit == 0)
-            {
-                throw new ParameterAbsentException($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{LongSideLimitParameterName}' parameter or setup setting value '{nameof(ApplicationSettingsReadOnly.ImageResizeLongSideLimit)}'.");
-            }
-
-            if (!parametersEmpty)
-            {
-                if (parameters.TryGetValue(LongSideLimitParameterName, out var sizeLimitValue))
-                {
-                    if (int.TryParse(sizeLimitValue, out var number))
-                    {
-                        sizeLimit = number;
-
-                        if (number < 1)
-                        {
-                            throw new ArgumentOutOfRangeException($"{CommandParser.ShortCommandPrefix}{LongSideLimitParameterName}", $"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{LongSideLimitParameterName}' should be higher than 0.");
-                        }
-                    }
-                    else
-                    {
-                        throw new ParameterParseException($"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{LongSideLimitParameterName}' is not a number.");
-                    }
-                }
-            }
+            var sourceFolderPath = ParameterHandler.SourceParameter.Initialize(parameters, Environment.CurrentDirectory);
+            var outputFolderName = ParameterHandler.OutputFolderNameParameter.Initialize(parameters, _applicationSettings.ResizedImageSubfolderName);
+            var destinationFolder = Path.Combine(sourceFolderPath, outputFolderName);
+            var sizeLimit = ParameterHandler.LongSideLimitParameter.Initialize(parameters, _applicationSettings.ImageResizeLongSideLimit);
 
             var jpegFiles = new List<string>();
             _applicationSettings.FileForProcessExtensions.Distinct().ToList()
                 .ForEach(x => jpegFiles.AddRange(Directory.EnumerateFiles(currentDirectory, $"*.{x}", SearchOption.TopDirectoryOnly)));
 
-            if (jpegFiles.Any() && !Directory.Exists(destinationDirectory))
+            if (jpegFiles.Any() && !Directory.Exists(destinationFolder))
             {
-                Directory.CreateDirectory(destinationDirectory);
+                Directory.CreateDirectory(destinationFolder);
             }
 
             foreach (var jpegFile in jpegFiles)
             {
                 var jpegFileInfo = new FileInfo(jpegFile);
-                var destinationImagePath = Path.Combine(destinationDirectory, jpegFileInfo.Name);
+                var destinationImagePath = Path.Combine(destinationFolder, jpegFileInfo.Name);
 
                 using var image = new MagickImage(jpegFile);
                 var info = new MagickImageInfo(jpegFile);

@@ -1,6 +1,7 @@
 ﻿using ImageMagick;
 using Polo.UnitTests.Models;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 
@@ -14,6 +15,7 @@ namespace Polo.UnitTests.FileUtils
         private const string TestFolderName = "UnitTestTemp";
         public const string FilePrefix = "UTP-";
         public const string RawFolderName = "RAW";
+        public const string WatermarkFolderName = "watermark";
         public static readonly FotoFile Watermark = new FotoFile("watermark", "png", 10, 10);
 
         private static string UnitTestFolder
@@ -42,12 +44,47 @@ namespace Polo.UnitTests.FileUtils
         public static string CreateFoldersAndFilesByStructure(Folder folderStructure)
         {
             var testFolderFullPath = CreateTestFolder();
+
+            foreach (var fotoFile in folderStructure.Files)
+            {
+                CreateFileByFotoFile(testFolderFullPath, fotoFile);
+            }
+
             foreach (var subFolder in folderStructure.SubFolders)
             {
                 CreateFoldersAndFiles(subFolder, testFolderFullPath);
             }
 
             return testFolderFullPath;
+        }
+
+        public static string CreateWatermark()
+        {
+            var watermarkPath = Path.Combine(TestFolderFullPath, WatermarkFolderName, $"{Watermark.Name}.{Watermark.Extension}");
+
+            if (File.Exists(watermarkPath))
+            {
+                return watermarkPath;
+            }
+
+            var folderStructureInitial = new Folder()
+            {
+                SubFolders = new List<Folder>()
+                {
+                    new Folder()
+                    {
+                        Name = WatermarkFolderName,
+                        Files = new List<FotoFile>()
+                        {
+                            Watermark
+                        }
+                    }
+                }
+            };
+
+            CreateFoldersAndFilesByStructure(folderStructureInitial);
+
+            return Path.Combine(TestFolderFullPath, WatermarkFolderName, $"{Watermark.Name}.{Watermark.Extension}");
         }
 
         private static string CreateTestFolder()
@@ -168,7 +205,6 @@ namespace Polo.UnitTests.FileUtils
         private static void CreateFileByFotoFile(string folderPath, FotoFile fotoFile)
         {
             var fullFileName = Path.Join(folderPath, fotoFile.GetNameWithExtension());
-            fotoFile.FullFilePath = fullFileName;
 
             if (fotoFile.Width > 0 || fotoFile.Height > 0)
             {

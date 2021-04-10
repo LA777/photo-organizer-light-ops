@@ -13,7 +13,7 @@ namespace Polo.Commands
     {
         private readonly ILogger _logger;
         private readonly ApplicationSettingsReadOnly _applicationSettings;
-        private readonly string VideoSubfolderName = "video";
+        private readonly string VideoSubfolderName = "video"; // TODO LA - Create Parameter and Setting for Video folder name
 
         public string Name => "video";
 
