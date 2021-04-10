@@ -11,6 +11,7 @@ namespace Polo.Parameters.Handler
         public PositionParameter PositionParameter { get; init; }
         public TransparencyParameter TransparencyParameter { get; init; }
         public LongSideLimitParameter LongSideLimitParameter { get; init; }
+        public DestinationParameter DestinationParameter { get; init; }
 
         public IReadOnlyCollection<IParameterInfo> GetStringParameters()
         {
@@ -22,6 +23,7 @@ namespace Polo.Parameters.Handler
             if (PositionParameter != null) parameters.Add(PositionParameter);
             if (TransparencyParameter != null) parameters.Add(TransparencyParameter);
             if (LongSideLimitParameter != null) parameters.Add(LongSideLimitParameter);
+            if (DestinationParameter != null) parameters.Add(DestinationParameter);
 
             return parameters;
         }

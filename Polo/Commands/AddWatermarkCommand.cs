@@ -41,7 +41,7 @@ namespace Polo.Commands
 
         public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
         {
-            // TODO LA - Add overwrite file parameter
+            // TODO LA - Add OverwriteFile parameter
 
             var sourceFolderPath = ParameterHandler.SourceParameter.Initialize(parameters, Environment.CurrentDirectory);
 

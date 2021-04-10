@@ -3,6 +3,7 @@ using Moq;
 using Polo.Abstractions.Commands;
 using Polo.Abstractions.Options;
 using Polo.Commands;
+using Polo.Parameters;
 using Polo.UnitTests.FileUtils;
 using Polo.UnitTests.Models;
 using Serilog;
@@ -99,7 +100,7 @@ namespace Polo.UnitTests.Commands
         };
 
         [Fact]
-        public void Action_Should_Copy_Files_With_Two_Valid_Parameters_Test()
+        public void Action_Should_Copy_Files_With_Valid_Input_Parameters_Test()
         {
             // Arrange
             var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
@@ -108,8 +109,8 @@ namespace Polo.UnitTests.Commands
             Environment.CurrentDirectory = testFolderFullPath;
             var parameters = new Dictionary<string, string>
             {
-                { CopyAllFilesCommand.SourceFolderParameterName, sourceFolderPath },
-                { CopyAllFilesCommand.DestinationFolderParameterName, destinationFolderPath }
+                { SourceParameter.Name, sourceFolderPath },
+                { DestinationParameter.Name, destinationFolderPath }
             };
 
             // Act
@@ -121,49 +122,7 @@ namespace Polo.UnitTests.Commands
         }
 
         [Fact]
-        public void Action_Should_Throw_Exception_With_Valid_DestinationFolder_And_Invalid_SourceFolder_Parameters_Test()
-        {
-            // Arrange
-            var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
-            var sourceFolderPath = Path.Combine(testFolderFullPath, "no such folder");
-            var destinationFolderPath = Path.Combine(testFolderFullPath, _destinationFolderName);
-            Environment.CurrentDirectory = testFolderFullPath;
-            var parameters = new Dictionary<string, string>
-            {
-                { CopyAllFilesCommand.SourceFolderParameterName, sourceFolderPath },
-                { CopyAllFilesCommand.DestinationFolderParameterName, destinationFolderPath }
-            };
-
-            // Act
-            var exception = Assert.Throws<DirectoryNotFoundException>(() => _sut.Action(parameters));
-
-            // Assert
-            Assert.Equal($"ERROR: Directory '{sourceFolderPath}' does not exists.", exception.Message);
-        }
-
-        [Fact]
-        public void Action_Should_Throw_Exception_With_Invalid_DestinationFolder_And_Valid_SourceFolder_Parameters_Test()
-        {
-            // Arrange
-            var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
-            var sourceFolderPath = Path.Combine(testFolderFullPath, _sourceFolderName);
-            var destinationFolderPath = Path.Combine(testFolderFullPath, "no such folder");
-            Environment.CurrentDirectory = testFolderFullPath;
-            var parameters = new Dictionary<string, string>
-            {
-                { CopyAllFilesCommand.SourceFolderParameterName, sourceFolderPath },
-                { CopyAllFilesCommand.DestinationFolderParameterName, destinationFolderPath }
-            };
-
-            // Act
-            var exception = Assert.Throws<DirectoryNotFoundException>(() => _sut.Action(parameters));
-
-            // Assert
-            Assert.Equal($"ERROR: Directory '{destinationFolderPath}' does not exists.", exception.Message);
-        }
-
-        [Fact]
-        public void Action_Should_Copy_Files_With_Valid_SourceFolder_Parameter_Test()
+        public void Action_Should_Copy_Files_With_Valid_SourceFolder_Input_Parameter_Test()
         {
             // Arrange
             var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
@@ -172,7 +131,7 @@ namespace Polo.UnitTests.Commands
             Environment.CurrentDirectory = destinationFolderPath;
             var parameters = new Dictionary<string, string>
             {
-                { CopyAllFilesCommand.SourceFolderParameterName, sourceFolderPath }
+                { SourceParameter.Name, sourceFolderPath }
             };
 
             // Act
@@ -184,27 +143,7 @@ namespace Polo.UnitTests.Commands
         }
 
         [Fact]
-        public void Action_Should_Throw_Exception_With_Invalid_SourceFolder_Parameter_And_Valid_SourceFolder_Setting_Test()
-        {
-            // Arrange
-            var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
-            var sourceFolderPath = Path.Combine(testFolderFullPath, "no such folder");
-            var destinationFolderPath = Path.Combine(testFolderFullPath, _destinationFolderName);
-            Environment.CurrentDirectory = destinationFolderPath;
-            var parameters = new Dictionary<string, string>
-            {
-                { CopyAllFilesCommand.SourceFolderParameterName, sourceFolderPath }
-            };
-
-            // Act
-            var exception = Assert.Throws<DirectoryNotFoundException>(() => _sut.Action(parameters));
-
-            // Assert
-            Assert.Equal($"ERROR: Directory '{sourceFolderPath}' does not exists.", exception.Message);
-        }
-
-        [Fact]
-        public void Action_Should_Copy_Files_Without_Parameters_And_Valid_SourceFolder_Settings_Test()
+        public void Action_Should_Copy_Files_Without_Input_Parameters_And_Valid_SourceFolder_Settings_Test()
         {
             // Arrange
             var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
@@ -226,250 +165,6 @@ namespace Polo.UnitTests.Commands
             var folderStructureActual = FileHelper.CreateFolderStructureByFolderAndFiles(testFolderFullPath);
             folderStructureActual.Should().BeEquivalentTo(_folderStructureExpected);
         }
-
-        [Fact]
-        public void Action_Should_Copy_Files_If_Parameters_Null_And_Valid_SourceFolder_Settings_Test()
-        {
-            // Arrange
-            var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
-            var sourceFolderPath = Path.Combine(testFolderFullPath, _sourceFolderName);
-            var destinationFolderPath = Path.Combine(testFolderFullPath, _destinationFolderName);
-            Environment.CurrentDirectory = destinationFolderPath;
-
-            var validApplicationSettings = new ApplicationSettings()
-            {
-                DefaultSourceFolderPath = sourceFolderPath
-            };
-            var sut = new CopyAllFilesCommand(GetOptions(validApplicationSettings), _loggerMock.Object);
-
-            // Act
-            sut.Action();
-
-            // Assert
-            var folderStructureActual = FileHelper.CreateFolderStructureByFolderAndFiles(testFolderFullPath);
-            folderStructureActual.Should().BeEquivalentTo(_folderStructureExpected);
-        }
-
-        [Fact]
-        public void Action_Should_Copy_Files_With_Valid_DestinationFolder_Parameter_And_Valid_SourceFolder_Settings_Test()
-        {
-            // Arrange
-            var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
-            var sourceFolderPath = Path.Combine(testFolderFullPath, _sourceFolderName);
-            var destinationFolderPath = Path.Combine(testFolderFullPath, _destinationFolderName);
-            var parameters = new Dictionary<string, string>
-            {
-                { CopyAllFilesCommand.DestinationFolderParameterName, destinationFolderPath }
-            };
-
-            var validApplicationSettings = new ApplicationSettings()
-            {
-                DefaultSourceFolderPath = sourceFolderPath
-            };
-            var sut = new CopyAllFilesCommand(GetOptions(validApplicationSettings), _loggerMock.Object);
-
-            // Act
-            sut.Action(parameters);
-
-            // Assert
-            var folderStructureActual = FileHelper.CreateFolderStructureByFolderAndFiles(testFolderFullPath);
-            folderStructureActual.Should().BeEquivalentTo(_folderStructureExpected);
-        }
-
-        [Fact]
-        public void Action_Should_Copy_Files_With_Valid_SourceFolder_Parameter_And_Invalid_SourceFolder_Settings_Test()
-        {
-            // Arrange
-            var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
-            var sourceFolderPath = Path.Combine(testFolderFullPath, _sourceFolderName);
-            var invalidSourceFolderPath = Path.Combine(testFolderFullPath, "no such folder");
-            var destinationFolderPath = Path.Combine(testFolderFullPath, _destinationFolderName);
-            Environment.CurrentDirectory = destinationFolderPath;
-            var parameters = new Dictionary<string, string>
-            {
-                { CopyAllFilesCommand.SourceFolderParameterName, sourceFolderPath }
-            };
-
-            var invalidApplicationSettings = new ApplicationSettings()
-            {
-                DefaultSourceFolderPath = invalidSourceFolderPath
-            };
-            var sut = new CopyAllFilesCommand(GetOptions(invalidApplicationSettings), _loggerMock.Object);
-
-            // Act
-            sut.Action(parameters);
-
-            // Assert
-            var folderStructureActual = FileHelper.CreateFolderStructureByFolderAndFiles(testFolderFullPath);
-            folderStructureActual.Should().BeEquivalentTo(_folderStructureExpected);
-        }
-
-        [Fact]
-        public void Action_Should_Throw_Exception_With_Invalid_SourceFolder_Parameter_And_Invalid_SourceFolder_Settings_Test()
-        {
-            // Arrange
-            var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
-            var sourceFolderPath = Path.Combine(testFolderFullPath, "no such folder");
-            var destinationFolderPath = Path.Combine(testFolderFullPath, _destinationFolderName);
-            Environment.CurrentDirectory = destinationFolderPath;
-            var parameters = new Dictionary<string, string>();
-
-            var validApplicationSettings = new ApplicationSettings()
-            {
-                DefaultSourceFolderPath = sourceFolderPath
-            };
-            var sut = new CopyAllFilesCommand(GetOptions(validApplicationSettings), _loggerMock.Object);
-
-            // Act
-            var exception = Assert.Throws<DirectoryNotFoundException>(() => sut.Action(parameters));
-
-            // Assert
-            Assert.Equal($"ERROR: Directory '{sourceFolderPath}' does not exists.", exception.Message);
-        }
-
-        [Fact]
-        public void Action_Should_Throw_Exception_With_Invalid_Parameters_And_Invalid_SourceFolder_Settings_Test()
-        {
-            // Arrange
-            var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
-            var invalidSourceFolderPath = Path.Combine(testFolderFullPath, "no such folder");
-            var invalidDestinationFolderPath = Path.Combine(testFolderFullPath, "no such folder 2");
-            var destinationFolderPath = Path.Combine(testFolderFullPath, _destinationFolderName);
-            Environment.CurrentDirectory = destinationFolderPath;
-
-            var parameters = new Dictionary<string, string>
-            {
-                { CopyAllFilesCommand.SourceFolderParameterName, invalidSourceFolderPath },
-                { CopyAllFilesCommand.DestinationFolderParameterName, invalidDestinationFolderPath }
-            };
-
-            var invalidApplicationSettings = new ApplicationSettings()
-            {
-                DefaultSourceFolderPath = invalidSourceFolderPath
-            };
-            var sut = new CopyAllFilesCommand(GetOptions(invalidApplicationSettings), _loggerMock.Object);
-
-            // Act
-            var exception = Assert.Throws<DirectoryNotFoundException>(() => sut.Action(parameters));
-
-            // Assert
-            Assert.Equal($"ERROR: Directory '{invalidSourceFolderPath}' does not exists.", exception.Message);
-        }
-
-        [Fact]
-        public void Action_Should_Throw_Exception_Without_Parameters_And_Invalid_SourceFolder_Settings_Test()
-        {
-            // Arrange
-            var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
-            var sourceFolderPath = Path.Combine(testFolderFullPath, "no such folder");
-            var destinationFolderPath = Path.Combine(testFolderFullPath, _destinationFolderName);
-            Environment.CurrentDirectory = destinationFolderPath;
-            var parameters = new Dictionary<string, string>();
-
-            var validApplicationSettings = new ApplicationSettings()
-            {
-                DefaultSourceFolderPath = sourceFolderPath
-            };
-            var sut = new CopyAllFilesCommand(GetOptions(validApplicationSettings), _loggerMock.Object);
-
-            // Act
-            var exception = Assert.Throws<DirectoryNotFoundException>(() => sut.Action(parameters));
-
-            // Assert
-            Assert.Equal($"ERROR: Directory '{sourceFolderPath}' does not exists.", exception.Message);
-        }
-
-        [Fact]
-        public void Action_Should_Throw_Exception_With_Valid_DestinationFolder_Parameter_And_Invalid_SourceFolder_Settings_Test()
-        {
-            // Arrange
-            var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
-            var destinationFolderPath = Path.Combine(testFolderFullPath, _destinationFolderName);
-            Environment.CurrentDirectory = destinationFolderPath;
-            var parameters = new Dictionary<string, string>
-            {
-                { CopyAllFilesCommand.DestinationFolderParameterName, destinationFolderPath }
-            };
-
-            var invalidApplicationSettings = new ApplicationSettings()
-            {
-                DefaultSourceFolderPath = string.Empty
-            };
-            var sut = new CopyAllFilesCommand(GetOptions(invalidApplicationSettings), _loggerMock.Object);
-
-            // Act
-            var exception = Assert.Throws<DirectoryNotFoundException>(() => sut.Action(parameters));
-
-            // Assert
-            Assert.Equal($"ERROR: Directory '{string.Empty}' does not exists.", exception.Message);
-        }
-
-        [Fact]
-        public void Action_Should_Throw_Exception_With_Invalid_SourceFolder_And_Valid_DestinationFolder_Parameter_And_Valid_SourceFolder_Parameters_Test()
-        {
-            // Arrange
-            var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
-            var invalidSourceFolderPath = Path.Combine(testFolderFullPath, "no such folder");
-            var destinationFolderPath = Path.Combine(testFolderFullPath, _destinationFolderName);
-            Environment.CurrentDirectory = testFolderFullPath;
-            var parameters = new Dictionary<string, string>
-            {
-                { CopyAllFilesCommand.SourceFolderParameterName, invalidSourceFolderPath },
-                { CopyAllFilesCommand.DestinationFolderParameterName, destinationFolderPath }
-            };
-
-            // Act
-            var exception = Assert.Throws<DirectoryNotFoundException>(() => _sut.Action(parameters));
-
-            // Assert
-            Assert.Equal($"ERROR: Directory '{invalidSourceFolderPath}' does not exists.", exception.Message);
-        }
-
-        [Fact]
-        public void Action_Should_Throw_Exception_With_Invalid_DestinationFolder_Parameter_And_Invalid_SourceFolder_Settings_Test()
-        {
-            // Arrange
-            var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
-            var invalidDestinationFolderPath = Path.Combine(testFolderFullPath, "no such folder");
-            var destinationFolderPath = Path.Combine(testFolderFullPath, _destinationFolderName);
-            Environment.CurrentDirectory = destinationFolderPath;
-            var parameters = new Dictionary<string, string>
-            {
-                { CopyAllFilesCommand.DestinationFolderParameterName, invalidDestinationFolderPath }
-            };
-
-            var invalidApplicationSettings = new ApplicationSettings()
-            {
-                DefaultSourceFolderPath = string.Empty
-            };
-            var sut = new CopyAllFilesCommand(GetOptions(invalidApplicationSettings), _loggerMock.Object);
-
-            // Act
-            var exception = Assert.Throws<DirectoryNotFoundException>(() => sut.Action(parameters));
-
-            // Assert
-            Assert.Equal($"ERROR: Directory '{string.Empty}' does not exists.", exception.Message);
-        }
-
-        [Fact]
-        public void Action_Should_Throw_Exception_With_Invalid_DestinationFolder_Parameter_And_Valid_SourceFolder_Parameters_Test()
-        {
-            // Arrange
-            var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
-            var invalidDestinationFolderPath = Path.Combine(testFolderFullPath, "no such folder");
-            Environment.CurrentDirectory = testFolderFullPath;
-            var parameters = new Dictionary<string, string>
-            {
-                { CopyAllFilesCommand.DestinationFolderParameterName, invalidDestinationFolderPath }
-            };
-
-            // Act
-            var exception = Assert.Throws<DirectoryNotFoundException>(() => _sut.Action(parameters));
-
-            // Assert
-            Assert.Equal($"ERROR: Directory '{invalidDestinationFolderPath}' does not exists.", exception.Message);
-        }
-
 
         ~CopyAllFilesCommandTests()
         {
