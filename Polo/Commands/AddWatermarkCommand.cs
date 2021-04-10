@@ -4,6 +4,7 @@ using Polo.Abstractions.Commands;
 using Polo.Abstractions.Options;
 using Polo.Extensions;
 using Polo.Parameters;
+using Polo.Parameters.Handler;
 using Serilog;
 using System;
 using System.Collections.Generic;

@@ -1,7 +1,7 @@
 ﻿using Polo.Abstractions.Parameters;
 using System.Collections.Generic;
 
-namespace Polo.Parameters
+namespace Polo.Parameters.Handler
 {
     public class ParameterHandler
     {
