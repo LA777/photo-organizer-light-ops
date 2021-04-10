@@ -33,7 +33,7 @@ namespace Polo.Abstractions.Options
         public int WatermarkTransparencyPercent { get; set; } = 0;
 
         [MinLength(1, ErrorMessage = "ERROR: Value for {0} should contain some data.")]
-        public ICollection<string> JpegFileExtensions { get; set; } = new List<string>();
+        public ICollection<string> FileForProcessExtensions { get; set; } = new List<string>();
 
         [MinLength(1, ErrorMessage = "ERROR: Value for {0} should contain some data.")]
         public ICollection<string> RawFileExtensions { get; set; } = new List<string>();

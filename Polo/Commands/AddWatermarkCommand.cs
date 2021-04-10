@@ -57,7 +57,7 @@ namespace Polo.Commands
 
             // TODO LA - Check in UTs duplicates
             var jpegFiles = new List<string>();
-            _applicationSettings.JpegFileExtensions.Distinct().ToList()// TODO LA - Move this Select to some extension
+            _applicationSettings.FileForProcessExtensions.Distinct().ToList()// TODO LA - Move this Select to some extension
                 .ForEach(x => jpegFiles.AddRange(Directory.EnumerateFiles(sourceFolderPath, $"*.{x}", SearchOption.TopDirectoryOnly)));
 
             if (jpegFiles.Any() && !Directory.Exists(destinationDirectory))

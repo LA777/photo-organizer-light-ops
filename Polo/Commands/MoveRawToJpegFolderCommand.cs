@@ -42,7 +42,7 @@ namespace Polo.Commands
                 var allFotosFolder = Directory.GetParent(currentDirectory).FullName;
 
                 var jpegFiles = new List<string>();
-                _applicationSettings.JpegFileExtensions.Distinct().ToList()
+                _applicationSettings.FileForProcessExtensions.Distinct().ToList()
                     .ForEach(x => jpegFiles.AddRange(Directory.EnumerateFiles(allFotosFolder, $"{fileNameWithoutExtension}.{x}", SearchOption.AllDirectories)));
 
                 if (jpegFiles.Count() > 1)

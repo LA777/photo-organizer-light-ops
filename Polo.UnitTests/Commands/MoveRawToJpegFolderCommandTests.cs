@@ -23,7 +23,7 @@ namespace Polo.UnitTests.Commands
         private static readonly ICollection<string> _jpegFileExtensions = new List<string>() { "jpg", "jpeg" };
         private static readonly ApplicationSettings _validApplicationSettings = new ApplicationSettings()
         {
-            JpegFileExtensions = _jpegFileExtensions,
+            FileForProcessExtensions = _jpegFileExtensions,
             RawFileExtensions = _rawFileExtensions,
             RawFolderName = _rawFolderName
         };
@@ -220,7 +220,7 @@ namespace Polo.UnitTests.Commands
             Environment.CurrentDirectory = Path.Combine(testFolderFullPath, _albumName);
 
             var jpegFileExtensionsWithDuplicates = new List<string>() { "jpeg", "jpg", "jpeg", "jpg" };
-            var applicationSettings = new ApplicationSettings() { JpegFileExtensions = jpegFileExtensionsWithDuplicates, RawFileExtensions = _rawFileExtensions, RawFolderName = _rawFolderName };
+            var applicationSettings = new ApplicationSettings() { FileForProcessExtensions = jpegFileExtensionsWithDuplicates, RawFileExtensions = _rawFileExtensions, RawFolderName = _rawFolderName };
             var sut = new MoveRawToJpegFolderCommand(GetOptions(applicationSettings), _loggerMock.Object);
 
             // Act
@@ -242,7 +242,7 @@ namespace Polo.UnitTests.Commands
                                                                        "orf", "crw", "cr2", "cr3", "3fr", "mef", "nef", "nrw", "pef", "ptx", "rw2", "arw", "srf", "sr2", "gpr", "raf", "raw", "rwl", "dng", "srw", "x3f" };
             var applicationSettings = new ApplicationSettings()
             {
-                JpegFileExtensions = _jpegFileExtensions,
+                FileForProcessExtensions = _jpegFileExtensions,
                 RawFileExtensions = rawFileExtensionsWithDuplicates,
                 RawFolderName = _rawFolderName
             };

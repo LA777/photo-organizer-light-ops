@@ -23,7 +23,7 @@ namespace Polo.UnitTests.Commands
         private static readonly string _watermarkFolderName = "sign";
         private static readonly ApplicationSettings _validApplicationSettings = new ApplicationSettings()
         {
-            JpegFileExtensions = _jpegFileExtensions,
+            FileForProcessExtensions = _jpegFileExtensions,
             WatermarkPath = "",
             WatermarkOutputFolderName = _watermarkOutputFolderName,
             WatermarkPosition = "center-center",

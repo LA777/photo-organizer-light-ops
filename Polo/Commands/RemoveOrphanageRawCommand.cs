@@ -44,7 +44,7 @@ namespace Polo.Commands
                 var rawFileShortName = Path.GetFileNameWithoutExtension(rawFileInfo.Name);
 
                 var jpegFiles = new List<string>();
-                _applicationSettings.JpegFileExtensions.Distinct().ToList()
+                _applicationSettings.FileForProcessExtensions.Distinct().ToList()
                     .ForEach(x => jpegFiles.AddRange(Directory.EnumerateFiles(currentDirectory, $"{rawFileShortName}.{x}", SearchOption.TopDirectoryOnly)));
 
                 if (!jpegFiles.Any())

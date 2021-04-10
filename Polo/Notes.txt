@@ -154,4 +154,7 @@ polo.exe --add-watermark -source:'d:\tmp dev\images\' -watermark-path:'d:\tmp de
 --add-watermark -source:"d:\tmp dev\images" -watermark-path:"d:\tmp dev\images\sign\Sign v3.5sl - 64% - FSviewer.png" -output-folder-name:"watermark-output" -transparency:34
 
 
+--add-watermark -source:"d:\tmp dev\images" -watermark-path:"d:\tmp dev\images\sign\Sign v3.5sl - 64% - FSviewer.png" -output-folder-name:"watermark-output" -transparency:100
 
+
+--resize-with-watermark -source:"d:\tmp dev\images 2"

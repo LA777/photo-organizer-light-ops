@@ -22,7 +22,7 @@ namespace Polo.UnitTests.Commands
         private static readonly string _resizedImageSubfolderName = "small";
         private static readonly ApplicationSettings _validApplicationSettings = new ApplicationSettings()
         {
-            JpegFileExtensions = _jpegFileExtensions,
+            FileForProcessExtensions = _jpegFileExtensions,
             ImageResizeLongSideLimit = _imageResizeLongSideLimit,
             ResizedImageSubfolderName = _resizedImageSubfolderName
         };
@@ -204,7 +204,7 @@ namespace Polo.UnitTests.Commands
             var jpegFileExtensions = new List<string>() { "jpeg", "jpg" };
             var applicationSettings = new ApplicationSettings()
             {
-                JpegFileExtensions = jpegFileExtensions,
+                FileForProcessExtensions = jpegFileExtensions,
                 ImageResizeLongSideLimit = 0,
                 ResizedImageSubfolderName = _resizedImageSubfolderName
             };
@@ -228,7 +228,7 @@ namespace Polo.UnitTests.Commands
             var jpegFileExtensionsWithDuplicates = new List<string>() { "jpeg", "jpg", "jpeg", "jpg" };
             var applicationSettings = new ApplicationSettings()
             {
-                JpegFileExtensions = jpegFileExtensionsWithDuplicates,
+                FileForProcessExtensions = jpegFileExtensionsWithDuplicates,
                 ImageResizeLongSideLimit = _imageResizeLongSideLimit,
                 ResizedImageSubfolderName = _resizedImageSubfolderName
             };
@@ -250,7 +250,7 @@ namespace Polo.UnitTests.Commands
             var jpegFileExtensions = new List<string>() { "jpeg", "jpg" };
             var applicationSettings = new ApplicationSettings()
             {
-                JpegFileExtensions = jpegFileExtensions,
+                FileForProcessExtensions = jpegFileExtensions,
                 ImageResizeLongSideLimit = 0,
                 ResizedImageSubfolderName = _resizedImageSubfolderName
             };
@@ -277,7 +277,7 @@ namespace Polo.UnitTests.Commands
 
             var applicationSettings = new ApplicationSettings()
             {
-                JpegFileExtensions = jpegFileExtensions,
+                FileForProcessExtensions = jpegFileExtensions,
                 ImageResizeLongSideLimit = 0,
                 ResizedImageSubfolderName = _resizedImageSubfolderName
             };
