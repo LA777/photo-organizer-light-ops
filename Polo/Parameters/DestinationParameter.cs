@@ -16,7 +16,6 @@ namespace Polo.Parameters
 
         public string Initialize(IReadOnlyDictionary<string, string> inputParameters, string defaultValue)
         {
-            // TODO LA - Cover with UTs
             var outputValue = defaultValue;
 
             if (!inputParameters.IsNullOrEmpty() && inputParameters.TryGetValue(Name, out var parameterValue))
