@@ -1,10 +1,6 @@
 ﻿
 TODO
 
-- add watermark to JPEG files
-
-- migrate to .Net 5
-
 - add argument for resize JPEG files (resize with watermark)
 
 - add overwrite-file parameter
@@ -24,7 +20,7 @@ TODO
 
 - update MoveRawCommand to sync RAW files in the sub-folders of the current folder
 
-- ApplicationSettingsReadOnly make readonly record
+- ApplicationSettingsReadOnly make readonly Record
 
 
 
@@ -53,6 +49,15 @@ DONE
 + add argument for resize JPEG files (sizeLimit)
 
 + add license https://docs.github.com/en/github/building-a-strong-community/adding-a-license-to-a-repository
+
++ migrate to .Net 5
+
++ add watermark to JPEG files
+
+
+
+
+
 
 
 
