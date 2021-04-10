@@ -16,12 +16,11 @@ namespace Polo.Parameters
 
         public static string Description => "Long side limit for image resize.";
 
-        public int Initialize(IReadOnlyDictionary<string, string> incomeParameters, int defaultValue)
+        public int Initialize(IReadOnlyDictionary<string, string> inputParameters, int defaultValue)
         {
             var outputValue = defaultValue;
-            var parametersEmpty = incomeParameters.IsNullOrEmpty();
 
-            if (!parametersEmpty && incomeParameters.TryGetValue(Name, out var parameterValue))
+            if (!inputParameters.IsNullOrEmpty() && inputParameters.TryGetValue(Name, out var parameterValue))
             {
                 if (int.TryParse(parameterValue, out var number))
                 {

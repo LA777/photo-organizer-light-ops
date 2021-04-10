@@ -6,12 +6,12 @@ using System.Threading;
 
 namespace Polo.UnitTests.FileUtils
 {
-    public class FileHelper
+    public static class FileHelper
     {
         public const int FileLimit = 5;
         public const string JpegExtension = "JPG";
         public const string RawExtension = "ORF";
-        public const string TestFolderName = "UnitTestTemp";
+        private const string TestFolderName = "UnitTestTemp";
         public const string FilePrefix = "UTP-";
         public const string RawFolderName = "RAW";
         public static readonly FotoFile Watermark = new FotoFile("watermark", "png", 10, 10);

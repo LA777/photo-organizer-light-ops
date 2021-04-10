@@ -24,19 +24,11 @@ namespace Polo.Parameters
 
         public static string Description => "Describes position.";
 
-        public string Initialize(IReadOnlyDictionary<string, string> incomeParameters, string defaultValue)
+        public string Initialize(IReadOnlyDictionary<string, string> inputParameters, string defaultValue)
         {
-            // TODO LA - Cover with UTs
-
             var outputValue = defaultValue;
-            var parametersEmpty = incomeParameters.IsNullOrEmpty();
 
-            if (parametersEmpty && string.IsNullOrWhiteSpace(defaultValue))
-            {
-                throw new ParameterAbsentException($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{Name}' parameter or setup setting value '{nameof(ApplicationSettingsReadOnly.WatermarkPosition)}'.");  // TODO LA - Refactor
-            }
-
-            if (!parametersEmpty && incomeParameters.TryGetValue(Name, out var parameterValue))
+            if (!inputParameters.IsNullOrEmpty() && inputParameters.TryGetValue(Name, out var parameterValue))
             {
                 outputValue = parameterValue;
             }

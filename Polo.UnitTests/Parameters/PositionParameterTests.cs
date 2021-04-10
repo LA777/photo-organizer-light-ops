@@ -8,9 +8,9 @@ using Xunit;
 
 namespace Polo.UnitTests.Parameters
 {
-    public class OutputFolderNameParameterTests
+    public class PositionParameterTests
     {
-        private readonly IParameter<string> _sut = new OutputFolderNameParameter();
+        private readonly IParameter<string> _sut = new PositionParameter();
 
         [Fact]
         public void Initialize_Should_Return_Input_Parameter_Test()
@@ -20,7 +20,7 @@ namespace Polo.UnitTests.Parameters
             const string defaultValue = nameof(defaultValue);
             var inputParameters = new Dictionary<string, string>
             {
-                { OutputFolderNameParameter.Name, inputParameter }
+                { PositionParameter.Name, inputParameter }
             };
 
             // Act
@@ -54,14 +54,14 @@ namespace Polo.UnitTests.Parameters
             const string defaultValue = nameof(defaultValue);
             var inputParameters = new Dictionary<string, string>
             {
-                { OutputFolderNameParameter.Name, parameterValue }
+                { PositionParameter.Name, parameterValue }
             };
 
             // Act
             var exception = Assert.Throws<ParameterAbsentException>(() => _sut.Initialize(inputParameters, defaultValue));
 
             // Assert
-            Assert.Contains($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{OutputFolderNameParameter.Name}' parameter or setup setting value '{nameof(ApplicationSettingsReadOnly.WatermarkOutputFolderName)}'.", exception.Message);
+            Assert.Contains($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{PositionParameter.Name}' parameter or setup setting value '{nameof(ApplicationSettingsReadOnly.WatermarkPosition)}'.", exception.Message);
         }
 
         [Theory]
@@ -77,7 +77,7 @@ namespace Polo.UnitTests.Parameters
             var exception = Assert.Throws<ParameterAbsentException>(() => _sut.Initialize(inputParameters, parameterValue));
 
             // Assert
-            Assert.Contains($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{OutputFolderNameParameter.Name}' parameter or setup setting value '{nameof(ApplicationSettingsReadOnly.WatermarkOutputFolderName)}'.", exception.Message);
+            Assert.Contains($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{PositionParameter.Name}' parameter or setup setting value '{nameof(ApplicationSettingsReadOnly.WatermarkPosition)}'.", exception.Message);
         }
     }
 }

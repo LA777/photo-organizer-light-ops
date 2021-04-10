@@ -13,21 +13,21 @@ namespace Polo.UnitTests.Parameters
         private readonly IParameter<int> _sut = new LongSideLimitParameter();
 
         [Fact]
-        public void Initialize_Should_Return_Income_Parameter_Test()
+        public void Initialize_Should_Return_Input_Parameter_Test()
         {
             // Arrange
-            const int incomeParameter = 1221;
+            const int inputParameter = 1221;
             const int defaultValue = 1234;
-            var incomeParameters = new Dictionary<string, string>
+            var inputParameters = new Dictionary<string, string>
             {
-                { LongSideLimitParameter.Name, incomeParameter.ToString() }
+                { LongSideLimitParameter.Name, inputParameter.ToString() }
             };
 
             // Act
-            var result = _sut.Initialize(incomeParameters, defaultValue);
+            var result = _sut.Initialize(inputParameters, defaultValue);
 
             // Assert
-            result.Should().Be(incomeParameter);
+            result.Should().Be(inputParameter);
         }
 
         [Fact]
@@ -35,10 +35,10 @@ namespace Polo.UnitTests.Parameters
         {
             // Arrange
             const int defaultValue = 1234;
-            var incomeParameters = new Dictionary<string, string>();
+            var inputParameters = new Dictionary<string, string>();
 
             // Act
-            var result = _sut.Initialize(incomeParameters, defaultValue);
+            var result = _sut.Initialize(inputParameters, defaultValue);
 
             // Assert
             result.Should().Be(defaultValue);
@@ -48,15 +48,15 @@ namespace Polo.UnitTests.Parameters
         public void Initialize_Should_Throw_ArgumentOutOfRangeException_If_Input_Parameter_Is_OutOfRange_Test()
         {
             // Arrange
-            var incomeParameter = LongSideLimitParameter.Min - 1;
+            var inputParameter = LongSideLimitParameter.Min - 1;
             const int defaultValue = 1234;
-            var incomeParameters = new Dictionary<string, string>
+            var inputParameters = new Dictionary<string, string>
             {
-                { LongSideLimitParameter.Name, incomeParameter.ToString() }
+                { LongSideLimitParameter.Name, inputParameter.ToString() }
             };
 
             // Act
-            var exception = Assert.Throws<ArgumentOutOfRangeException>(() => _sut.Initialize(incomeParameters, defaultValue));
+            var exception = Assert.Throws<ArgumentOutOfRangeException>(() => _sut.Initialize(inputParameters, defaultValue));
 
             // Assert
             Assert.Contains($"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{LongSideLimitParameter.Name}' should be higher than {LongSideLimitParameter.Min - 1}.", exception.Message);
@@ -67,10 +67,10 @@ namespace Polo.UnitTests.Parameters
         {
             // Arrange
             var defaultValue = LongSideLimitParameter.Min - 1;
-            var incomeParameters = new Dictionary<string, string>();
+            var inputParameters = new Dictionary<string, string>();
 
             // Act
-            var exception = Assert.Throws<ArgumentOutOfRangeException>(() => _sut.Initialize(incomeParameters, defaultValue));
+            var exception = Assert.Throws<ArgumentOutOfRangeException>(() => _sut.Initialize(inputParameters, defaultValue));
 
             // Assert
             Assert.Contains($"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{LongSideLimitParameter.Name}' should be higher than {LongSideLimitParameter.Min - 1}.", exception.Message);
@@ -80,15 +80,15 @@ namespace Polo.UnitTests.Parameters
         public void Initialize_Should_Throw_ParameterParseException_If_Input_Parameter_Is_Not_A_Number_Test()
         {
             // Arrange
-            var incomeParameter = "a1";
+            const string inputParameter = "a1";
             const int defaultValue = 1234;
-            var incomeParameters = new Dictionary<string, string>
+            var inputParameters = new Dictionary<string, string>
             {
-                { LongSideLimitParameter.Name, incomeParameter }
+                { LongSideLimitParameter.Name, inputParameter }
             };
 
             // Act
-            var exception = Assert.Throws<ParameterParseException>(() => _sut.Initialize(incomeParameters, defaultValue));
+            var exception = Assert.Throws<ParameterParseException>(() => _sut.Initialize(inputParameters, defaultValue));
 
             // Assert
             Assert.Contains($"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{LongSideLimitParameter.Name}' is not a number.", exception.Message);

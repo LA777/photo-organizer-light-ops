@@ -14,13 +14,13 @@ namespace Polo.Parameters
 
         public static string Description => "Watermark image full path.";
 
-        public string Initialize(IReadOnlyDictionary<string, string> incomeParameters, string defaultValue)
+        public string Initialize(IReadOnlyDictionary<string, string> inputParameters, string defaultValue)
         {
             // TODO LA - Cover with UTs
             var outputValue = defaultValue;
-            var parametersEmpty = incomeParameters.IsNullOrEmpty();
+            var parametersEmpty = inputParameters.IsNullOrEmpty();
 
-            if (!parametersEmpty && incomeParameters.TryGetValue(Name, out var parameterValue))
+            if (!parametersEmpty && inputParameters.TryGetValue(Name, out var parameterValue))
             {
                 outputValue = parameterValue;
             }

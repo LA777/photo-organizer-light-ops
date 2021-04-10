@@ -4,6 +4,6 @@ namespace Polo.Abstractions.Parameters
 {
     public interface IParameter<T>
     {
-        public T Initialize(IReadOnlyDictionary<string, string> incomeParameters, T defaultValue);
+        public T Initialize(IReadOnlyDictionary<string, string> inputParameters, T defaultValue);
     }
 }

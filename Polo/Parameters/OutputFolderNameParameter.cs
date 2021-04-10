@@ -14,12 +14,11 @@ namespace Polo.Parameters
 
         public static string Description => "Name of the folder, where all processed files will be placed.";
 
-        public string Initialize(IReadOnlyDictionary<string, string> incomeParameters, string defaultValue)
+        public string Initialize(IReadOnlyDictionary<string, string> inputParameters, string defaultValue)
         {
             var outputValue = defaultValue;
-            var parametersEmpty = incomeParameters.IsNullOrEmpty();
 
-            if (!parametersEmpty && incomeParameters.TryGetValue(Name, out var parameterValue))
+            if (!inputParameters.IsNullOrEmpty() && inputParameters.TryGetValue(Name, out var parameterValue))
             {
                 outputValue = parameterValue;
             }

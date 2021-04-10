@@ -17,14 +17,14 @@ namespace Polo.Parameters
 
         public static string Description => "Watermark transparency percent.";
 
-        public int Initialize(IReadOnlyDictionary<string, string> incomeParameters, int defaultValue)
+        public int Initialize(IReadOnlyDictionary<string, string> inputParameters, int defaultValue)
         {
             // TODO LA - Cover with UTs
 
             var outputValue = defaultValue;
-            var parametersEmpty = incomeParameters.IsNullOrEmpty();
+            var parametersEmpty = inputParameters.IsNullOrEmpty();
 
-            if (!parametersEmpty && incomeParameters.TryGetValue(Name, out var parameterValue))
+            if (!parametersEmpty && inputParameters.TryGetValue(Name, out var parameterValue))
             {
                 if (int.TryParse(parameterValue, out var number))
                 {
