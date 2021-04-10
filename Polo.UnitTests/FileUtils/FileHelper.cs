@@ -28,7 +28,10 @@ namespace Polo.UnitTests.FileUtils
                         return testFodlerPath;
                     }
                 }
-                catch (Exception) { }
+                catch (Exception)
+                {
+                    // ignored
+                }
 
                 return Directory.GetCurrentDirectory(); // "photo-organizer-light-ops\\Polo.UnitTests\\bin\\Debug"
             }
@@ -47,7 +50,7 @@ namespace Polo.UnitTests.FileUtils
             return testFolderFullPath;
         }
 
-        public static string CreateTestFolder()
+        private static string CreateTestFolder()
         {
             if (Directory.Exists(TestFolderFullPath))
             {
@@ -66,7 +69,7 @@ namespace Polo.UnitTests.FileUtils
                 return;
             }
 
-            Environment.CurrentDirectory = Directory.GetParent(TestFolderFullPath).FullName;
+            Environment.CurrentDirectory = Directory.GetParent(TestFolderFullPath)?.FullName ?? throw new DirectoryNotFoundException(TestFolderFullPath);
 
             try
             {
@@ -135,7 +138,10 @@ namespace Polo.UnitTests.FileUtils
 
                 return (info.Width, info.Height);
             }
-            catch (Exception) { }
+            catch (Exception)
+            {
+                // ignored
+            }
 
             return (0, 0);
         }

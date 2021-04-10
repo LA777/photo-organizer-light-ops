@@ -8,6 +8,7 @@ namespace Polo.UnitTests.Extensions
 {
     public class MagickImageExtensionTests
     {
+        // TODO LA - Remove
         [Fact]
         public void ConvertToTransparentMagickImage_Should_Convert_Succesfully_Test()
         {

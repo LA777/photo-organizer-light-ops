@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Polo.Abstractions.Options
@@ -18,7 +17,7 @@ namespace Polo.Abstractions.Options
         public string ResizedImageSubfolderName { get; set; } = string.Empty;
 
         [Range(1, int.MaxValue, ErrorMessage = "ERROR: Value for {0} should be between {1} and {2}.")]
-        public int ImageResizeLongSideLimit { get; set; } = 0;
+        public int ImageResizeLongSideLimit { get; set; }
 
         [Required(ErrorMessage = "ERROR: Value for {0} should contain some data.")]
         public string WatermarkPath { get; set; } = string.Empty;
@@ -30,7 +29,7 @@ namespace Polo.Abstractions.Options
         public string WatermarkPosition { get; set; } = string.Empty;
 
         [Range(0, 100, ErrorMessage = "ERROR: Value for {0} should be between {1} and {2}.")]
-        public int WatermarkTransparencyPercent { get; set; } = 0;
+        public int WatermarkTransparencyPercent { get; set; }
 
         [MinLength(1, ErrorMessage = "ERROR: Value for {0} should contain some data.")]
         public ICollection<string> FileForProcessExtensions { get; set; } = new List<string>();

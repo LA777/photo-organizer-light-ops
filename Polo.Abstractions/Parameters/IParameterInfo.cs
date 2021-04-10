@@ -4,6 +4,7 @@ namespace Polo.Abstractions.Parameters
 {
     public interface IParameterInfo
     {
+        // TODO LA - Remove
         public static string Name { get; }
 
         public static IReadOnlyCollection<string> PossibleValues { get; }

@@ -46,7 +46,7 @@ namespace Polo
 
         private static void ValidateApplicationSettings(ServiceProvider serviceProvider)
         {
-            var applicationSettings = serviceProvider.GetService<IOptions<ApplicationSettings>>().Value;
+            var applicationSettings = serviceProvider.GetService<IOptions<ApplicationSettings>>()?.Value;
 
             if (applicationSettings == null)
             {
@@ -62,7 +62,7 @@ namespace Polo
 
             var applicationSettings = Configuration.Get<ApplicationSettings>();
             var applicationSettingsReadOnly = new ApplicationSettingsReadOnly(applicationSettings);
-            IOptions<ApplicationSettingsReadOnly> applicationSettingsReadOnlyOptions = Microsoft.Extensions.Options.Options.Create(applicationSettingsReadOnly);
+            IOptions<ApplicationSettingsReadOnly> applicationSettingsReadOnlyOptions = Options.Create(applicationSettingsReadOnly);
 
             var version = Assembly.GetExecutingAssembly().GetName().Version;
 
