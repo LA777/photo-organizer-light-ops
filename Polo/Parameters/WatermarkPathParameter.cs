@@ -1,4 +1,5 @@
 ﻿using Polo.Abstractions.Exceptions;
+using Polo.Abstractions.Options;
 using Polo.Abstractions.Parameters;
 using Polo.Extensions;
 using System.Collections.Generic;
@@ -16,7 +17,6 @@ namespace Polo.Parameters
 
         public string Initialize(IReadOnlyDictionary<string, string> inputParameters, string defaultValue)
         {
-            // TODO LA - Cover with UTs
             var outputValue = defaultValue;
             var parametersEmpty = inputParameters.IsNullOrEmpty();
 
@@ -25,9 +25,9 @@ namespace Polo.Parameters
                 outputValue = parameterValue;
             }
 
-            if (string.IsNullOrEmpty(outputValue))
+            if (string.IsNullOrWhiteSpace(outputValue))
             {
-                throw new ParameterAbsentException($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{Name}' parameter."); // TODO LA - Refactor - Add setting parameter
+                throw new ParameterAbsentException($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{Name}' parameter or setup setting value '{nameof(ApplicationSettingsReadOnly.WatermarkPath)}'.");
             }
 
             if (!File.Exists(outputValue))

@@ -168,6 +168,7 @@ namespace Polo.UnitTests.FileUtils
         private static void CreateFileByFotoFile(string folderPath, FotoFile fotoFile)
         {
             var fullFileName = Path.Join(folderPath, fotoFile.GetNameWithExtension());
+            fotoFile.FullFilePath = fullFileName;
 
             if (fotoFile.Width > 0 || fotoFile.Height > 0)
             {

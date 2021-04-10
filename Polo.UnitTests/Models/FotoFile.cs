@@ -6,6 +6,7 @@
         public string Extension { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
+        public string FullFilePath { get; set; }
 
         public FotoFile(string name, string extension, int width = 0, int height = 0)
         {
