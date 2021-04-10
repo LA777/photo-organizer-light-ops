@@ -16,7 +16,7 @@ namespace Polo.UnitTests.Commands
             var loggerMock = new Mock<ILogger>();
             loggerMock.Setup(x => x.Information(It.IsAny<string>()))
                 .Callback<string>(v => version = v);
-            var expectedVersion = typeof(Program).Assembly.GetName().Version.ToString();
+            var expectedVersion = typeof(Program).Assembly.GetName().Version?.ToString();
             var sut = new VersionCommand(loggerMock.Object);
 
             // Act

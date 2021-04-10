@@ -7,7 +7,7 @@ namespace Polo.UnitTests.Commands
 {
     public abstract class CommandTestBase : IDisposable
     {
-        public CommandTestBase()
+        protected CommandTestBase()
         {
             FileHelper.TryDeleteTestFolder();
         }
@@ -26,7 +26,7 @@ namespace Polo.UnitTests.Commands
         internal static IOptions<ApplicationSettingsReadOnly> GetOptions(ApplicationSettings applicationSettings)
         {
             var validApplicationSettingsReadOnly = new ApplicationSettingsReadOnly(applicationSettings);
-            var mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(validApplicationSettingsReadOnly);
+            var mockApplicationOptions = Options.Create(validApplicationSettingsReadOnly);
 
             return mockApplicationOptions;
         }

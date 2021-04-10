@@ -1,5 +1,4 @@
 using FluentAssertions;
-using Microsoft.Extensions.Options;
 using Moq;
 using Polo.Abstractions.Commands;
 using Polo.Abstractions.Options;
@@ -28,7 +27,6 @@ namespace Polo.UnitTests.Commands
             RawFileExtensions = _rawFileExtensions,
             RawFolderName = _rawFolderName
         };
-        private static readonly IOptions<ApplicationSettings> _mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(_validApplicationSettings);
         private static readonly Mock<ILogger> _loggerMock = new Mock<ILogger>();
         private readonly ICommand _sut = new RemoveOrphanageRawCommand(GetOptions(_validApplicationSettings), _loggerMock.Object);
 
