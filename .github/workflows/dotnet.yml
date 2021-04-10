@@ -24,7 +24,7 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Clean
-      run: dotnet clean ./photo-organizer-light-ops/Polo.sln --configuration Release && dotnet nuget locals all --clear
+      run: dotnet clean && dotnet nuget locals all --clear
     - name: Build
       run: dotnet build --no-restore
     - name: Test
