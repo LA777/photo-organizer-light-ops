@@ -24,7 +24,7 @@ namespace Polo
         {
             if (arguments == null || !arguments.Any())
             {
-                throw new ParseException("ERROR: No command provided. Please enter --help to see available commands list.");
+                throw new ParameterParseException("ERROR: No command provided. Please enter --help to see available commands list.");
             }
 
             var commandArgument = arguments.First();
@@ -53,7 +53,7 @@ namespace Polo
                 }
                 else
                 {
-                    throw new ParseException("ERROR: Unknown command. Please enter --help to see available commands list."); // TODO LA - Refactor
+                    throw new ParameterParseException("ERROR: Unknown command. Please enter --help to see available commands list."); // TODO LA - Refactor
                 }
             }
 
@@ -68,7 +68,7 @@ namespace Polo
             {
                 if (!argument.StartsWith(ShortCommandPrefix))
                 {
-                    throw new ParseException("ERROR: Unknown parameter. Please enter --help to see available parameters list."); // TODO LA - Refactor
+                    throw new ParameterParseException("ERROR: Unknown parameter. Please enter --help to see available parameters list."); // TODO LA - Refactor
                 }
 
                 var argumentWithoutPrefix = argument.TrimStart(ShortCommandPrefix.ToCharArray().First());
@@ -76,7 +76,7 @@ namespace Polo
 
                 if (split.Length < 2)
                 {
-                    throw new ParseException("ERROR: Parameter delimiter missed. Please enter --help to see correct parameter syntax."); // TODO LA - Refactor
+                    throw new ParameterParseException("ERROR: Parameter delimiter missed. Please enter --help to see correct parameter syntax."); // TODO LA - Refactor
                 }
 
                 var value = split.Length > 2 ? string.Join(ParameterDelimiter, split.Skip(1)) : split[1];

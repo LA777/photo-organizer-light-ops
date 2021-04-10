@@ -10,29 +10,23 @@ namespace Polo.Parameters
     {
         public static string Name => "output-folder-name";
 
-        public static IReadOnlyCollection<string> PossibleValues => new List<string>() { "output" };
+        public static IReadOnlyCollection<string> PossibleValues => new List<string>() { "output", "processed" };
 
-        public static string Description => "Output folder name.";
+        public static string Description => "Name of the folder, where all processed files will be placed.";
 
         public string Initialize(IReadOnlyDictionary<string, string> incomeParameters, string defaultValue)
         {
-            // TODO LA - Cover with UTs
             var outputValue = defaultValue;
             var parametersEmpty = incomeParameters.IsNullOrEmpty();
-
-            if (parametersEmpty && string.IsNullOrWhiteSpace(defaultValue))
-            {
-                throw new ParameterAbsentException($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{Name}' parameter or setup setting value '{nameof(ApplicationSettingsReadOnly.WatermarkOutputFolderName)}'."); // TODO LA - Refactor
-            }
 
             if (!parametersEmpty && incomeParameters.TryGetValue(Name, out var parameterValue))
             {
                 outputValue = parameterValue;
             }
 
-            if (string.IsNullOrEmpty(outputValue))
+            if (string.IsNullOrWhiteSpace(outputValue))
             {
-                throw new ParameterAbsentException($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{Name}' parameter."); // TODO LA - Refactor - Add setting parameter
+                throw new ParameterAbsentException($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{Name}' parameter or setup setting value '{nameof(ApplicationSettingsReadOnly.WatermarkOutputFolderName)}'.");
             }
 
             return outputValue;

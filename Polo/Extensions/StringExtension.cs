@@ -11,7 +11,7 @@ namespace Polo.Extensions
             var split = position.Split(CommandParser.ShortCommandPrefix);
             if (split.Length != 2)
             {
-                throw new ParseException($"ERROR: Invalid parameter value '{position}'. Should be only single delimiter '{CommandParser.ShortCommandPrefix}'.");
+                throw new ParameterParseException($"ERROR: Invalid parameter value '{position}'. Should be only single delimiter '{CommandParser.ShortCommandPrefix}'.");
             }
 
             var screenPosition = ScreenPosition.None;
@@ -21,7 +21,7 @@ namespace Polo.Extensions
             switch (screenPosition)
             {
                 case ScreenPosition.None:
-                    throw new ParseException($"ERROR: Invalid parameter value '{position}'. Unsupported position name.");
+                    throw new ParameterParseException($"ERROR: Invalid parameter value '{position}'. Unsupported position name.");
                 case ScreenPosition.Top | ScreenPosition.Left:
                     return Gravity.Northwest;
                 case ScreenPosition.Top | ScreenPosition.Right:
@@ -41,7 +41,7 @@ namespace Polo.Extensions
                 case ScreenPosition.Bottom | ScreenPosition.Center:
                     return Gravity.South;
                 default:
-                    throw new ParseException($"ERROR: Invalid parameter value '{position}'. Incorrect position.");
+                    throw new ParameterParseException($"ERROR: Invalid parameter value '{position}'. Incorrect position.");
             }
         }
 

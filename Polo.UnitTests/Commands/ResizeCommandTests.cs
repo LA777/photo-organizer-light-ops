@@ -164,7 +164,7 @@ namespace Polo.UnitTests.Commands
             };
 
             // Act
-            var exception = Assert.Throws<ParseException>(() => _sut.Action(parameters));
+            var exception = Assert.Throws<ParameterParseException>(() => _sut.Action(parameters));
 
             // Assert
             Assert.Equal($"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{ResizeCommand.LongSideLimitParameterName}' is not a number.", exception.Message);
@@ -284,7 +284,7 @@ namespace Polo.UnitTests.Commands
             var sut = new ResizeCommand(GetOptions(applicationSettings), _loggerMock.Object);
 
             // Act
-            var exception = Assert.Throws<ParseException>(() => sut.Action(parameters));
+            var exception = Assert.Throws<ParameterParseException>(() => sut.Action(parameters));
 
             // Assert
             Assert.Equal($"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{ResizeCommand.LongSideLimitParameterName}' is not a number.", exception.Message);

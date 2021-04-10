@@ -5,12 +5,12 @@ namespace Polo.Parameters
 {
     public class ParameterHandler
     {
-        public SourceParameter SourceParameter { get; set; } = null; // TODO LA - Refactor - use init
-        public WatermarkPathParameter WatermarkPathParameter { get; set; } = null;
-        public OutputFolderNameParameter OutputFolderNameParameter { get; set; } = null;
-        public PositionParameter PositionParameter { get; set; } = null;
-        public TransparencyParameter TransparencyParameter { get; set; } = null;
-        public LongSideLimitParameter LongSideLimitParameter { get; set; } = null;
+        public SourceParameter SourceParameter { get; set; } // TODO LA - Refactor - use init
+        public WatermarkPathParameter WatermarkPathParameter { get; set; }
+        public OutputFolderNameParameter OutputFolderNameParameter { get; set; }
+        public PositionParameter PositionParameter { get; set; }
+        public TransparencyParameter TransparencyParameter { get; set; }
+        public LongSideLimitParameter LongSideLimitParameter { get; set; }
 
         public IReadOnlyCollection<IParameterInfo> GetStringParameters()
         {

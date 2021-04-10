@@ -35,7 +35,7 @@ namespace Polo.UnitTests.Extensions
             var position = "bottom-bottom";
 
             // Act
-            var exception = Assert.Throws<ParseException>(() => position.ParsePosition());
+            var exception = Assert.Throws<ParameterParseException>(() => position.ParsePosition());
 
             // Assert
             exception.Message.Should().BeEquivalentTo($"ERROR: Invalid parameter value '{position}'. Incorrect position.");
@@ -48,7 +48,7 @@ namespace Polo.UnitTests.Extensions
             var position = "bottom";
 
             // Act
-            var exception = Assert.Throws<ParseException>(() => position.ParsePosition());
+            var exception = Assert.Throws<ParameterParseException>(() => position.ParsePosition());
 
             // Assert
             exception.Message.Should().BeEquivalentTo($"ERROR: Invalid parameter value '{position}'. Should be only single delimiter '{CommandParser.ShortCommandPrefix}'.");
@@ -61,7 +61,7 @@ namespace Polo.UnitTests.Extensions
             var position = "bottom-left-center";
 
             // Act
-            var exception = Assert.Throws<ParseException>(() => position.ParsePosition());
+            var exception = Assert.Throws<ParameterParseException>(() => position.ParsePosition());
 
             // Assert
             exception.Message.Should().BeEquivalentTo($"ERROR: Invalid parameter value '{position}'. Should be only single delimiter '{CommandParser.ShortCommandPrefix}'.");
@@ -74,7 +74,7 @@ namespace Polo.UnitTests.Extensions
             var position = "up-down";
 
             // Act
-            var exception = Assert.Throws<ParseException>(() => position.ParsePosition());
+            var exception = Assert.Throws<ParameterParseException>(() => position.ParsePosition());
 
             // Assert
             exception.Message.Should().BeEquivalentTo($"ERROR: Invalid parameter value '{position}'. Unsupported position name.");

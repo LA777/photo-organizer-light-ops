@@ -32,7 +32,7 @@ namespace Polo.Parameters
                 }
                 else
                 {
-                    throw new ParseException($"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{Name}' is not a number.");
+                    throw new ParameterParseException($"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{Name}' is not a number.");
                 }
             }
 

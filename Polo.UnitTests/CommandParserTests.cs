@@ -107,7 +107,7 @@ namespace Polo.UnitTests
             var incomeArguments = Array.Empty<string>();
 
             // Act
-            var exception = Assert.Throws<ParseException>(() => _sut.Parse(incomeArguments, _commands));
+            var exception = Assert.Throws<ParameterParseException>(() => _sut.Parse(incomeArguments, _commands));
 
             // Assert
             Assert.Equal("ERROR: No command provided. Please enter --help to see available commands list.", exception.Message);
@@ -121,7 +121,7 @@ namespace Polo.UnitTests
             var incomeArguments = argumentLine.Split(' ');
 
             // Act
-            var exception = Assert.Throws<ParseException>(() => _sut.Parse(incomeArguments, _commands));
+            var exception = Assert.Throws<ParameterParseException>(() => _sut.Parse(incomeArguments, _commands));
 
             // Assert
             Assert.Equal("ERROR: Unknown command. Please enter --help to see available commands list.", exception.Message);
@@ -137,7 +137,7 @@ namespace Polo.UnitTests
             var incomeArguments = argumentLine.Split(' ');
 
             // Act
-            var exception = Assert.Throws<ParseException>(() => _sut.Parse(incomeArguments, _commands));
+            var exception = Assert.Throws<ParameterParseException>(() => _sut.Parse(incomeArguments, _commands));
 
             // Assert
             Assert.Equal("ERROR: Unknown parameter. Please enter --help to see available parameters list.", exception.Message);
@@ -153,7 +153,7 @@ namespace Polo.UnitTests
             var incomeArguments = argumentLine.Split(' ');
 
             // Act
-            var exception = Assert.Throws<ParseException>(() => _sut.Parse(incomeArguments, _commands));
+            var exception = Assert.Throws<ParameterParseException>(() => _sut.Parse(incomeArguments, _commands));
 
             // Assert
             Assert.Equal("ERROR: Parameter delimiter missed. Please enter --help to see correct parameter syntax.", exception.Message);

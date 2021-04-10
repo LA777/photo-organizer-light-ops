@@ -8,18 +8,16 @@ namespace Polo.Parameters
 {
     public class LongSideLimitParameter : IParameter<int>, IParameterInfo
     {
-        private static readonly int _min = 1;
+        public static int Min => 1;
 
         public static string Name => "long-side-limit";
 
-        public static IReadOnlyCollection<int> PossibleValues => new List<int>() { _min, 1200 };
+        public static IReadOnlyCollection<int> PossibleValues => new List<int>() { Min, 1200 };
 
         public static string Description => "Long side limit for image resize.";
 
         public int Initialize(IReadOnlyDictionary<string, string> incomeParameters, int defaultValue)
         {
-            // TODO LA - Cover with UTs
-
             var outputValue = defaultValue;
             var parametersEmpty = incomeParameters.IsNullOrEmpty();
 
@@ -31,13 +29,13 @@ namespace Polo.Parameters
                 }
                 else
                 {
-                    throw new ParseException($"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{Name}' is not a number.");
+                    throw new ParameterParseException($"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{Name}' is not a number.");
                 }
             }
 
-            if (outputValue < _min)
+            if (outputValue < Min)
             {
-                throw new ArgumentOutOfRangeException($"{CommandParser.ShortCommandPrefix}{Name}", $"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{Name}' should be in the range from {_min} to image long side width."); // TODO LA - Refactor
+                throw new ArgumentOutOfRangeException($"{CommandParser.ShortCommandPrefix}{Name}", $"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{Name}' should be higher than {Min - 1}.");
             }
 
             return outputValue;

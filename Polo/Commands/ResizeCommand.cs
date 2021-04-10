@@ -60,7 +60,7 @@ namespace Polo.Commands
                     }
                     else
                     {
-                        throw new ParseException($"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{LongSideLimitParameterName}' is not a number.");
+                        throw new ParameterParseException($"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{LongSideLimitParameterName}' is not a number.");
                     }
                 }
             }
