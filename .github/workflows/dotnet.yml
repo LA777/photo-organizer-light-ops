@@ -7,9 +7,15 @@ on:
     branches: [ master, develop ]
 
 jobs:
+  - name: Clean
+      run: dotnet clean ./photo-organizer-light-ops/Polo.sln --configuration Release && dotnet nuget locals all --clear
+
   build:
 
-    runs-on: windows-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+        matrix:
+            os: [ubuntu-latest, windows-latest]
 
     steps:
     - uses: actions/checkout@v2
