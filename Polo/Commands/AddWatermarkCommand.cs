@@ -57,11 +57,11 @@ namespace Polo.Commands
             var watermarkTransparencyPercent = ParameterHandler.TransparencyParameter.Initialize(parameters, _applicationSettings.WatermarkTransparencyPercent);
 
             // TODO LA - Check in UTs duplicates
-            var jpegFiles = new List<string>();
+            var imagesForProcess = new List<string>();
             _applicationSettings.FileForProcessExtensions.Distinct().ToList()// TODO LA - Move this Select to some extension
-                .ForEach(x => jpegFiles.AddRange(Directory.EnumerateFiles(sourceFolderPath, $"*.{x}", SearchOption.TopDirectoryOnly)));
+                .ForEach(x => imagesForProcess.AddRange(Directory.EnumerateFiles(sourceFolderPath, $"*.{x}", SearchOption.TopDirectoryOnly)));
 
-            if (jpegFiles.Any() && !Directory.Exists(destinationDirectory))
+            if (imagesForProcess.Any() && !Directory.Exists(destinationDirectory))
             {
                 Directory.CreateDirectory(destinationDirectory);
             }
@@ -69,11 +69,11 @@ namespace Polo.Commands
             using var watermark = new MagickImage(watermarkPath);
             using var transparentWatermark = watermark.ConvertToTransparentMagickImage(watermarkTransparencyPercent);
 
-            foreach (var jpegFile in jpegFiles)
+            foreach (var imageForProcess in imagesForProcess)
             {
-                var fileName = Path.GetFileName(jpegFile);
+                var fileName = Path.GetFileName(imageForProcess);
                 var destinationImagePath = Path.Combine(destinationDirectory, fileName);
-                using var image = new MagickImage(jpegFile);
+                using var image = new MagickImage(imageForProcess);
                 image.Composite(transparentWatermark, watermarkPositionMagick, CompositeOperator.Over);
                 image.Write(destinationImagePath);
                 _logger.Information($"Watermark added: {destinationImagePath}");

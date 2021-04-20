@@ -2,7 +2,7 @@
   "profiles": {
     "Polo": {
       "commandName": "Project",
-      "commandLineArgs": "--resize-with-watermark -source:\"d:\\tmp dev\\images 2\"",
+      "commandLineArgs": "-ce -source:\"d:\\tmp dev\\images 3\" -output-folder-name:\"exif-output\"",
       "remoteDebugEnabled": false,
       "nativeDebugging": false
     }
