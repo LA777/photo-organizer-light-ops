@@ -30,7 +30,9 @@ namespace Polo.Commands
 
             foreach (var command in commands)
             {
-                _logger.Information($"{CommandParser.ShortCommandPrefix}{command.ShortName}, {CommandParser.CommandPrefix}{command.Name}\t\t{command.Description}");
+                var line = $"{CommandParser.ShortCommandPrefix}{command.ShortName},\t{CommandParser.CommandPrefix}{command.Name}\t\t\t{command.Description}";
+                _logger.Verbose(line);
+                Console.WriteLine(line);
             }
         }
     }

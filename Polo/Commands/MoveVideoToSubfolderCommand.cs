@@ -15,9 +15,9 @@ namespace Polo.Commands
         private readonly ApplicationSettingsReadOnly _applicationSettings;
         private readonly string VideoSubfolderName = "video"; // TODO LA - Create Parameter and Setting for Video folder name
 
-        public string Name => "video";
+        public string Name => "move-video";
 
-        public string ShortName => "v";
+        public string ShortName => "mv";
 
         public string Description => "Creates Video sub-folder in the current folder and moves all video files to this sub-folder.";
 

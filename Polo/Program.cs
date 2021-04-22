@@ -18,12 +18,11 @@ namespace Polo
     {
         private static IConfiguration Configuration { get; } = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("settings.json", optional: false, reloadOnChange: false)
+            .AddJsonFile(Path.Combine(AppContext.BaseDirectory, "settings.json"), optional: false, reloadOnChange: false)
             .Build();
 
         private static void Main(string[] args)
         {
-            // C:\Git\LA777\photo-organizer-light-ops\Polo\bin\Debug\netcoreapp3.1
             var services = new ServiceCollection();
             ConfigureServices(services);
             var serviceProvider = services.BuildServiceProvider();
@@ -69,8 +68,9 @@ namespace Polo
             var logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
                 .Enrich.WithProperty("Version", version)
-                .WriteTo.Console(LogEventLevel.Information)
-                .WriteTo.File(applicationSettings.LogFilePath, rollingInterval: RollingInterval.Day)
+                .WriteTo.Console(restrictedToMinimumLevel: LogEventLevel.Information,
+                outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} | {Message:lj}{NewLine}{Exception}")
+                .WriteTo.File(Path.Combine(AppContext.BaseDirectory, applicationSettings.LogFilePath), rollingInterval: RollingInterval.Day)
                 .CreateLogger();
 
             services.AddSingleton<ILogger>(logger);

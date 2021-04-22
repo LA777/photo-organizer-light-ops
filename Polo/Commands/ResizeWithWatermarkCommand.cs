@@ -30,7 +30,7 @@ namespace Polo.Commands
 
         public string Name => "resize-with-watermark";
 
-        public string ShortName => "rw";
+        public string ShortName => "rww";
 
         public string Description => $"Resizes all JPEG images in the current folder, adds watermark and saves them to a sub-folder. Example: polo.exe {CommandParser.CommandPrefix}{Name} {CommandParser.ShortCommandPrefix}{LongSideLimitParameter.Name}:1600"; // TODO LA - Show all possible parameters
 

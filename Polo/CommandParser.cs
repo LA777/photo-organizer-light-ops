@@ -57,7 +57,7 @@ namespace Polo
                 }
             }
 
-            _logger.Information($"Command '{commandArgument}' DONE!");
+            _logger.Verbose($"Command '{commandArgument}' DONE!");
         }
 
         private Dictionary<string, string> ParseParameters(IEnumerable<string> arguments)

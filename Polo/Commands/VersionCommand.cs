@@ -24,7 +24,8 @@ namespace Polo.Commands
         public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
         {
             var version = Assembly.GetExecutingAssembly().GetName().Version;
-            _logger.Information(version?.ToString());
+            _logger.Verbose(version?.ToString());
+            Console.WriteLine(version?.ToString());
         }
     }
 }
