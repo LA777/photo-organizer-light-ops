@@ -18,7 +18,7 @@ namespace Polo
     {
         private static IConfiguration Configuration { get; } = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile(Path.Combine(AppContext.BaseDirectory, "settings.json"), optional: false, reloadOnChange: false)
+            .AddJsonFile(Path.Combine(AppContext.BaseDirectory, @"settings\settings.json"), optional: false, reloadOnChange: false)
             .Build();
 
         private static void Main(string[] args)

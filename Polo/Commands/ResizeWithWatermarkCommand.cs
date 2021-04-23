@@ -25,7 +25,8 @@ namespace Polo.Commands
             OutputFolderNameParameter = new OutputFolderNameParameter(),
             PositionParameter = new PositionParameter(),
             TransparencyParameter = new TransparencyParameter(),
-            LongSideLimitParameter = new LongSideLimitParameter()
+            LongSideLimitParameter = new LongSideLimitParameter(),
+            ImageQuality = new ImageQuality()
         };
 
         public string Name => "resize-with-watermark";
@@ -52,6 +53,7 @@ namespace Polo.Commands
             var watermarkPosition = ParameterHandler.PositionParameter.Initialize(parameters, _applicationSettings.WatermarkPosition);
             var watermarkPositionMagick = watermarkPosition.ParsePosition();
             var watermarkTransparencyPercent = ParameterHandler.TransparencyParameter.Initialize(parameters, _applicationSettings.WatermarkTransparencyPercent);
+            var imageQuality = ParameterHandler.ImageQuality.Initialize(parameters, _applicationSettings.ImageQuality);
 
             // TODO LA - Check in UTs duplicates
             var jpegFiles = new List<string>();
@@ -94,6 +96,7 @@ namespace Polo.Commands
                 }
 
                 image.Composite(transparentWatermark, watermarkPositionMagick, CompositeOperator.Over);
+                image.Quality = imageQuality; // TODO LA - Cover with UTs
                 image.Write(destinationImagePath);
                 _logger.Information($"File resized with watermark: {destinationImagePath}");
             }

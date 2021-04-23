@@ -21,7 +21,8 @@ namespace Polo.Commands
         {
             SourceParameter = new SourceParameter(),
             LongSideLimitParameter = new LongSideLimitParameter(),
-            OutputFolderNameParameter = new OutputFolderNameParameter()
+            OutputFolderNameParameter = new OutputFolderNameParameter(),
+            ImageQuality = new ImageQuality()
         };
 
         public string Name => "resize";
@@ -43,6 +44,7 @@ namespace Polo.Commands
             var outputFolderName = ParameterHandler.OutputFolderNameParameter.Initialize(parameters, _applicationSettings.ResizedImageSubfolderName);
             var destinationFolder = Path.Combine(sourceFolderPath, outputFolderName);
             var sizeLimit = ParameterHandler.LongSideLimitParameter.Initialize(parameters, _applicationSettings.ImageResizeLongSideLimit);
+            var imageQuality = ParameterHandler.ImageQuality.Initialize(parameters, _applicationSettings.ImageQuality);
 
             var jpegFiles = new List<string>();
             _applicationSettings.FileForProcessExtensions.Distinct().ToList()
@@ -81,6 +83,7 @@ namespace Polo.Commands
                     continue;
                 }
 
+                image.Quality = imageQuality; // TODO LA - Cover with UTs
                 image.Write(destinationImagePath);
                 _logger.Information($"File resized: {destinationImagePath}");
             }
