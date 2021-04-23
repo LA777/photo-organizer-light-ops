@@ -24,7 +24,8 @@ namespace Polo.Commands
             WatermarkPathParameter = new WatermarkPathParameter(),
             OutputFolderNameParameter = new OutputFolderNameParameter(),
             PositionParameter = new PositionParameter(),
-            TransparencyParameter = new TransparencyParameter()
+            TransparencyParameter = new TransparencyParameter(),
+            ImageQuality = new ImageQuality()
         };
 
         public string Name => "add-watermark";
@@ -44,17 +45,13 @@ namespace Polo.Commands
             // TODO LA - Add OverwriteFile parameter
 
             var sourceFolderPath = ParameterHandler.SourceParameter.Initialize(parameters, Environment.CurrentDirectory);
-
             var watermarkPath = ParameterHandler.WatermarkPathParameter.Initialize(parameters, _applicationSettings.WatermarkPath);
-
             var watermarkOutputFolderName = ParameterHandler.OutputFolderNameParameter.Initialize(parameters, _applicationSettings.WatermarkOutputFolderName);
-
             var destinationDirectory = Path.Combine(sourceFolderPath, watermarkOutputFolderName);
-
             var watermarkPosition = ParameterHandler.PositionParameter.Initialize(parameters, _applicationSettings.WatermarkPosition);
             var watermarkPositionMagick = watermarkPosition.ParsePosition();
-
             var watermarkTransparencyPercent = ParameterHandler.TransparencyParameter.Initialize(parameters, _applicationSettings.WatermarkTransparencyPercent);
+            var imageQuality = ParameterHandler.ImageQuality.Initialize(parameters, _applicationSettings.ImageQuality);
 
             // TODO LA - Check in UTs duplicates
             var imagesForProcess = new List<string>();
@@ -75,6 +72,7 @@ namespace Polo.Commands
                 var destinationImagePath = Path.Combine(destinationDirectory, fileName);
                 using var image = new MagickImage(imageForProcess);
                 image.Composite(transparentWatermark, watermarkPositionMagick, CompositeOperator.Over);
+                image.Quality = imageQuality; // TODO LA - Cover with UTs
                 image.Write(destinationImagePath);
                 _logger.Information($"Watermark added: {destinationImagePath}");
             }

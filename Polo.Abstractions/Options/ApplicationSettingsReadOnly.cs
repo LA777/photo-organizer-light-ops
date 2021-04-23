@@ -22,6 +22,8 @@ namespace Polo.Abstractions.Options
 
         public int WatermarkTransparencyPercent { get; private set; }
 
+        public int ImageQuality { get; private set; }
+
         public IReadOnlyCollection<string> FileForProcessExtensions { get; private set; } = new List<string>();
 
         public IReadOnlyCollection<string> RawFileExtensions { get; private set; } = new List<string>();
@@ -38,6 +40,7 @@ namespace Polo.Abstractions.Options
             WatermarkPath = applicationSettings.WatermarkPath;
             WatermarkOutputFolderName = applicationSettings.WatermarkOutputFolderName;
             WatermarkPosition = applicationSettings.WatermarkPosition;
+            ImageQuality = applicationSettings.ImageQuality;
             WatermarkTransparencyPercent = applicationSettings.WatermarkTransparencyPercent;
             FileForProcessExtensions = new List<string>(applicationSettings.FileForProcessExtensions);
             RawFileExtensions = new List<string>(applicationSettings.RawFileExtensions);

@@ -12,6 +12,7 @@ namespace Polo.Parameters.Handler
         public TransparencyParameter TransparencyParameter { get; init; }
         public LongSideLimitParameter LongSideLimitParameter { get; init; }
         public DestinationParameter DestinationParameter { get; init; }
+        public ImageQuality ImageQuality { get; init; }
 
         public IReadOnlyCollection<IParameterInfo> GetStringParameters()
         {
@@ -24,6 +25,7 @@ namespace Polo.Parameters.Handler
             if (TransparencyParameter != null) parameters.Add(TransparencyParameter);
             if (LongSideLimitParameter != null) parameters.Add(LongSideLimitParameter);
             if (DestinationParameter != null) parameters.Add(DestinationParameter);
+            if (ImageQuality != null) parameters.Add(ImageQuality);
 
             return parameters;
         }
