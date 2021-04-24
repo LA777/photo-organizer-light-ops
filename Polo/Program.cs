@@ -1,29 +1,28 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Polo.Abstractions;
 using Polo.Abstractions.Commands;
+using Polo.Abstractions.Options;
 using Polo.Commands;
-using Polo.Options;
 using Serilog;
 using Serilog.Events;
 using System;
 using System.IO;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Polo
 {
-    internal static class Program
+    public static class Program
     {
-        public const string Version = "0.0.5";
-
         private static IConfiguration Configuration { get; } = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("settings.json", optional: false, reloadOnChange: false)
+            .AddJsonFile(Path.Combine(AppContext.BaseDirectory, @"settings\settings.json"), optional: false, reloadOnChange: false)
             .Build();
 
         private static void Main(string[] args)
         {
-            // C:\Git\LA777\photo-organizer-light-ops\Polo\bin\Debug\netcoreapp3.1
             var services = new ServiceCollection();
             ConfigureServices(services);
             var serviceProvider = services.BuildServiceProvider();
@@ -35,6 +34,7 @@ namespace Polo
 
             try
             {
+                ValidateApplicationSettings(serviceProvider);
                 task.Wait();
             }
             catch (Exception exception)
@@ -43,20 +43,38 @@ namespace Polo
             }
         }
 
+        private static void ValidateApplicationSettings(ServiceProvider serviceProvider)
+        {
+            var applicationSettings = serviceProvider.GetService<IOptions<ApplicationSettings>>()?.Value;
+
+            if (applicationSettings == null)
+            {
+                throw new ArgumentNullException(nameof(applicationSettings), "ERROR: Application settings are absent.");
+            }
+        }
+
         private static void ConfigureServices(IServiceCollection services)
         {
-            services.AddOptions();
-            services.Configure<ApplicationSettings>(Configuration);
+            services.AddOptions<ApplicationSettings>()
+                .Bind(Configuration)
+                .ValidateDataAnnotations();
+
             var applicationSettings = Configuration.Get<ApplicationSettings>();
+            var applicationSettingsReadOnly = new ApplicationSettingsReadOnly(applicationSettings);
+            IOptions<ApplicationSettingsReadOnly> applicationSettingsReadOnlyOptions = Options.Create(applicationSettingsReadOnly);
+
+            var version = Assembly.GetExecutingAssembly().GetName().Version;
 
             var logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
-                .Enrich.WithProperty("Version", Version)
-                .WriteTo.Console(LogEventLevel.Information)
-                .WriteTo.File(applicationSettings.LogFilePath, rollingInterval: RollingInterval.Day)
+                .Enrich.WithProperty("Version", version)
+                .WriteTo.Console(restrictedToMinimumLevel: LogEventLevel.Information,
+                outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} | {Message:lj}{NewLine}{Exception}")
+                .WriteTo.File(Path.Combine(AppContext.BaseDirectory, applicationSettings.LogFilePath), rollingInterval: RollingInterval.Day)
                 .CreateLogger();
 
             services.AddSingleton<ILogger>(logger);
+            services.AddSingleton(applicationSettingsReadOnlyOptions);
             services.AddSingleton<ICommandParser, CommandParser>();
             services.AddSingleton<ICommand, VersionCommand>();
             services.AddSingleton<ICommand, HelpCommand>();
@@ -66,6 +84,9 @@ namespace Polo
             services.AddSingleton<ICommand, CopyAllFilesCommand>();
             services.AddSingleton<ICommand, MoveAllFilesCommand>();
             services.AddSingleton<ICommand, MoveVideoToSubfolderCommand>();
+            services.AddSingleton<ICommand, AddWatermarkCommand>();
+            services.AddSingleton<ICommand, ResizeWithWatermarkCommand>();
+            services.AddSingleton<ICommand, ClearExifCommand>();
         }
     }
 }

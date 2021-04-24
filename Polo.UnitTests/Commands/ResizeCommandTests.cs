@@ -1,10 +1,9 @@
 using FluentAssertions;
-using Microsoft.Extensions.Options;
 using Moq;
 using Polo.Abstractions.Commands;
-using Polo.Abstractions.Exceptions;
+using Polo.Abstractions.Options;
 using Polo.Commands;
-using Polo.Options;
+using Polo.Parameters;
 using Polo.UnitTests.FileUtils;
 using Polo.UnitTests.Models;
 using Serilog;
@@ -18,15 +17,18 @@ namespace Polo.UnitTests.Commands
     [Collection("Sequential")]
     public class ResizeCommandTests : CommandTestBase
     {
-        private static readonly IEnumerable<string> _jpegFileExtensions = new List<string>() { "jpeg", "jpg" };
+        private static readonly ICollection<string> _jpegFileExtensions = new List<string>() { "jpeg", "jpg" };
         private static readonly int _imageResizeLongSideLimit = 100;
         private static readonly string _resizedImageSubfolderName = "small";
-        private static readonly ApplicationSettings _validApplicationSettings = new ApplicationSettings(jpegFileExtensions: _jpegFileExtensions,
-            imageResizeLongSideLimit: _imageResizeLongSideLimit, resizedImageSubfolderName: _resizedImageSubfolderName);
-        private static readonly IOptions<ApplicationSettings> _mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(_validApplicationSettings);
+        private static readonly ApplicationSettings _validApplicationSettings = new ApplicationSettings()
+        {
+            FileForProcessExtensions = _jpegFileExtensions,
+            ImageResizeLongSideLimit = _imageResizeLongSideLimit,
+            ResizedImageSubfolderName = _resizedImageSubfolderName
+        };
         private static readonly string _albumName = "Album1";
         private static readonly Mock<ILogger> _loggerMock = new Mock<ILogger>();
-        private readonly ICommand _sut = new ResizeCommand(_mockApplicationOptions, _loggerMock.Object);
+        private readonly ICommand _sut = new ResizeCommand(GetOptions(_validApplicationSettings), _loggerMock.Object);
 
         private readonly Folder _folderStructureInitial = new Folder()
         {
@@ -119,7 +121,7 @@ namespace Polo.UnitTests.Commands
 
             var parameters = new Dictionary<string, string>
             {
-                { ResizeCommand.LongSideLimitParameterName, validLongSideLimitParameter }
+                { LongSideLimitParameter.Name, validLongSideLimitParameter }
             };
 
             // Act
@@ -129,90 +131,6 @@ namespace Polo.UnitTests.Commands
             var folderStructureActual = FileHelper.CreateFolderStructureByFolderAndFiles(testFolderFullPath);
             folderStructureActual.Should().BeEquivalentTo(_folderStructureExpected);
         }
-
-        [Fact]
-        public void Action_Should_Resize_Jpeg_Files_And_Copy_To_Output_Folder_With_Unknown_Parameter_And_Valid_ImageResizeLongSideLimit_Setting_Test()
-        {
-            // Arrange
-            var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
-            Environment.CurrentDirectory = Path.Combine(testFolderFullPath, _albumName);
-
-            var parameters = new Dictionary<string, string>
-            {
-                { "param1", "data" }
-            };
-
-            // Act
-            _sut.Action(parameters);
-
-            // Assert
-            var folderStructureActual = FileHelper.CreateFolderStructureByFolderAndFiles(testFolderFullPath);
-            folderStructureActual.Should().BeEquivalentTo(_folderStructureExpected);
-        }
-
-        [Fact]
-        public void Action_Should_Throw_Exception_With_LongSideLimitParameter_Not_Number_And_Valid_ImageResizeLongSideLimit_Setting_Test()
-        {
-            // Arrange
-            const string invalidLongSideLimitParameter = "abc";
-
-            var parameters = new Dictionary<string, string>
-            {
-                { ResizeCommand.LongSideLimitParameterName, invalidLongSideLimitParameter }
-            };
-
-            // Act
-            var exception = Assert.Throws<ParseException>(() => _sut.Action(parameters));
-
-            // Assert
-            Assert.Equal($"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{ResizeCommand.LongSideLimitParameterName}' is not a number.", exception.Message);
-        }
-
-        [Fact]
-        public void Action_Should_Throw_Exception_With_LongSideLimitParameter_Is_Zero_And_Valid_ImageResizeLongSideLimit_Setting_Test()
-        {
-            // Arrange
-            const string invalidLongSideLimitParameter = "0";
-
-            var parameters = new Dictionary<string, string>
-            {
-                { ResizeCommand.LongSideLimitParameterName, invalidLongSideLimitParameter }
-            };
-
-            // Act
-            var exception = Assert.Throws<ArgumentOutOfRangeException>(() => _sut.Action(parameters));
-
-            // Assert
-            Assert.Contains($"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{ResizeCommand.LongSideLimitParameterName}' should be higher than 0.", exception.Message);
-        }
-
-        [Fact]
-        public void Action_Should_Resize_Jpeg_Files_And_Copy_To_Output_Folder_With_Valid_LongSideLimitParameter_And_Invalid_ImageResizeLongSideLimit_Setting_Test()
-        {
-            // Arrange
-            var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
-            Environment.CurrentDirectory = Path.Combine(testFolderFullPath, _albumName);
-            const string validLongSideLimitParameter = "100";
-
-            var parameters = new Dictionary<string, string>
-            {
-                { ResizeCommand.LongSideLimitParameterName, validLongSideLimitParameter }
-            };
-
-            var jpegFileExtensions = new List<string>() { "jpeg", "jpg" };
-            var applicationSettings = new ApplicationSettings(jpegFileExtensions: jpegFileExtensions,
-                imageResizeLongSideLimit: 0, resizedImageSubfolderName: _resizedImageSubfolderName);
-            var mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(applicationSettings);
-            var sut = new ResizeCommand(mockApplicationOptions, _loggerMock.Object);
-
-            // Act
-            sut.Action(parameters);
-
-            // Assert
-            var folderStructureActual = FileHelper.CreateFolderStructureByFolderAndFiles(testFolderFullPath);
-            folderStructureActual.Should().BeEquivalentTo(_folderStructureExpected);
-        }
-
 
         [Fact]
         public void Action_Should_Resize_Jpeg_Files_And_Copy_To_Output_Folder_If_Setting_Have_Duplicate_Extension_Test()
@@ -222,10 +140,14 @@ namespace Polo.UnitTests.Commands
             Environment.CurrentDirectory = Path.Combine(testFolderFullPath, _albumName);
 
             var jpegFileExtensionsWithDuplicates = new List<string>() { "jpeg", "jpg", "jpeg", "jpg" };
-            var applicationSettings = new ApplicationSettings(jpegFileExtensions: jpegFileExtensionsWithDuplicates,
-            imageResizeLongSideLimit: _imageResizeLongSideLimit, resizedImageSubfolderName: _resizedImageSubfolderName);
-            var mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(applicationSettings);
-            var sut = new ResizeCommand(mockApplicationOptions, _loggerMock.Object);
+            var applicationSettings = new ApplicationSettings()
+            {
+                FileForProcessExtensions = jpegFileExtensionsWithDuplicates,
+                ImageResizeLongSideLimit = _imageResizeLongSideLimit,
+                ResizedImageSubfolderName = _resizedImageSubfolderName
+            };
+
+            var sut = new ResizeCommand(GetOptions(applicationSettings), _loggerMock.Object);
 
             // Act
             sut.Action();
@@ -233,47 +155,6 @@ namespace Polo.UnitTests.Commands
             // Assert
             var folderStructureActual = FileHelper.CreateFolderStructureByFolderAndFiles(testFolderFullPath);
             folderStructureActual.Should().BeEquivalentTo(_folderStructureExpected);
-        }
-
-        [Fact]
-        public void Action_Should_Throw_Exception_With_Invalid_ImageResizeLongSideLimit_Setting_Test()
-        {
-            // Arrange
-            var jpegFileExtensions = new List<string>() { "jpeg", "jpg" };
-            var applicationSettings = new ApplicationSettings(jpegFileExtensions: jpegFileExtensions,
-                imageResizeLongSideLimit: 0, resizedImageSubfolderName: _resizedImageSubfolderName);
-            var mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(applicationSettings);
-            var sut = new ResizeCommand(mockApplicationOptions, _loggerMock.Object);
-
-            // Act
-            var exception = Assert.Throws<ParameterAbsentException>(() => sut.Action());
-
-            // Assert
-            Assert.Equal($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{ResizeCommand.LongSideLimitParameterName}' parameter or setup setting value '{nameof(ApplicationSettings.ImageResizeLongSideLimit)}'.", exception.Message);
-        }
-
-        [Fact]
-        public void Action_Should_Throw_Exception_With_LongSideLimitParameter_Not_Number_And_Invalid_ImageResizeLongSideLimit_Setting_Test()
-        {
-            // Arrange
-            var jpegFileExtensions = new List<string>() { "jpeg", "jpg" };
-            const string invalidLongSideLimitParameter = "abc";
-
-            var parameters = new Dictionary<string, string>
-            {
-                { ResizeCommand.LongSideLimitParameterName, invalidLongSideLimitParameter }
-            };
-
-            var applicationSettings = new ApplicationSettings(jpegFileExtensions: jpegFileExtensions,
-                imageResizeLongSideLimit: 0, resizedImageSubfolderName: _resizedImageSubfolderName);
-            var mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(applicationSettings);
-            var sut = new ResizeCommand(mockApplicationOptions, _loggerMock.Object);
-
-            // Act
-            var exception = Assert.Throws<ParseException>(() => sut.Action(parameters));
-
-            // Assert
-            Assert.Equal($"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{ResizeCommand.LongSideLimitParameterName}' is not a number.", exception.Message);
         }
 
         ~ResizeCommandTests()

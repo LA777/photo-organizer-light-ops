@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using Polo.Abstractions.Commands;
-using Polo.Options;
+using Polo.Abstractions.Options;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -12,7 +12,7 @@ namespace Polo.Commands
     public class MoveRawToJpegFolderCommand : ICommand
     {
         private readonly ILogger _logger;
-        private readonly ApplicationSettings _applicationSettings;
+        private readonly ApplicationSettingsReadOnly _applicationSettings;
 
         public string Name => "move-raw";
 
@@ -20,7 +20,7 @@ namespace Polo.Commands
 
         public string Description => "Move RAW files to the RAW sub-folder in the JPEG folder.";
 
-        public MoveRawToJpegFolderCommand(IOptions<ApplicationSettings> applicationOptions, ILogger logger)
+        public MoveRawToJpegFolderCommand(IOptions<ApplicationSettingsReadOnly> applicationOptions, ILogger logger)
         {
             _applicationSettings = applicationOptions.Value ?? throw new ArgumentNullException(nameof(applicationOptions));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -29,7 +29,7 @@ namespace Polo.Commands
         public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
         {
             var currentDirectory = Environment.CurrentDirectory;
-            var rawFolderPath = Path.Join(currentDirectory, _applicationSettings.RawFolderName);
+            var rawFolderPath = Path.Join(currentDirectory, _applicationSettings.RawFolderName);// TODO LA - Create RAW input parameter
 
             var rawFiles = new List<string>();
 
@@ -42,7 +42,7 @@ namespace Polo.Commands
                 var allFotosFolder = Directory.GetParent(currentDirectory).FullName;
 
                 var jpegFiles = new List<string>();
-                _applicationSettings.JpegFileExtensions.Distinct().ToList()
+                _applicationSettings.FileForProcessExtensions.Distinct().ToList()
                     .ForEach(x => jpegFiles.AddRange(Directory.EnumerateFiles(allFotosFolder, $"{fileNameWithoutExtension}.{x}", SearchOption.AllDirectories)));
 
                 if (jpegFiles.Count() > 1)

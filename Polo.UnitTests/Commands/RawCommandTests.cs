@@ -1,9 +1,8 @@
 using FluentAssertions;
-using Microsoft.Extensions.Options;
 using Moq;
 using Polo.Abstractions.Commands;
+using Polo.Abstractions.Options;
 using Polo.Commands;
-using Polo.Options;
 using Polo.UnitTests.FileUtils;
 using Polo.UnitTests.Models;
 using Serilog;
@@ -20,12 +19,16 @@ namespace Polo.UnitTests.Commands
     {
         private static readonly string _albumName = "Album1";
         private static readonly string _rawFolderName = "RAW";
-        private static readonly IEnumerable<string> _rawFileExtensions = new List<string>() { "orf", "crw", "cr2", "cr3", "3fr", "mef", "nef", "nrw", "pef", "ptx", "rw2", "arw", "srf", "sr2", "gpr", "raf", "raw", "rwl", "dng", "srw", "x3f" };
-        private static readonly IEnumerable<string> _jpegFileExtensions = new List<string>() { "jpg", "jpeg" };
-        private static readonly ApplicationSettings _validApplicationSettings = new ApplicationSettings(jpegFileExtensions: _jpegFileExtensions, rawFileExtensions: _rawFileExtensions, rawFolderName: _rawFolderName);
-        private static readonly IOptions<ApplicationSettings> _mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(_validApplicationSettings);
+        private static readonly ICollection<string> _rawFileExtensions = new List<string>() { "orf", "crw", "cr2", "cr3", "3fr", "mef", "nef", "nrw", "pef", "ptx", "rw2", "arw", "srf", "sr2", "gpr", "raf", "raw", "rwl", "dng", "srw", "x3f" };
+        private static readonly ICollection<string> _jpegFileExtensions = new List<string>() { "jpg", "jpeg" };
+        private static readonly ApplicationSettings _validApplicationSettings = new ApplicationSettings()
+        {
+            FileForProcessExtensions = _jpegFileExtensions,
+            RawFileExtensions = _rawFileExtensions,
+            RawFolderName = _rawFolderName
+        };
         private static readonly Mock<ILogger> _loggerMock = new Mock<ILogger>();
-        private readonly ICommand _sut = new RawCommand(_mockApplicationOptions, _loggerMock.Object);
+        private readonly ICommand _sut = new RawCommand(GetOptions(_validApplicationSettings), _loggerMock.Object);
 
 
         private readonly Folder _folderStructureInitial = new Folder()
@@ -127,8 +130,6 @@ namespace Polo.UnitTests.Commands
             folderStructureActual.Should().BeEquivalentTo(_folderStructureExpected);
         }
 
-
-
         [Fact]
         public void Action_Should_Create_Raw_Folder_And_Move_Raw_Files_If_Setting_Have_Duplicate_JpegFileExtension_Test()
         {
@@ -137,9 +138,13 @@ namespace Polo.UnitTests.Commands
             Environment.CurrentDirectory = Path.Combine(testFolderFullPath, _albumName);
 
             var jpegFileExtensionsWithDuplicates = new List<string>() { "jpeg", "jpg", "jpeg", "jpg" };
-            var applicationSettings = new ApplicationSettings(jpegFileExtensions: jpegFileExtensionsWithDuplicates, rawFileExtensions: _rawFileExtensions, rawFolderName: _rawFolderName);
-            var mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(applicationSettings);
-            var sut = new RawCommand(mockApplicationOptions, _loggerMock.Object);
+            var applicationSettings = new ApplicationSettings()
+            {
+                FileForProcessExtensions = jpegFileExtensionsWithDuplicates,
+                RawFileExtensions = _rawFileExtensions,
+                RawFolderName = _rawFolderName
+            };
+            var sut = new RawCommand(GetOptions(applicationSettings), _loggerMock.Object);
 
             // Act
             sut.Action();
@@ -158,9 +163,13 @@ namespace Polo.UnitTests.Commands
 
             var rawFileExtensionsWithDuplicates = new List<string>() { "orf", "crw", "cr2", "cr3", "3fr", "mef", "nef", "nrw", "pef", "ptx", "rw2", "arw", "srf", "sr2", "gpr", "raf", "raw", "rwl", "dng", "srw", "x3f",
                                                                        "orf", "crw", "cr2", "cr3", "3fr", "mef", "nef", "nrw", "pef", "ptx", "rw2", "arw", "srf", "sr2", "gpr", "raf", "raw", "rwl", "dng", "srw", "x3f" };
-            var applicationSettings = new ApplicationSettings(jpegFileExtensions: _jpegFileExtensions, rawFileExtensions: rawFileExtensionsWithDuplicates, rawFolderName: _rawFolderName);
-            var mockApplicationOptions = Microsoft.Extensions.Options.Options.Create(applicationSettings);
-            var sut = new RawCommand(mockApplicationOptions, _loggerMock.Object);
+            var applicationSettings = new ApplicationSettings()
+            {
+                FileForProcessExtensions = _jpegFileExtensions,
+                RawFileExtensions = rawFileExtensionsWithDuplicates,
+                RawFolderName = _rawFolderName
+            };
+            var sut = new RawCommand(GetOptions(applicationSettings), _loggerMock.Object);
 
             // Act
             sut.Action();
@@ -169,8 +178,6 @@ namespace Polo.UnitTests.Commands
             var folderStructureActual = FileHelper.CreateFolderStructureByFolderAndFiles(testFolderFullPath);
             folderStructureActual.Should().BeEquivalentTo(_folderStructureExpected);
         }
-
-
 
         ~RawCommandTests()
         {

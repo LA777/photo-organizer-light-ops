@@ -22,6 +22,7 @@ namespace Polo.Commands
 
         public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
         {
+            // TODO LA - Cover with UTs
             if (commands == null)
             {
                 throw new ArgumentNullException(nameof(commands));
@@ -29,7 +30,9 @@ namespace Polo.Commands
 
             foreach (var command in commands)
             {
-                _logger.Information($"{CommandParser.ShortCommandPrefix}{command.ShortName}, {CommandParser.CommandPrefix}{command.Name}\t\t{command.Description}");
+                var line = $"{CommandParser.ShortCommandPrefix}{command.ShortName},\t{CommandParser.CommandPrefix}{command.Name}\t\t\t{command.Description}";
+                _logger.Verbose(line);
+                Console.WriteLine(line);
             }
         }
     }

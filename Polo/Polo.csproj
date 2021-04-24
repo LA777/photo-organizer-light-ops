@@ -2,16 +2,30 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <StartupObject>Polo.Program</StartupObject>
+
+    <RuntimeIdentifier>win10-x64</RuntimeIdentifier>
+    <PublishTrimmed>true</PublishTrimmed>
+    <TrimMode>CopyUsed</TrimMode>
+
     <ApplicationIcon>Icon\multimediaphotoviewer.ico</ApplicationIcon>
+    <Version>0.0.7</Version>
+    <Description>Photo organizer</Description>
+    <PackageProjectUrl>https://github.com/LA777/photo-organizer-light-ops</PackageProjectUrl>
+    <PackageIcon>multimediaphotoviewer.ico</PackageIcon>
+    <RepositoryUrl>https://github.com/LA777/photo-organizer-light-ops</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="7.23.0" />
+    <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="7.23.3" />
+    <PackageReference Include="Magick.NET.SystemDrawing" Version="2.0.14" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" Version="5.0.0" />
     <PackageReference Include="Serilog" Version="2.10.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
     <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
@@ -23,8 +37,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="settings.json">
+    <None Update="settings\settings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Icon\multimediaphotoviewer.ico">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
     </None>
   </ItemGroup>
 

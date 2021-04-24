@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using Polo.Abstractions.Commands;
-using Polo.Options;
+using Polo.Abstractions.Options;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -12,16 +12,16 @@ namespace Polo.Commands
     public class MoveVideoToSubfolderCommand : ICommand
     {
         private readonly ILogger _logger;
-        private readonly ApplicationSettings _applicationSettings;
-        private readonly string VideoSubfolderName = "video";
+        private readonly ApplicationSettingsReadOnly _applicationSettings;
+        private readonly string VideoSubfolderName = "video"; // TODO LA - Create Parameter and Setting for Video folder name
 
-        public string Name => "video";
+        public string Name => "move-video";
 
-        public string ShortName => "v";
+        public string ShortName => "mv";
 
         public string Description => "Creates Video sub-folder in the current folder and moves all video files to this sub-folder.";
 
-        public MoveVideoToSubfolderCommand(IOptions<ApplicationSettings> applicationOptions, ILogger logger)
+        public MoveVideoToSubfolderCommand(IOptions<ApplicationSettingsReadOnly> applicationOptions, ILogger logger)
         {
             _applicationSettings = applicationOptions.Value ?? throw new ArgumentNullException(nameof(applicationOptions));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));

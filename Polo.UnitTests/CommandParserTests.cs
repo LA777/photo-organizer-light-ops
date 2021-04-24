@@ -37,13 +37,13 @@ namespace Polo.UnitTests
         }
 
         [Fact]
-        public void Parse_Should_Parse_Income_Arguments_To_Commands_And_DictionaryArguments_With_Full_CommandName_Test()
+        public void Parse_Should_Parse_Input_Arguments_To_Commands_And_DictionaryArguments_With_Full_CommandName_Test()
         {
             // Arrange
             var parameterName = "param";
             var parameterValue = "42";
             var argumentLine = $"{CommandParser.CommandPrefix}{_commandMock.Object.Name} {CommandParser.ShortCommandPrefix}{parameterName}{CommandParser.ParameterDelimiter}{parameterValue}";
-            var incomeArguments = argumentLine.Split(' ');
+            var inputArguments = argumentLine.Split(' ');
             var parsedArguments = new Dictionary<string, string>
             {
                 { parameterName, parameterValue }
@@ -51,7 +51,7 @@ namespace Polo.UnitTests
             _commandMock.Invocations.Clear();
 
             // Act
-            _sut.Parse(incomeArguments, _commands);
+            _sut.Parse(inputArguments, _commands);
 
 
             // Assert
@@ -61,13 +61,13 @@ namespace Polo.UnitTests
         }
 
         [Fact]
-        public void Parse_Should_Parse_Income_Arguments_To_Commands_And_DictionaryArguments_With_Short_CommandName_Test()
+        public void Parse_Should_Parse_Input_Arguments_To_Commands_And_DictionaryArguments_With_Short_CommandName_Test()
         {
             // Arrange
             var parameterName = "param";
             var parameterValue = "42";
             var argumentLine = $"{CommandParser.ShortCommandPrefix}{_commandMock.Object.ShortName} {CommandParser.ShortCommandPrefix}{parameterName}{CommandParser.ParameterDelimiter}{parameterValue}";
-            var incomeArguments = argumentLine.Split(' ');
+            var inputArguments = argumentLine.Split(' ');
             var parsedArguments = new Dictionary<string, string>
             {
                 { parameterName, parameterValue }
@@ -75,7 +75,7 @@ namespace Polo.UnitTests
             _commandMock.Invocations.Clear();
 
             // Act
-            _sut.Parse(incomeArguments, _commands);
+            _sut.Parse(inputArguments, _commands);
 
             // Assert
             _commandMock.Verify(x => x.Action(It.IsAny<IReadOnlyDictionary<string, string>>(), It.IsAny<IEnumerable<ICommand>>()), Times.Once);
@@ -84,15 +84,15 @@ namespace Polo.UnitTests
         }
 
         [Fact]
-        public void Parse_Should_Parse_Income_Arguments_To_Commands_Without_Parameters_Test()
+        public void Parse_Should_Parse_Input_Arguments_To_Commands_Without_Parameters_Test()
         {
             // Arrange
             var argumentLine = $"{CommandParser.CommandPrefix}{_commandMock.Object.Name}";
-            var incomeArguments = argumentLine.Split(' ');
+            var inputArguments = argumentLine.Split(' ');
             _commandMock.Invocations.Clear();
 
             // Act
-            _sut.Parse(incomeArguments, _commands);
+            _sut.Parse(inputArguments, _commands);
 
             // Assert
             _commandMock.Verify(x => x.Action(It.IsAny<IReadOnlyDictionary<string, string>>(), It.IsAny<IEnumerable<ICommand>>()), Times.Once);
@@ -104,10 +104,10 @@ namespace Polo.UnitTests
         public void Parse_Should_Throw_ParseException_If_No_Command_Provided_Test()
         {
             // Arrange
-            var incomeArguments = Array.Empty<string>();
+            var inputArguments = Array.Empty<string>();
 
             // Act
-            var exception = Assert.Throws<ParseException>(() => _sut.Parse(incomeArguments, _commands));
+            var exception = Assert.Throws<ParameterParseException>(() => _sut.Parse(inputArguments, _commands));
 
             // Assert
             Assert.Equal("ERROR: No command provided. Please enter --help to see available commands list.", exception.Message);
@@ -118,10 +118,10 @@ namespace Polo.UnitTests
         {
             // Arrange
             var argumentLine = $"{CommandParser.CommandPrefix}{_commandMock.Object.Name}zz";
-            var incomeArguments = argumentLine.Split(' ');
+            var inputArguments = argumentLine.Split(' ');
 
             // Act
-            var exception = Assert.Throws<ParseException>(() => _sut.Parse(incomeArguments, _commands));
+            var exception = Assert.Throws<ParameterParseException>(() => _sut.Parse(inputArguments, _commands));
 
             // Assert
             Assert.Equal("ERROR: Unknown command. Please enter --help to see available commands list.", exception.Message);
@@ -134,10 +134,10 @@ namespace Polo.UnitTests
             var parameterName = "param";
             var parameterValue = "42";
             var argumentLine = $"{CommandParser.ShortCommandPrefix}{_commandMock.Object.ShortName} {parameterName}{CommandParser.ParameterDelimiter}{parameterValue}";
-            var incomeArguments = argumentLine.Split(' ');
+            var inputArguments = argumentLine.Split(' ');
 
             // Act
-            var exception = Assert.Throws<ParseException>(() => _sut.Parse(incomeArguments, _commands));
+            var exception = Assert.Throws<ParameterParseException>(() => _sut.Parse(inputArguments, _commands));
 
             // Assert
             Assert.Equal("ERROR: Unknown parameter. Please enter --help to see available parameters list.", exception.Message);
@@ -150,23 +150,23 @@ namespace Polo.UnitTests
             var parameterName = "param";
             var parameterValue = "42";
             var argumentLine = $"{CommandParser.ShortCommandPrefix}{_commandMock.Object.ShortName} {CommandParser.ShortCommandPrefix}{parameterName}{parameterValue}";
-            var incomeArguments = argumentLine.Split(' ');
+            var inputArguments = argumentLine.Split(' ');
 
             // Act
-            var exception = Assert.Throws<ParseException>(() => _sut.Parse(incomeArguments, _commands));
+            var exception = Assert.Throws<ParameterParseException>(() => _sut.Parse(inputArguments, _commands));
 
             // Assert
             Assert.Equal("ERROR: Parameter delimiter missed. Please enter --help to see correct parameter syntax.", exception.Message);
         }
 
         [Fact]
-        public void Parse_Should_Parse_Income_Arguments_To_Commands_And_DictionaryArguments_If_Parameter_Value_Contains_Semicolon_Test()
+        public void Parse_Should_Parse_Input_Arguments_To_Commands_And_DictionaryArguments_If_Parameter_Value_Contains_Semicolon_Test()
         {
             // Arrange
             var parameterName = "param";
             var parameterValue = "c:\\\\folder";
             var argumentLine = $"{CommandParser.CommandPrefix}{_commandMock.Object.Name} {CommandParser.ShortCommandPrefix}{parameterName}{CommandParser.ParameterDelimiter}{parameterValue}";
-            var incomeArguments = argumentLine.Split(' ');
+            var inputArguments = argumentLine.Split(' ');
             var parsedArguments = new Dictionary<string, string>
             {
                 { parameterName, parameterValue }
@@ -174,7 +174,7 @@ namespace Polo.UnitTests
             _commandMock.Invocations.Clear();
 
             // Act
-            _sut.Parse(incomeArguments, _commands);
+            _sut.Parse(inputArguments, _commands);
 
             // Assert
             _commandMock.Verify(x => x.Action(It.IsAny<IReadOnlyDictionary<string, string>>(), It.IsAny<IEnumerable<ICommand>>()), Times.Once);
@@ -183,13 +183,13 @@ namespace Polo.UnitTests
         }
 
         [Fact]
-        public void Parse_Should_Parse_Income_Arguments_To_Commands_And_DictionaryArguments_If_Parameter_Value_Contains_Many_Semicolons_Test()
+        public void Parse_Should_Parse_Input_Arguments_To_Commands_And_DictionaryArguments_If_Parameter_Value_Contains_Many_Semicolons_Test()
         {
             // Arrange
             var parameterName = "param";
             var parameterValue = ":c:\\\\fol:der:";
             var argumentLine = $"{CommandParser.CommandPrefix}{_commandMock.Object.Name} {CommandParser.ShortCommandPrefix}{parameterName}{CommandParser.ParameterDelimiter}{parameterValue}";
-            var incomeArguments = argumentLine.Split(' ');
+            var inputArguments = argumentLine.Split(' ');
             var parsedArguments = new Dictionary<string, string>
             {
                 { parameterName, parameterValue }
@@ -197,7 +197,7 @@ namespace Polo.UnitTests
             _commandMock.Invocations.Clear();
 
             // Act
-            _sut.Parse(incomeArguments, _commands);
+            _sut.Parse(inputArguments, _commands);
 
             // Assert
             _commandMock.Verify(x => x.Action(It.IsAny<IReadOnlyDictionary<string, string>>(), It.IsAny<IEnumerable<ICommand>>()), Times.Once);
@@ -206,12 +206,12 @@ namespace Polo.UnitTests
         }
 
         [Fact]
-        public void Parse_Should_Parse_Income_Arguments_To_Commands_And_DictionaryArguments_If_Parameter_Value_Contains_Quotation_Marks_Test()
+        public void Parse_Should_Parse_Input_Arguments_To_Commands_And_DictionaryArguments_If_Parameter_Value_Contains_Quotation_Marks_Test()
         {
             // Arrange
             var parameterName = "param";
             var parameterValue = "'c:\\\\new folder'";
-            var incomeArguments = new[] { $"{CommandParser.CommandPrefix}{_commandMock.Object.Name}", $"{CommandParser.ShortCommandPrefix}{parameterName}{CommandParser.ParameterDelimiter}{parameterValue}" };
+            var inputArguments = new[] { $"{CommandParser.CommandPrefix}{_commandMock.Object.Name}", $"{CommandParser.ShortCommandPrefix}{parameterName}{CommandParser.ParameterDelimiter}{parameterValue}" };
             var parsedArguments = new Dictionary<string, string>
             {
                 { parameterName, parameterValue }
@@ -219,7 +219,7 @@ namespace Polo.UnitTests
             _commandMock.Invocations.Clear();
 
             // Act
-            _sut.Parse(incomeArguments, _commands);
+            _sut.Parse(inputArguments, _commands);
 
             // Assert
             _commandMock.Verify(x => x.Action(It.IsAny<IReadOnlyDictionary<string, string>>(), It.IsAny<IEnumerable<ICommand>>()), Times.Once);

@@ -1,13 +1,13 @@
 ﻿
 TODO
 
-- add SIGN to JPEG files
-
 - add argument for resize JPEG files (resize with watermark)
+
+- add overwrite-file parameter
 
 - add Sequence command to run several commands
 
-- add setting - DeleteToRecycleBin
+- add parameter/setting - DeleteToRecycleBin
 
 - copy\move files command - add argument - overwrite
 
@@ -20,6 +20,7 @@ TODO
 
 - update MoveRawCommand to sync RAW files in the sub-folders of the current folder
 
+- ApplicationSettingsReadOnly make readonly Record
 
 
 
@@ -48,6 +49,15 @@ DONE
 + add argument for resize JPEG files (sizeLimit)
 
 + add license https://docs.github.com/en/github/building-a-strong-community/adding-a-license-to-a-repository
+
++ migrate to .Net 5
+
++ add watermark to JPEG files
+
+
+
+
+
 
 
 
@@ -119,5 +129,37 @@ unknown parameter					y
 
 
 
+left top		9
+left center		24
+left bottom		12
+right top		3
+right center	18
+right bottom	5
+center top		17
+center center	32
+center bottom	20
 
 
+Northwest = 1,
+North = 2,
+Northeast = 3,
+West = 4,
+Center = 5,
+East = 6,
+Southwest = 7,
+South = 8,
+Southeast = 9
+
+
+-c "d:\temp\Test delete\Source" "d:\temp\Test delete\Destination"
+
+
+polo.exe --add-watermark -source:'d:\tmp dev\images\' -watermark-path:'d:\tmp dev\images\sign\Sign v3.5sl - 64% - FSviewer.png' -output-folder-name:'watermark-output' -transparency:34
+
+--add-watermark -source:"d:\tmp dev\images" -watermark-path:"d:\tmp dev\images\sign\Sign v3.5sl - 64% - FSviewer.png" -output-folder-name:"watermark-output" -transparency:34
+
+
+--add-watermark -source:"d:\tmp dev\images" -watermark-path:"d:\tmp dev\images\sign\Sign v3.5sl - 64% - FSviewer.png" -output-folder-name:"watermark-output" -transparency:100
+
+
+--resize-with-watermark -source:"d:\tmp dev\images 2"

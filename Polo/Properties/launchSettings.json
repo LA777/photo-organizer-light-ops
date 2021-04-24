@@ -2,7 +2,9 @@
   "profiles": {
     "Polo": {
       "commandName": "Project",
-      "commandLineArgs": "-c \"d:\\temp\\Test delete\\Source\" \"d:\\temp\\Test delete\\Destination\""
+      "commandLineArgs": "-ce -source:\"d:\\Downloads\\tmp photo\\2021.04.21\" -output-folder-name:\"exif-output\"",
+      "remoteDebugEnabled": false,
+      "nativeDebugging": false
     }
   }
 }

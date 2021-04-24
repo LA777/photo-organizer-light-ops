@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using Polo.Abstractions.Commands;
-using Polo.Options;
+using Polo.Abstractions.Options;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -12,7 +12,7 @@ namespace Polo.Commands
     public class RawCommand : ICommand
     {
         private readonly ILogger _logger;
-        private readonly ApplicationSettings _applicationSettings;
+        private readonly ApplicationSettingsReadOnly _applicationSettings;
 
         public string Name => "raw";
 
@@ -20,7 +20,7 @@ namespace Polo.Commands
 
         public string Description => "Creates RAW sub-folder in the current folder and moves all RAW files to this sub-folder.";
 
-        public RawCommand(IOptions<ApplicationSettings> applicationOptions, ILogger logger)
+        public RawCommand(IOptions<ApplicationSettingsReadOnly> applicationOptions, ILogger logger)
         {
             _applicationSettings = applicationOptions.Value ?? throw new ArgumentNullException(nameof(applicationOptions));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
