@@ -96,6 +96,7 @@ namespace Polo
             services.AddSingleton<ICommand, ResizeWithWatermarkCommand>();
             services.AddSingleton<ICommand, ClearExifCommand>();
             services.AddSingleton<ICommand, GooglePhotoUploadCommand>();
+            services.AddSingleton<ICommand, RemoveThumbsDbCommand>();
         }
     }
 }
