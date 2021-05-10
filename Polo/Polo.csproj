@@ -40,8 +40,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="settings\client_secret.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="settings\settings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Icon\multimediaphotoviewer.ico">
       <Pack>True</Pack>
