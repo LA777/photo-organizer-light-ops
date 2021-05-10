@@ -6,10 +6,12 @@ using Polo.Abstractions.Commands;
 using Polo.Abstractions.Options;
 using Polo.Commands;
 using Serilog;
+using Serilog.Core;
 using Serilog.Events;
 using System;
 using System.IO;
 using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Polo
@@ -23,6 +25,7 @@ namespace Polo
 
         private static void Main(string[] args)
         {
+            Console.OutputEncoding = Encoding.UTF8;
             var services = new ServiceCollection();
             ConfigureServices(services);
             var serviceProvider = services.BuildServiceProvider();
@@ -68,10 +71,15 @@ namespace Polo
             var logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
                 .Enrich.WithProperty("Version", version)
-                .WriteTo.Console(restrictedToMinimumLevel: LogEventLevel.Information,
-                outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} | {Message:lj}{NewLine}{Exception}")
+                .WriteTo.Seq("http://localhost:5341", apiKey: "amlPYT4U7TP5u5w8GhWR", controlLevelSwitch: new LoggingLevelSwitch(LogEventLevel.Verbose))// TODO LA - Move logging setting to JSON file
+                .WriteTo.Console(restrictedToMinimumLevel: LogEventLevel.Information, outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} | {Message:lj}{NewLine}{Exception}")
                 .WriteTo.File(Path.Combine(AppContext.BaseDirectory, applicationSettings.LogFilePath), rollingInterval: RollingInterval.Day)
                 .CreateLogger();
+
+            services.AddLogging(loggingBuilder =>
+            {
+                loggingBuilder.AddSerilog(logger: logger, dispose: true);
+            });
 
             services.AddSingleton<ILogger>(logger);
             services.AddSingleton(applicationSettingsReadOnlyOptions);
@@ -87,6 +95,7 @@ namespace Polo
             services.AddSingleton<ICommand, AddWatermarkCommand>();
             services.AddSingleton<ICommand, ResizeWithWatermarkCommand>();
             services.AddSingleton<ICommand, ClearExifCommand>();
+            services.AddSingleton<ICommand, GooglePhotoUploadCommand>();
         }
     }
 }

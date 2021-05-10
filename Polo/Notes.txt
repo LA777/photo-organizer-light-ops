@@ -163,3 +163,5 @@ polo.exe --add-watermark -source:'d:\tmp dev\images\' -watermark-path:'d:\tmp de
 
 
 --resize-with-watermark -source:"d:\tmp dev\images 2"
+
+-ce -source:"d:\Downloads\tmp photo\2021.04.21" -output-folder-name:"exif-output"

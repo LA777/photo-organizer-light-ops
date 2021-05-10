@@ -18,6 +18,8 @@ namespace Polo.Abstractions.Options
 
         public string WatermarkOutputFolderName { get; private set; }
 
+        public string OutputSubfolderName { get; set; }
+
         public string WatermarkPosition { get; private set; }
 
         public int WatermarkTransparencyPercent { get; private set; }
@@ -39,6 +41,7 @@ namespace Polo.Abstractions.Options
             ImageResizeLongSideLimit = applicationSettings.ImageResizeLongSideLimit;
             WatermarkPath = applicationSettings.WatermarkPath;
             WatermarkOutputFolderName = applicationSettings.WatermarkOutputFolderName;
+            OutputSubfolderName = applicationSettings.OutputSubfolderName;
             WatermarkPosition = applicationSettings.WatermarkPosition;
             ImageQuality = applicationSettings.ImageQuality;
             WatermarkTransparencyPercent = applicationSettings.WatermarkTransparencyPercent;

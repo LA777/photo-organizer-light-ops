@@ -30,7 +30,7 @@ namespace Polo.Commands
         public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
         {
             var currentDirectory = Environment.CurrentDirectory;
-            var videoFolderPath = Path.Join(currentDirectory, VideoSubfolderName);
+            var videoFolderPath = Path.Join(currentDirectory, VideoSubfolderName);// TODO LA - Use parameter VideoSubfolderName
             Directory.CreateDirectory(videoFolderPath);
 
             var videoFiles = new List<string>();
@@ -43,7 +43,7 @@ namespace Polo.Commands
                 var fileInfo = new FileInfo(filePath);
                 var destinationFilePath = Path.Join(fileInfo.DirectoryName, VideoSubfolderName, fileInfo.Name);
                 File.Move(filePath, destinationFilePath);
-                _logger.Information($"Moved: {fileInfo.Name}");
+                _logger.Information($"Moved: {fileInfo.Name} to '{VideoSubfolderName}'");
             }
         }
     }

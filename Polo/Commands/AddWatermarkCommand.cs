@@ -47,7 +47,8 @@ namespace Polo.Commands
             var sourceFolderPath = ParameterHandler.SourceParameter.Initialize(parameters, Environment.CurrentDirectory);
             var watermarkPath = ParameterHandler.WatermarkPathParameter.Initialize(parameters, _applicationSettings.WatermarkPath);
             var watermarkOutputFolderName = ParameterHandler.OutputFolderNameParameter.Initialize(parameters, _applicationSettings.WatermarkOutputFolderName);
-            var destinationDirectory = Path.Combine(sourceFolderPath, watermarkOutputFolderName);
+            var destinationDirectory = Path.Combine(sourceFolderPath, watermarkOutputFolderName); // TODO LA - Add possibility to add full path to Destination directory in settings
+            destinationDirectory = @"e:\Photos\OLD for upload\";
             var watermarkPosition = ParameterHandler.PositionParameter.Initialize(parameters, _applicationSettings.WatermarkPosition);
             var watermarkPositionMagick = watermarkPosition.ParsePosition();
             var watermarkTransparencyPercent = ParameterHandler.TransparencyParameter.Initialize(parameters, _applicationSettings.WatermarkTransparencyPercent);
