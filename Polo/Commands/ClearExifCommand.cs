@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using Polo.Abstractions.Commands;
 using Polo.Abstractions.Options;
+using Polo.Extensions;
 using Polo.Parameters;
 using Polo.Parameters.Handler;
 using Serilog;
@@ -45,6 +46,7 @@ namespace Polo.Commands
             var imagesForProcess = new List<string>();
             _applicationSettings.FileForProcessExtensions.Distinct().ToList()
                 .ForEach(x => imagesForProcess.AddRange(Directory.EnumerateFiles(sourceFolderPath, $"*.{x}", SearchOption.TopDirectoryOnly)));
+            imagesForProcess.SortByFileName();
 
             if (imagesForProcess.Any() && !Directory.Exists(destinationFolder))
             {

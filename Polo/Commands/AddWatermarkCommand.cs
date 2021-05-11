@@ -48,7 +48,7 @@ namespace Polo.Commands
             var watermarkPath = ParameterHandler.WatermarkPathParameter.Initialize(parameters, _applicationSettings.WatermarkPath);
             var watermarkOutputFolderName = ParameterHandler.OutputFolderNameParameter.Initialize(parameters, _applicationSettings.WatermarkOutputFolderName);
             var destinationDirectory = Path.Combine(sourceFolderPath, watermarkOutputFolderName); // TODO LA - Add possibility to add full path to Destination directory in settings
-            destinationDirectory = @"e:\Photos\OLD for upload\";
+            destinationDirectory = @"e:\Photos\OLD for upload\"; // TODO LA - Remove
             var watermarkPosition = ParameterHandler.PositionParameter.Initialize(parameters, _applicationSettings.WatermarkPosition);
             var watermarkPositionMagick = watermarkPosition.ParsePosition();
             var watermarkTransparencyPercent = ParameterHandler.TransparencyParameter.Initialize(parameters, _applicationSettings.WatermarkTransparencyPercent);
@@ -58,15 +58,20 @@ namespace Polo.Commands
             var imagesForProcess = new List<string>();
             _applicationSettings.FileForProcessExtensions.Distinct().ToList()// TODO LA - Move this Select to some extension
                 .ForEach(x => imagesForProcess.AddRange(Directory.EnumerateFiles(sourceFolderPath, $"*.{x}", SearchOption.TopDirectoryOnly)));
+            _logger.Information($"Files for process: {imagesForProcess.Count}");
+            imagesForProcess.SortByFileName();
+            _logger.Information($"Files sorted");
 
             if (imagesForProcess.Any() && !Directory.Exists(destinationDirectory))
             {
                 Directory.CreateDirectory(destinationDirectory);
+                _logger.Information($"Destination directory created: {destinationDirectory}");
             }
 
             using var watermark = new MagickImage(watermarkPath);
             using var transparentWatermark = watermark.ConvertToTransparentMagickImage(watermarkTransparencyPercent);
 
+            int index = 0;
             foreach (var imageForProcess in imagesForProcess)
             {
                 var fileName = Path.GetFileName(imageForProcess);
@@ -75,7 +80,7 @@ namespace Polo.Commands
                 image.Composite(transparentWatermark, watermarkPositionMagick, CompositeOperator.Over);
                 image.Quality = imageQuality; // TODO LA - Cover with UTs
                 image.Write(destinationImagePath);
-                _logger.Information($"Watermark added: {destinationImagePath}");
+                _logger.Information($"[{++index}/{imagesForProcess.Count}] Watermark added: {destinationImagePath}");
             }
         }
     }

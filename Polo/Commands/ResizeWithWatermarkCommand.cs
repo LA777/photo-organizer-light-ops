@@ -59,6 +59,7 @@ namespace Polo.Commands
             var jpegFiles = new List<string>();
             _applicationSettings.FileForProcessExtensions.Distinct().ToList()// TODO LA - Move this Select to some extension
                 .ForEach(x => jpegFiles.AddRange(Directory.EnumerateFiles(sourceFolderPath, $"*.{x}", SearchOption.TopDirectoryOnly)));
+            jpegFiles.SortByFileName();
 
             if (jpegFiles.Any() && !Directory.Exists(destinationFolder))
             {
