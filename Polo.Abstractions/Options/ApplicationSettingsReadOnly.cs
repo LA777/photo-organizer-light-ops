@@ -32,6 +32,8 @@ namespace Polo.Abstractions.Options
 
         public IReadOnlyCollection<string> VideoFileExtensions { get; private set; } = new List<string>();
 
+        public IReadOnlyCollection<string> RedundantFiles { get; private set; } = new List<string>();
+
         public ApplicationSettingsReadOnly(ApplicationSettings applicationSettings)
         {
             LogFilePath = applicationSettings.LogFilePath;
@@ -48,6 +50,7 @@ namespace Polo.Abstractions.Options
             FileForProcessExtensions = new List<string>(applicationSettings.FileForProcessExtensions);
             RawFileExtensions = new List<string>(applicationSettings.RawFileExtensions);
             VideoFileExtensions = new List<string>(applicationSettings.VideoFileExtensions);
+            RedundantFiles = new List<string>(applicationSettings.RedundantFiles);
         }
     }
 }

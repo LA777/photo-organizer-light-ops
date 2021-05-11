@@ -45,5 +45,7 @@ namespace Polo.Abstractions.Options
 
         [MinLength(1, ErrorMessage = "ERROR: Value for {0} should contain some data.")]
         public ICollection<string> VideoFileExtensions { get; set; } = new List<string>();
+
+        public ICollection<string> RedundantFiles { get; set; } = new List<string>();
     }
 }
