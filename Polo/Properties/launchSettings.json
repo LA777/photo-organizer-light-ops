@@ -2,7 +2,7 @@
   "profiles": {
     "Polo": {
       "commandName": "Project",
-      "commandLineArgs": "-v",
+      "commandLineArgs": "-gpc -output-folder-name:\"2018.11 Munich Museums\"",
       "remoteDebugEnabled": false,
       "nativeDebugging": false
     }
