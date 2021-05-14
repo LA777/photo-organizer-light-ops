@@ -13,7 +13,7 @@ namespace Polo.Comparers
             var fileNameX = Path.GetFileName(x);
             var fileNameY = Path.GetFileName(y);
 
-            return string.Compare(fileNameX, fileNameY);
+            return string.Compare(fileNameX, fileNameY, StringComparison.OrdinalIgnoreCase);
         }
 
         public bool Equals(string x, string y)
@@ -26,9 +26,9 @@ namespace Polo.Comparers
 
         public int GetHashCode([DisallowNull] string fileFullPath)
         {
-            var fileNameWithoutExtension = Path.GetFileName(fileFullPath);
+            var fileName = Path.GetFileName(fileFullPath).ToUpper();
 
-            return fileNameWithoutExtension.GetHashCode();
+            return fileName.GetHashCode();
         }
     }
 }

@@ -98,6 +98,7 @@ namespace Polo
             services.AddSingleton<ICommand, GooglePhotoUploadCommand>();
             services.AddSingleton<ICommand, RemoveRedundantFilesCommand>();
             services.AddSingleton<ICommand, GooglePhotoCompareCommand>();
+            services.AddSingleton<ICommand, CompareFileNamesCommand>();
         }
     }
 }

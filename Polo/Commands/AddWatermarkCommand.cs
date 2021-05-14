@@ -54,13 +54,13 @@ namespace Polo.Commands
             var watermarkTransparencyPercent = ParameterHandler.TransparencyParameter.Initialize(parameters, _applicationSettings.WatermarkTransparencyPercent);
             var imageQuality = ParameterHandler.ImageQuality.Initialize(parameters, _applicationSettings.ImageQuality);
 
+            _logger.Information($"Seeking files...");
             // TODO LA - Check in UTs duplicates
             var imagesForProcess = new List<string>();
             _applicationSettings.FileForProcessExtensions.Distinct().ToList()// TODO LA - Move this Select to some extension
                 .ForEach(x => imagesForProcess.AddRange(Directory.EnumerateFiles(sourceFolderPath, $"*.{x}", SearchOption.TopDirectoryOnly)));
             _logger.Information($"Files for process: {imagesForProcess.Count}");
             imagesForProcess.SortByFileName();
-            _logger.Information($"Files sorted");
 
             if (imagesForProcess.Any() && !Directory.Exists(destinationDirectory))
             {
