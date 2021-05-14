@@ -22,6 +22,7 @@ namespace Polo.Commands
         {
             SourceParameter = new SourceParameter(),
             LongSideLimitParameter = new LongSideLimitParameter(),
+            MegaPixelsLimitParameter = new MegaPixelsLimitParameter(),
             OutputFolderNameParameter = new OutputFolderNameParameter(),
             ImageQuality = new ImageQuality()
         };
@@ -45,6 +46,7 @@ namespace Polo.Commands
             var outputFolderName = ParameterHandler.OutputFolderNameParameter.Initialize(parameters, _applicationSettings.ResizedImageSubfolderName);
             var destinationFolder = Path.Combine(sourceFolderPath, outputFolderName);
             var sizeLimit = ParameterHandler.LongSideLimitParameter.Initialize(parameters, _applicationSettings.ImageResizeLongSideLimit);
+            var megaPixelsLimit = ParameterHandler.MegaPixelsLimitParameter.Initialize(parameters, _applicationSettings.ImageResizeMegaPixelsLimit);
             var imageQuality = ParameterHandler.ImageQuality.Initialize(parameters, _applicationSettings.ImageQuality);
 
             var jpegFiles = new List<string>();
@@ -63,10 +65,10 @@ namespace Polo.Commands
                 var destinationImagePath = Path.Combine(destinationFolder, jpegFileInfo.Name);
 
                 using var image = new MagickImage(jpegFile);
-                var info = new MagickImageInfo(jpegFile);
+                var magickImageInfo = new MagickImageInfo(jpegFile);
 
-                var width = info.Width;
-                var height = info.Height;
+                var width = magickImageInfo.Width;
+                var height = magickImageInfo.Height;
 
 
                 if (width >= height && width > sizeLimit)
@@ -79,6 +81,12 @@ namespace Polo.Commands
                 }
                 else
                 {
+                    var imageResolution = width * height;
+                    if (imageResolution > (megaPixelsLimit * 1000000))
+                    {
+                        image.ResizeByMegapixelsLimit(megaPixelsLimit, magickImageInfo);
+                    }
+
                     File.Copy(jpegFile, destinationImagePath);
                     _logger.Information($"File copied without resize: {destinationImagePath}");
 

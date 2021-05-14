@@ -14,6 +14,8 @@ namespace Polo.Abstractions.Options
 
         public int ImageResizeLongSideLimit { get; private set; }
 
+        public float ImageResizeMegaPixelsLimit { get; private set; }
+
         public string WatermarkPath { get; private set; }
 
         public string WatermarkOutputFolderName { get; private set; }
@@ -41,6 +43,7 @@ namespace Polo.Abstractions.Options
             RawFolderName = applicationSettings.RawFolderName;
             ResizedImageSubfolderName = applicationSettings.ResizedImageSubfolderName;
             ImageResizeLongSideLimit = applicationSettings.ImageResizeLongSideLimit;
+            ImageResizeMegaPixelsLimit = applicationSettings.ImageResizeMegaPixelsLimit;
             WatermarkPath = applicationSettings.WatermarkPath;
             WatermarkOutputFolderName = applicationSettings.WatermarkOutputFolderName;
             OutputSubfolderName = applicationSettings.OutputSubfolderName;

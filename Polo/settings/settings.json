@@ -3,7 +3,8 @@
   "DefaultSourceFolderPath": "j:\\DCIM",
   "RawFolderName": "RAW", // RawSubfolderName
   "ResizedImageSubfolderName": "publish", // TODO LA - Rename
-  "ImageResizeLongSideLimit": 5000, // Min - 1; // TODO LA - Rename
+  "ImageResizeLongSideLimit": 50000, // Min - 1; // TODO LA - Rename
+  "ImageResizeMegaPixelsLimit": 16.0, // Min - 0.001; // TODO LA - Rename
   "WatermarkPath": "X:\\_LA_\\Sign\\Sign v3.5sl - 64% - FSviewer.png", //"d:\\tmp dev\\images\\sign\\Sign v3.5 small.png",
   "WatermarkOutputFolderName": "publish",
   "OutputSubfolderName": "publish",

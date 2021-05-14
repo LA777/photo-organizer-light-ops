@@ -26,6 +26,7 @@ namespace Polo.Commands
             PositionParameter = new PositionParameter(),
             TransparencyParameter = new TransparencyParameter(),
             LongSideLimitParameter = new LongSideLimitParameter(),
+            MegaPixelsLimitParameter = new MegaPixelsLimitParameter(),
             ImageQuality = new ImageQuality()
         };
 
@@ -50,18 +51,19 @@ namespace Polo.Commands
             var outputFolderName = ParameterHandler.OutputFolderNameParameter.Initialize(parameters, _applicationSettings.WatermarkOutputFolderName);
             var destinationFolder = Path.Combine(sourceFolderPath, outputFolderName);
             var sizeLimit = ParameterHandler.LongSideLimitParameter.Initialize(parameters, _applicationSettings.ImageResizeLongSideLimit);
+            var megaPixelsLimit = ParameterHandler.MegaPixelsLimitParameter.Initialize(parameters, _applicationSettings.ImageResizeMegaPixelsLimit);
             var watermarkPosition = ParameterHandler.PositionParameter.Initialize(parameters, _applicationSettings.WatermarkPosition);
             var watermarkPositionMagick = watermarkPosition.ParsePosition();
             var watermarkTransparencyPercent = ParameterHandler.TransparencyParameter.Initialize(parameters, _applicationSettings.WatermarkTransparencyPercent);
             var imageQuality = ParameterHandler.ImageQuality.Initialize(parameters, _applicationSettings.ImageQuality);
 
             // TODO LA - Check in UTs duplicates
-            var jpegFiles = new List<string>();
+            var imagesForProcess = new List<string>();
             _applicationSettings.FileForProcessExtensions.Distinct().ToList()// TODO LA - Move this Select to some extension
-                .ForEach(x => jpegFiles.AddRange(Directory.EnumerateFiles(sourceFolderPath, $"*.{x}", SearchOption.TopDirectoryOnly)));
-            jpegFiles.SortByFileName();
+                .ForEach(x => imagesForProcess.AddRange(Directory.EnumerateFiles(sourceFolderPath, $"*.{x}", SearchOption.TopDirectoryOnly)));
+            imagesForProcess.SortByFileName();
 
-            if (jpegFiles.Any() && !Directory.Exists(destinationFolder))
+            if (imagesForProcess.Any() && !Directory.Exists(destinationFolder))
             {
                 Directory.CreateDirectory(destinationFolder);
             }
@@ -69,15 +71,16 @@ namespace Polo.Commands
             using var watermark = new MagickImage(watermarkPath);
             using var transparentWatermark = watermark.ConvertToTransparentMagickImage(watermarkTransparencyPercent);
 
-            foreach (var jpegFile in jpegFiles)
+            int index = 0;
+            foreach (var jpegFile in imagesForProcess)
             {
                 var fileName = Path.GetFileName(jpegFile);
                 var destinationImagePath = Path.Combine(destinationFolder, fileName);
 
                 using var image = new MagickImage(jpegFile);
-                var info = new MagickImageInfo(jpegFile);
-                var width = info.Width;
-                var height = info.Height;
+                var magickImageInfo = new MagickImageInfo(jpegFile);
+                var width = magickImageInfo.Width;
+                var height = magickImageInfo.Height;
 
                 if (width >= height && width > sizeLimit)
                 {
@@ -89,9 +92,16 @@ namespace Polo.Commands
                 }
                 else
                 {
+                    var imageResolution = width * height;
+                    if (imageResolution > (megaPixelsLimit * 1000000))
+                    {
+                        image.ResizeByMegapixelsLimit(megaPixelsLimit, magickImageInfo);
+                    }
+
                     image.Composite(transparentWatermark, watermarkPositionMagick, CompositeOperator.Over);
+                    image.Quality = imageQuality; // TODO LA - Cover with UTs
                     image.Write(destinationImagePath);
-                    _logger.Information($"File copied with watermark and without resize: {destinationImagePath}");
+                    _logger.Information($"[{++index}/{imagesForProcess.Count}] File copied with watermark and without resize: {destinationImagePath}");
 
                     continue;
                 }

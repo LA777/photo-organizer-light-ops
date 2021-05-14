@@ -19,6 +19,9 @@ namespace Polo.Abstractions.Options
         [Range(1, int.MaxValue, ErrorMessage = "ERROR: Value for {0} should be between {1} and {2}.")]
         public int ImageResizeLongSideLimit { get; set; }
 
+        [Range(0.001f, int.MaxValue, ErrorMessage = "ERROR: Value for {0} should be between {1} and {2}.")]
+        public float ImageResizeMegaPixelsLimit { get; set; }
+
         [Required(ErrorMessage = "ERROR: Value for {0} should contain some data.")]
         public string WatermarkPath { get; set; } = string.Empty;
 

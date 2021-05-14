@@ -1,4 +1,5 @@
 ﻿using ImageMagick;
+using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -26,6 +27,20 @@ namespace Polo.Extensions
             var magickImageOutput = new MagickImage(memoryStream, MagickFormat.Bmp);
 
             return magickImageOutput;
+        }
+
+        public static void ResizeByMegapixelsLimit(this MagickImage magickImage, float megaPixelsLimit, MagickImageInfo magickImageInfo)
+        {
+            var aspectRatio = (double)magickImageInfo.Width / magickImageInfo.Height;
+            var diff = (megaPixelsLimit * 1000000) * aspectRatio;
+            var expectedWidth = (int)Math.Floor(Math.Sqrt(diff));
+
+            if (expectedWidth % 2 != 0)
+            {
+                --expectedWidth;
+            }
+
+            magickImage.Resize(expectedWidth, 0);
         }
     }
 }

@@ -19,11 +19,13 @@ namespace Polo.UnitTests.Commands
     {
         private static readonly ICollection<string> _jpegFileExtensions = new List<string>() { "jpeg", "jpg" };
         private static readonly int _imageResizeLongSideLimit = 100;
+        private static readonly float _megaPixelsLimit = 16.0f;
         private static readonly string _resizedImageSubfolderName = "small";
         private static readonly ApplicationSettings _validApplicationSettings = new ApplicationSettings()
         {
             FileForProcessExtensions = _jpegFileExtensions,
             ImageResizeLongSideLimit = _imageResizeLongSideLimit,
+            ImageResizeMegaPixelsLimit = _megaPixelsLimit,
             ResizedImageSubfolderName = _resizedImageSubfolderName
         };
         private static readonly string _albumName = "Album1";
@@ -41,6 +43,8 @@ namespace Polo.UnitTests.Commands
                     {
                         new FotoFile("video-1", "mp4"),
                         new FotoFile("UTP-1", "ORF"),
+                        new FotoFile("UTP-11", "jpeg", 5000, 4000),
+                        new FotoFile("UTP-12", "jpeg", 5542, 3334),
                         new FotoFile("UTP-1", "jpg", 90, 30),
                         new FotoFile("UTP-2", "jpeg", 30, 90),
                         new FotoFile("UTP-3", "jpeg", 120, 90),
@@ -118,6 +122,27 @@ namespace Polo.UnitTests.Commands
             var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
             Environment.CurrentDirectory = Path.Combine(testFolderFullPath, _albumName);
             const string validLongSideLimitParameter = "100";
+
+            var parameters = new Dictionary<string, string>
+            {
+                { LongSideLimitParameter.Name, validLongSideLimitParameter }
+            };
+
+            // Act
+            _sut.Action(parameters);
+
+            // Assert
+            var folderStructureActual = FileHelper.CreateFolderStructureByFolderAndFiles(testFolderFullPath);
+            folderStructureActual.Should().BeEquivalentTo(_folderStructureExpected);
+        }
+
+        [Fact]
+        public void Action_Should_Resize_Jpeg_Files_And_Copy_To_Output_Folder_With_Valid_MegaPixelsLimitParameter_Test()
+        {
+            // Arrange
+            var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
+            Environment.CurrentDirectory = Path.Combine(testFolderFullPath, _albumName);
+            const string validLongSideLimitParameter = "10000";
 
             var parameters = new Dictionary<string, string>
             {

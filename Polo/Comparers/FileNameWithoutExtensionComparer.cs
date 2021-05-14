@@ -16,9 +16,9 @@ namespace Polo.Comparers
             return string.Equals(fileNameWithoutExtensionX, fileNameWithoutExtensionY, StringComparison.OrdinalIgnoreCase);
         }
 
-        // TODO LA - Cover with UTs
         public int GetHashCode([DisallowNull] string fileFullPath)
         {
+            // TODO LA - Cover with UTs
             var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileFullPath).ToUpper();
 
             return fileNameWithoutExtension.GetHashCode();

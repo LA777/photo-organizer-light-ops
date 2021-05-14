@@ -26,6 +26,7 @@ namespace Polo.Comparers
 
         public int GetHashCode([DisallowNull] string fileFullPath)
         {
+            // TODO LA - Cover with UTs
             var fileName = Path.GetFileName(fileFullPath).ToUpper();
 
             return fileName.GetHashCode();
