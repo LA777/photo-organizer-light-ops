@@ -50,6 +50,7 @@ namespace Polo.Commands
             .ForEach(x => jpegFilesInParentFolder.AddRange(Directory.EnumerateFiles(parentFolder, $"*.{x}", SearchOption.AllDirectories)));
             var jpegFilesRelatedToOrphanageRawFiles = jpegFilesInParentFolder.Intersect(orphanageRawFiles, fileNameWithoutExtensionComparer);
 
+            var index = 0;
             foreach (var jpegFile in jpegFilesRelatedToOrphanageRawFiles)
             {
                 var jpegFolder = Directory.GetParent(jpegFile).FullName;
@@ -68,7 +69,7 @@ namespace Polo.Commands
                     var destinationRawFilePath = Path.Combine(rawSubfolderPath, rawFileName);
 
                     File.Move(rawFileForProcess, destinationRawFilePath);
-                    _logger.Information($"Moved: {rawFileName} to '{Path.Combine(jpegFolder, _applicationSettings.RawFolderName)}'");
+                    _logger.Information($"[{++index}/{jpegFilesRelatedToOrphanageRawFiles.Count()}] Moved: {rawFileName} to '{Path.Combine(jpegFolder, _applicationSettings.RawFolderName)}'");
                 }
             }
         }

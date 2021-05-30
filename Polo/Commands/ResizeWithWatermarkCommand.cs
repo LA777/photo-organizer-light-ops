@@ -49,7 +49,7 @@ namespace Polo.Commands
             var sourceFolderPath = ParameterHandler.SourceParameter.Initialize(parameters, Environment.CurrentDirectory);
             var watermarkPath = ParameterHandler.WatermarkPathParameter.Initialize(parameters, _applicationSettings.WatermarkPath);
             var outputFolderName = ParameterHandler.OutputFolderNameParameter.Initialize(parameters, _applicationSettings.WatermarkOutputFolderName);
-            var destinationFolder = Path.Combine(sourceFolderPath, outputFolderName);
+            var destinationFolder = Path.GetFullPath(outputFolderName, sourceFolderPath);
             var sizeLimit = ParameterHandler.LongSideLimitParameter.Initialize(parameters, _applicationSettings.ImageResizeLongSideLimit);
             var megaPixelsLimit = ParameterHandler.MegaPixelsLimitParameter.Initialize(parameters, _applicationSettings.ImageResizeMegaPixelsLimit);
             var watermarkPosition = ParameterHandler.PositionParameter.Initialize(parameters, _applicationSettings.WatermarkPosition);
@@ -90,14 +90,12 @@ namespace Polo.Commands
                 {
                     image.Resize(0, sizeLimit);
                 }
+                else if ((width * height) > (megaPixelsLimit * 1000000))
+                {
+                    image.ResizeByMegapixelsLimit(megaPixelsLimit, magickImageInfo);
+                }
                 else
                 {
-                    var imageResolution = width * height;
-                    if (imageResolution > (megaPixelsLimit * 1000000))
-                    {
-                        image.ResizeByMegapixelsLimit(megaPixelsLimit, magickImageInfo);
-                    }
-
                     image.Composite(transparentWatermark, watermarkPositionMagick, CompositeOperator.Over);
                     image.Quality = imageQuality; // TODO LA - Cover with UTs
                     image.Write(destinationImagePath);
@@ -109,7 +107,7 @@ namespace Polo.Commands
                 image.Composite(transparentWatermark, watermarkPositionMagick, CompositeOperator.Over);
                 image.Quality = imageQuality; // TODO LA - Cover with UTs
                 image.Write(destinationImagePath);
-                _logger.Information($"File resized with watermark: {destinationImagePath}");
+                _logger.Information($"[{++index}/{imagesForProcess.Count}] File resized with watermark: {destinationImagePath}");
             }
         }
     }

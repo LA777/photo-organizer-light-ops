@@ -44,22 +44,23 @@ namespace Polo.Commands
             var currentDirectory = Environment.CurrentDirectory;
             var sourceFolderPath = ParameterHandler.SourceParameter.Initialize(parameters, Environment.CurrentDirectory);
             var outputFolderName = ParameterHandler.OutputFolderNameParameter.Initialize(parameters, _applicationSettings.ResizedImageSubfolderName);
-            var destinationFolder = Path.Combine(sourceFolderPath, outputFolderName);
+            var destinationFolder = Path.GetFullPath(outputFolderName, sourceFolderPath);// TODO LA - Refactor other commands to use Path.GetFullPath
             var sizeLimit = ParameterHandler.LongSideLimitParameter.Initialize(parameters, _applicationSettings.ImageResizeLongSideLimit);
             var megaPixelsLimit = ParameterHandler.MegaPixelsLimitParameter.Initialize(parameters, _applicationSettings.ImageResizeMegaPixelsLimit);
             var imageQuality = ParameterHandler.ImageQuality.Initialize(parameters, _applicationSettings.ImageQuality);
 
-            var jpegFiles = new List<string>();
+            var imagesForProcess = new List<string>();
             _applicationSettings.FileForProcessExtensions.Distinct().ToList()
-                .ForEach(x => jpegFiles.AddRange(Directory.EnumerateFiles(currentDirectory, $"*.{x}", SearchOption.TopDirectoryOnly)));
-            jpegFiles.SortByFileName();
+                .ForEach(x => imagesForProcess.AddRange(Directory.EnumerateFiles(currentDirectory, $"*.{x}", SearchOption.TopDirectoryOnly)));
+            imagesForProcess.SortByFileName();
 
-            if (jpegFiles.Any() && !Directory.Exists(destinationFolder))
+            if (imagesForProcess.Any() && !Directory.Exists(destinationFolder))
             {
                 Directory.CreateDirectory(destinationFolder);
             }
 
-            foreach (var jpegFile in jpegFiles)
+            int index = 0;
+            foreach (var jpegFile in imagesForProcess)
             {
                 var jpegFileInfo = new FileInfo(jpegFile);
                 var destinationImagePath = Path.Combine(destinationFolder, jpegFileInfo.Name);
@@ -79,23 +80,21 @@ namespace Polo.Commands
                 {
                     image.Resize(0, sizeLimit);
                 }
+                else if ((width * height) > (megaPixelsLimit * 1000000))
+                {
+                    image.ResizeByMegapixelsLimit(megaPixelsLimit, magickImageInfo);
+                }
                 else
                 {
-                    var imageResolution = width * height;
-                    if (imageResolution > (megaPixelsLimit * 1000000))
-                    {
-                        image.ResizeByMegapixelsLimit(megaPixelsLimit, magickImageInfo);
-                    }
-
                     File.Copy(jpegFile, destinationImagePath);
-                    _logger.Information($"File copied without resize: {destinationImagePath}");
+                    _logger.Information($"[{++index}/{imagesForProcess.Count}] File copied without resize: {destinationImagePath}");
 
                     continue;
                 }
 
                 image.Quality = imageQuality; // TODO LA - Cover with UTs
                 image.Write(destinationImagePath);
-                _logger.Information($"File resized: {destinationImagePath}");
+                _logger.Information($"[{++index}/{imagesForProcess.Count}] File resized: {destinationImagePath}");
             }
         }
     }

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Polo.Parameters
 {
-    public class OutputFolderNameParameter : IParameter<string>, IParameterInfo
+    public class OutputFolderNameParameter : IParameter<string>, IParameterInfo // TODO LA - Refactor to OutputFolderPathParameter
     {
         public static string Name => "output-folder-name";
 

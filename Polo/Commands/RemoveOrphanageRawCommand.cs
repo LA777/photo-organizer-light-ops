@@ -52,13 +52,14 @@ namespace Polo.Commands
 
             var orphanageRawFilesToDelete = orphanageRawFiles.Except(jpegFilesInParentFolder, fileNameWithoutExtensionComparer);
 
+            int index = 0;
             foreach (var rawFile in orphanageRawFilesToDelete)
             {
                 var fileInfo = new FileInfo(rawFile);
                 var isDeleted = fileInfo.DeleteToRecycleBin();
 
                 _logger.Information(isDeleted
-                    ? $"RAW file deleted: {fileInfo.Name}"
+                    ? $"[{++index}/{orphanageRawFilesToDelete.Count()}] RAW file deleted: {fileInfo.Name}"
                     : $"RAW file not found: {fileInfo.Name}");
             }
         }

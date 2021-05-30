@@ -93,6 +93,7 @@ namespace Polo
             services.AddSingleton<ICommand, MoveAllFilesCommand>();
             services.AddSingleton<ICommand, MoveVideoToSubfolderCommand>();
             services.AddSingleton<ICommand, AddWatermarkCommand>();
+            services.AddSingleton<ICommand, ResizeCommand>();
             services.AddSingleton<ICommand, ResizeWithWatermarkCommand>();
             services.AddSingleton<ICommand, ClearExifCommand>();
             services.AddSingleton<ICommand, GooglePhotoUploadCommand>();
