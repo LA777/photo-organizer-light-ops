@@ -19,8 +19,6 @@ namespace Polo.UnitTests.Commands
     {
         private const string DefaultSourceFolderPath = "c:\\";
         private static readonly ApplicationSettings _validApplicationSettings = new ApplicationSettings() { DefaultSourceFolderPath = DefaultSourceFolderPath };
-        private static readonly string _sourceFolderName = "Source Fotos";
-        private static readonly string _destinationFolderName = "Destination Fotos";
         private static readonly Mock<ILogger> _loggerMock = new Mock<ILogger>();
         private readonly ICommand _sut = new MoveAllFilesCommand(GetOptions(_validApplicationSettings), _loggerMock.Object);
 
@@ -30,26 +28,26 @@ namespace Polo.UnitTests.Commands
             {
                 new Folder()
                 {
-                    Name = _sourceFolderName,
+                    Name = Constants.SourceFolderName,
                     Files = new List<FotoFile>()
                     {
-                        new FotoFile("UTP-1", "ORF"),
-                        new FotoFile("UTP-2", "ORF"),
-                        new FotoFile("UTP-3", "ORF"),
-                        new FotoFile("UTP-4", "ORF"),
-                        new FotoFile("UTP-5", "ORF"),
-                        new FotoFile("UTP-6", "ORF"),
-                        new FotoFile("UTP-1", "jpg"),
-                        new FotoFile("UTP-2", "jpg"),
-                        new FotoFile("UTP-3", "jpg"),
-                        new FotoFile("UTP-4", "jpg"),
-                        new FotoFile("UTP-5", "jpg"),
-                        new FotoFile("UTP-6", "jpg")
+                        new FotoFile("UTP-1", FileExtension.Orf),
+                        new FotoFile("UTP-2", FileExtension.Orf),
+                        new FotoFile("UTP-3", FileExtension.Orf),
+                        new FotoFile("UTP-4", FileExtension.Orf),
+                        new FotoFile("UTP-5", FileExtension.Orf),
+                        new FotoFile("UTP-6", FileExtension.Orf),
+                        new FotoFile("UTP-1", FileExtension.Jpg),
+                        new FotoFile("UTP-2", FileExtension.Jpg),
+                        new FotoFile("UTP-3", FileExtension.Jpg),
+                        new FotoFile("UTP-4", FileExtension.Jpg),
+                        new FotoFile("UTP-5", FileExtension.Jpg),
+                        new FotoFile("UTP-6", FileExtension.Jpg)
                     }
                 },
                 new Folder()
                 {
-                    Name = _destinationFolderName
+                    Name = Constants.DestinationFolderName
                 }
             }
         };
@@ -60,26 +58,26 @@ namespace Polo.UnitTests.Commands
             {
                 new Folder()
                 {
-                    Name = _sourceFolderName,
+                    Name = Constants.SourceFolderName,
                     Files = new List<FotoFile>()
                 },
                 new Folder()
                 {
-                    Name = _destinationFolderName,
+                    Name = Constants.DestinationFolderName,
                     Files = new List<FotoFile>()
                     {
-                        new FotoFile("UTP-1", "ORF"),
-                        new FotoFile("UTP-2", "ORF"),
-                        new FotoFile("UTP-3", "ORF"),
-                        new FotoFile("UTP-4", "ORF"),
-                        new FotoFile("UTP-5", "ORF"),
-                        new FotoFile("UTP-6", "ORF"),
-                        new FotoFile("UTP-1", "jpg"),
-                        new FotoFile("UTP-2", "jpg"),
-                        new FotoFile("UTP-3", "jpg"),
-                        new FotoFile("UTP-4", "jpg"),
-                        new FotoFile("UTP-5", "jpg"),
-                        new FotoFile("UTP-6", "jpg")
+                        new FotoFile("UTP-1", FileExtension.Orf),
+                        new FotoFile("UTP-2", FileExtension.Orf),
+                        new FotoFile("UTP-3", FileExtension.Orf),
+                        new FotoFile("UTP-4", FileExtension.Orf),
+                        new FotoFile("UTP-5", FileExtension.Orf),
+                        new FotoFile("UTP-6", FileExtension.Orf),
+                        new FotoFile("UTP-1", FileExtension.Jpg),
+                        new FotoFile("UTP-2", FileExtension.Jpg),
+                        new FotoFile("UTP-3", FileExtension.Jpg),
+                        new FotoFile("UTP-4", FileExtension.Jpg),
+                        new FotoFile("UTP-5", FileExtension.Jpg),
+                        new FotoFile("UTP-6", FileExtension.Jpg)
                     }
                 }
             }
@@ -90,8 +88,8 @@ namespace Polo.UnitTests.Commands
         {
             // Arrange
             var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
-            var sourceFolderPath = Path.Combine(testFolderFullPath, _sourceFolderName);
-            var destinationFolderPath = Path.Combine(testFolderFullPath, _destinationFolderName);
+            var sourceFolderPath = Path.Combine(testFolderFullPath, Constants.SourceFolderName);
+            var destinationFolderPath = Path.Combine(testFolderFullPath, Constants.DestinationFolderName);
             Environment.CurrentDirectory = testFolderFullPath;
             var parameters = new Dictionary<string, string>
             {
@@ -112,8 +110,8 @@ namespace Polo.UnitTests.Commands
         {
             // Arrange
             var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
-            var sourceFolderPath = Path.Combine(testFolderFullPath, _sourceFolderName);
-            var destinationFolderPath = Path.Combine(testFolderFullPath, _destinationFolderName);
+            var sourceFolderPath = Path.Combine(testFolderFullPath, Constants.SourceFolderName);
+            var destinationFolderPath = Path.Combine(testFolderFullPath, Constants.DestinationFolderName);
             Environment.CurrentDirectory = destinationFolderPath;
             var parameters = new Dictionary<string, string>
             {
@@ -133,8 +131,8 @@ namespace Polo.UnitTests.Commands
         {
             // Arrange
             var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
-            var sourceFolderPath = Path.Combine(testFolderFullPath, _sourceFolderName);
-            var destinationFolderPath = Path.Combine(testFolderFullPath, _destinationFolderName);
+            var sourceFolderPath = Path.Combine(testFolderFullPath, Constants.SourceFolderName);
+            var destinationFolderPath = Path.Combine(testFolderFullPath, Constants.DestinationFolderName);
             Environment.CurrentDirectory = destinationFolderPath;
             var parameters = new Dictionary<string, string>();
 

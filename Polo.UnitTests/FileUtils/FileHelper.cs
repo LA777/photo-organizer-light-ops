@@ -10,13 +10,13 @@ namespace Polo.UnitTests.FileUtils
     public static class FileHelper
     {
         public const int FileLimit = 5;
-        public const string JpegExtension = "JPG";
-        public const string RawExtension = "ORF";
+        public const string JpegExtension = ".JPG";
+        public const string RawExtension = ".ORF";
         private const string TestFolderName = "UnitTestTemp";
         public const string FilePrefix = "UTP-";
         public const string RawFolderName = "RAW";
         public const string WatermarkFolderName = "watermark";
-        public static readonly FotoFile Watermark = new FotoFile("watermark", "png", 10, 10);
+        public static readonly FotoFile Watermark = new FotoFile("watermark", ".png", 10, 10);
 
         private static string UnitTestFolder
         {
@@ -60,7 +60,7 @@ namespace Polo.UnitTests.FileUtils
 
         public static string CreateWatermark()
         {
-            var watermarkPath = Path.Combine(TestFolderFullPath, WatermarkFolderName, $"{Watermark.Name}.{Watermark.Extension}");
+            var watermarkPath = Path.Combine(TestFolderFullPath, WatermarkFolderName, $"{Watermark.Name}{Watermark.Extension}");
 
             if (File.Exists(watermarkPath))
             {
@@ -84,7 +84,7 @@ namespace Polo.UnitTests.FileUtils
 
             CreateFoldersAndFilesByStructure(folderStructureInitial);
 
-            return Path.Combine(TestFolderFullPath, WatermarkFolderName, $"{Watermark.Name}.{Watermark.Extension}");
+            return Path.Combine(TestFolderFullPath, WatermarkFolderName, $"{Watermark.Name}{Watermark.Extension}");
         }
 
         private static string CreateTestFolder()
@@ -137,15 +137,15 @@ namespace Polo.UnitTests.FileUtils
         {
             var folderStructure = new Folder();
 
-            var files = Directory.EnumerateFiles(folderFullPath, "*.*", SearchOption.TopDirectoryOnly);
+            var files = Directory.EnumerateFiles(folderFullPath, "*", SearchOption.TopDirectoryOnly);
             foreach (var file in files)
             {
                 var fileName = Path.GetFileNameWithoutExtension(file);
-                var fileExtension = Path.GetExtension(file).TrimStart('.');
+                var fileExtension = Path.GetExtension(file);
                 var fotoFile = new FotoFile(fileName, fileExtension);
                 var fileExtensionUpper = fileExtension.ToUpper();
 
-                if (fileExtensionUpper == "JPEG" || fileExtensionUpper == "JPG" || fileExtensionUpper == "PNG")
+                if (fileExtensionUpper == ".JPEG" || fileExtensionUpper == ".JPG" || fileExtensionUpper == ".PNG")
                 {
                     var (width, height) = TryGetWidthAndHeight(file);
                     fotoFile.Width = width;
