@@ -2,7 +2,7 @@
   "profiles": {
     "Polo": {
       "commandName": "Project",
-      "commandLineArgs": "-gpc -output-folder-name:\"2018.11 Munich Museums\"",
+      "commandLineArgs": "--show-video-files -source:\"e:\\Video\"",
       "remoteDebugEnabled": false,
       "nativeDebugging": false
     }

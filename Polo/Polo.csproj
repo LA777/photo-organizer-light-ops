@@ -10,7 +10,7 @@
     <TrimMode>CopyUsed</TrimMode>
 
     <ApplicationIcon>Icon\multimediaphotoviewer.ico</ApplicationIcon>
-    <Version>0.0.7.5</Version>
+    <Version>0.0.7.6</Version>
     <Description>Photo organizer</Description>
     <PackageProjectUrl>https://github.com/LA777/photo-organizer-light-ops</PackageProjectUrl>
     <PackageIcon>multimediaphotoviewer.ico</PackageIcon>
