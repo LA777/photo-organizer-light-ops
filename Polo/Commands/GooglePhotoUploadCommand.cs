@@ -89,7 +89,7 @@ namespace Polo.Commands
             // TODO LA - Check in UTs duplicates
             var imagesForProcess = new List<string>();
             _applicationSettings.FileForProcessExtensions.Distinct().ToList()// TODO LA - Move this Select to some extension
-                .ForEach(x => imagesForProcess.AddRange(Directory.EnumerateFiles(outputDirectory, $"*.{x}", SearchOption.TopDirectoryOnly)));
+                .ForEach(x => imagesForProcess.AddRange(Directory.EnumerateFiles(outputDirectory, $"*{x}", SearchOption.TopDirectoryOnly)));
             imagesForProcess.SortByFileName();
 
             foreach (var imageForProcess in imagesForProcess)

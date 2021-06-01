@@ -35,8 +35,8 @@ namespace Polo.Commands
 
             var videoFiles = new List<string>();
 
-            _applicationSettings.VideoFileExtensions.ToList()
-                .ForEach(x => videoFiles.AddRange(Directory.EnumerateFiles(currentDirectory, $"*.{x}", SearchOption.TopDirectoryOnly)));
+            _applicationSettings.VideoFileExtensions.Distinct().ToList()
+                .ForEach(x => videoFiles.AddRange(Directory.EnumerateFiles(currentDirectory, $"*{x}", SearchOption.TopDirectoryOnly)));// TODO LA - Refactor
 
             foreach (var filePath in videoFiles)
             {

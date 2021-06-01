@@ -35,11 +35,11 @@ namespace Polo.Commands
 
             var rawFiles = new List<string>();
             _applicationSettings.RawFileExtensions.Distinct().ToList()
-                .ForEach(x => rawFiles.AddRange(Directory.EnumerateFiles(rawFolderPath, $"*.{x}", SearchOption.TopDirectoryOnly)));
+                .ForEach(x => rawFiles.AddRange(Directory.EnumerateFiles(rawFolderPath, $"*{x}", SearchOption.TopDirectoryOnly)));
 
             var jpegFilesInCurrentFolder = new List<string>();
             _applicationSettings.FileForProcessExtensions.Distinct().ToList()
-                .ForEach(x => jpegFilesInCurrentFolder.AddRange(Directory.EnumerateFiles(currentDirectory, $"*.{x}", SearchOption.TopDirectoryOnly)));
+                .ForEach(x => jpegFilesInCurrentFolder.AddRange(Directory.EnumerateFiles(currentDirectory, $"*{x}", SearchOption.TopDirectoryOnly)));
 
             var fileNameWithoutExtensionComparer = new FileNameWithoutExtensionComparer();// TODO LA - Use Comparer via DI
             var orphanageRawFiles = rawFiles.Except(jpegFilesInCurrentFolder, fileNameWithoutExtensionComparer);
@@ -47,7 +47,7 @@ namespace Polo.Commands
             var parentFolder = Directory.GetParent(currentDirectory).FullName;
             var jpegFilesInParentFolder = new List<string>();
             _applicationSettings.FileForProcessExtensions.Distinct().ToList()
-            .ForEach(x => jpegFilesInParentFolder.AddRange(Directory.EnumerateFiles(parentFolder, $"*.{x}", SearchOption.AllDirectories)));
+            .ForEach(x => jpegFilesInParentFolder.AddRange(Directory.EnumerateFiles(parentFolder, $"*{x}", SearchOption.AllDirectories)));
             var jpegFilesRelatedToOrphanageRawFiles = jpegFilesInParentFolder.Intersect(orphanageRawFiles, fileNameWithoutExtensionComparer);
 
             var index = 0;

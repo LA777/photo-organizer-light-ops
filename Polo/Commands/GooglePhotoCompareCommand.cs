@@ -88,7 +88,7 @@ namespace Polo.Commands
             // TODO LA - Check in UTs duplicates
             var imagesLocal = new List<string>();
             _applicationSettings.FileForProcessExtensions.Distinct().ToList()// TODO LA - Move this Select to some extension
-                .ForEach(x => imagesLocal.AddRange(Directory.EnumerateFiles(sourceFolderPath, $"*.{x}", SearchOption.TopDirectoryOnly)));
+                .ForEach(x => imagesLocal.AddRange(Directory.EnumerateFiles(sourceFolderPath, $"*{x}", SearchOption.TopDirectoryOnly)));
             _logger.LogInformation($"Local files count: {imagesLocal.Count}");
 
             var absentItems = imagesLocal.Except(uploadedFileNames, new FileNameComparer()).ToList();

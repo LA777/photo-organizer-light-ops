@@ -44,7 +44,7 @@ namespace Polo.Commands
             // TODO LA - add Parameter for RedundatFiles names
             var reduntantFiles = new List<string>();
             _applicationSettings.RedundantFiles.Distinct().ToList()
-                .ForEach(x => reduntantFiles.AddRange(Directory.EnumerateFiles(currentDirectory, $"{x}", System.IO.SearchOption.AllDirectories)));
+                .ForEach(x => reduntantFiles.AddRange(Directory.EnumerateFiles(currentDirectory, $"{x}", System.IO.SearchOption.AllDirectories)));// TODO LA - Refactor
 
             foreach (var reduntantFile in reduntantFiles)
             {

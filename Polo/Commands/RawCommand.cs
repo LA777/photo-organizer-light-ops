@@ -34,7 +34,7 @@ namespace Polo.Commands
 
             var rawFiles = new List<string>();
             _applicationSettings.RawFileExtensions.Distinct().ToList()
-                .ForEach(x => rawFiles.AddRange(Directory.EnumerateFiles(currentDirectory, $"*.{x}", SearchOption.TopDirectoryOnly)));
+                .ForEach(x => rawFiles.AddRange(Directory.EnumerateFiles(currentDirectory, $"*{x}", SearchOption.TopDirectoryOnly)));
 
             foreach (var rawFilePath in rawFiles)
             {

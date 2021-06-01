@@ -40,7 +40,7 @@ namespace Polo.Commands
             var extensionsUpper = _applicationSettings.VideoFileExtensions.Distinct().Select(x => x.ToUpper());
 
             var videoFiles = Directory.EnumerateFiles(sourceFolder, "*", SearchOption.AllDirectories)
-                .Where(x => extensionsUpper.Contains(Path.GetExtension(x).TrimStart('.').ToUpper()))
+                .Where(x => extensionsUpper.Contains(Path.GetExtension(x).ToUpper()))
                 .ToList();
 
             _logger.Information($"Files found: {videoFiles.Count}");
