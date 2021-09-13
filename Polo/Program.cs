@@ -96,6 +96,7 @@ namespace Polo
             services.AddSingleton<ICommand, ResizeCommand>();
             services.AddSingleton<ICommand, ResizeWithWatermarkCommand>();
             services.AddSingleton<ICommand, ClearExifCommand>();
+            services.AddSingleton<ICommand, UpdateExifDateCommand>();
             services.AddSingleton<ICommand, GooglePhotoUploadCommand>();
             services.AddSingleton<ICommand, RemoveRedundantFilesCommand>();
             services.AddSingleton<ICommand, GooglePhotoCompareCommand>();

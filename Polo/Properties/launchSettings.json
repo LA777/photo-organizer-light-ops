@@ -2,7 +2,7 @@
   "profiles": {
     "Polo": {
       "commandName": "Project",
-      "commandLineArgs": "--show-video-files -source:\"e:\\Video\"",
+      "commandLineArgs": "--update-exif-date -source:\"e:\\Photos\\2021 Turkey\\2021 Turkey Oludeniz Boat trip - friends\\update\"",
       "remoteDebugEnabled": false,
       "nativeDebugging": false
     }
