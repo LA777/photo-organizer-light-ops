@@ -25,7 +25,7 @@ namespace Polo.Commands
             OutputFolderNameParameter = new OutputFolderNameParameter(),
             PositionParameter = new PositionParameter(),
             TransparencyParameter = new TransparencyParameter(),
-            ImageQuality = new ImageQuality()
+            ImageQualityParameter = new ImageQualityParameter()
         };
 
         public string Name => "add-watermark";
@@ -51,7 +51,7 @@ namespace Polo.Commands
             var watermarkPosition = ParameterHandler.PositionParameter.Initialize(parameters, _applicationSettings.WatermarkPosition);
             var watermarkPositionMagick = watermarkPosition.ParsePosition();
             var watermarkTransparencyPercent = ParameterHandler.TransparencyParameter.Initialize(parameters, _applicationSettings.WatermarkTransparencyPercent);
-            var imageQuality = ParameterHandler.ImageQuality.Initialize(parameters, _applicationSettings.ImageQuality);
+            var imageQuality = ParameterHandler.ImageQualityParameter.Initialize(parameters, _applicationSettings.ImageQuality);
 
             _logger.Information($"Seeking files...");
             // TODO LA - Check in UTs duplicates

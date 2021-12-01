@@ -13,7 +13,8 @@ namespace Polo.Parameters.Handler
         public LongSideLimitParameter LongSideLimitParameter { get; init; }
         public MegaPixelsLimitParameter MegaPixelsLimitParameter { get; init; }
         public DestinationParameter DestinationParameter { get; init; }
-        public ImageQuality ImageQuality { get; init; }
+        public ImageQualityParameter ImageQualityParameter { get; init; }
+        public TimeDifferenceParameter TimeDifferenceParameter { get; init; }
 
         public IReadOnlyCollection<IParameterInfo> GetStringParameters()
         {
@@ -27,7 +28,8 @@ namespace Polo.Parameters.Handler
             if (LongSideLimitParameter != null) parameters.Add(LongSideLimitParameter);
             if (MegaPixelsLimitParameter != null) parameters.Add(MegaPixelsLimitParameter);
             if (DestinationParameter != null) parameters.Add(DestinationParameter);
-            if (ImageQuality != null) parameters.Add(ImageQuality);
+            if (ImageQualityParameter != null) parameters.Add(ImageQualityParameter);
+            if (TimeDifferenceParameter != null) parameters.Add(TimeDifferenceParameter);
 
             return parameters;
         }

@@ -24,7 +24,7 @@ namespace Polo.Commands
             LongSideLimitParameter = new LongSideLimitParameter(),
             MegaPixelsLimitParameter = new MegaPixelsLimitParameter(),
             OutputFolderNameParameter = new OutputFolderNameParameter(),
-            ImageQuality = new ImageQuality()
+            ImageQualityParameter = new ImageQualityParameter()
         };
 
         public string Name => "resize";
@@ -47,7 +47,7 @@ namespace Polo.Commands
             var destinationFolder = Path.GetFullPath(outputFolderName, sourceFolderPath);// TODO LA - Refactor other commands to use Path.GetFullPath
             var sizeLimit = ParameterHandler.LongSideLimitParameter.Initialize(parameters, _applicationSettings.ImageResizeLongSideLimit);
             var megaPixelsLimit = ParameterHandler.MegaPixelsLimitParameter.Initialize(parameters, _applicationSettings.ImageResizeMegaPixelsLimit);
-            var imageQuality = ParameterHandler.ImageQuality.Initialize(parameters, _applicationSettings.ImageQuality);
+            var imageQuality = ParameterHandler.ImageQualityParameter.Initialize(parameters, _applicationSettings.ImageQuality);
 
             var imagesForProcess = new List<string>();
             _applicationSettings.FileForProcessExtensions.Distinct().ToList()

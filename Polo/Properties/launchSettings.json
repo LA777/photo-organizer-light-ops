@@ -2,7 +2,7 @@
   "profiles": {
     "Polo": {
       "commandName": "Project",
-      "commandLineArgs": "--update-exif-date -source:\"e:\\Photos\\2021 Turkey\\2021 Turkey Oludeniz Boat trip - friends\\update\"",
+      "commandLineArgs": "-cetz -source:\"h:\\Photos\\2021 USA San Jose Liuba\" -time-difference:-10",
       "remoteDebugEnabled": false,
       "nativeDebugging": false
     }

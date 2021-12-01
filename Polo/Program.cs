@@ -102,6 +102,7 @@ namespace Polo
             services.AddSingleton<ICommand, GooglePhotoCompareCommand>();
             services.AddSingleton<ICommand, CompareFileNamesCommand>();
             services.AddSingleton<ICommand, ShowVideoFilesCommand>();
+            services.AddSingleton<ICommand, ConvertExifTimezoneCommand>();
         }
     }
 }

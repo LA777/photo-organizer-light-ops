@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Polo.Parameters
 {
-    public class ImageQuality : IParameter<int>, IParameterInfo
+    public class ImageQualityParameter : IParameter<int>, IParameterInfo
     {
         public static int Min => 0;// TODO LA - Combine min and max with Options validation
         public static int Max => 100;

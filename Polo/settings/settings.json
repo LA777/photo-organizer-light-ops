@@ -2,11 +2,11 @@
   "LogFilePath": "c:\\Prime\\Progs\\Polo\\logs\\polo-log-.txt", // "logs\\\\polo-log-.txt\",
   "DefaultSourceFolderPath": "j:\\DCIM",
   "RawFolderName": "RAW", // RawSubfolderName
-  "ResizedImageSubfolderName": "e:\\Photos\\OLD for upload", // TODO LA - Rename
+  "ResizedImageSubfolderName": "h:\\Photos\\OLD for upload", // TODO LA - Rename
   "ImageResizeLongSideLimit": 50000, // Min - 1; // TODO LA - Rename
   "ImageResizeMegaPixelsLimit": 16.0, // Min - 0.001; // TODO LA - Rename
   "WatermarkPath": "X:\\_LA_\\Sign\\Sign v3.5sl - 64% - FSviewer.png", //"d:\\tmp dev\\images\\sign\\Sign v3.5 small.png",
-  "WatermarkOutputFolderName": "e:\\Photos\\OLD for upload", // TODO LA - Rename
+  "WatermarkOutputFolderName": "h:\\Photos\\OLD for upload", // TODO LA - Rename
   "OutputSubfolderName": "publish", // TODO LA - Rename
   "WatermarkPosition": "left-bottom",
   "WatermarkTransparencyPercent": 64, // Min - 0; Max - 100;
