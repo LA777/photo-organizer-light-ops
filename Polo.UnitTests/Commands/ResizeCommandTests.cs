@@ -25,7 +25,7 @@ namespace Polo.UnitTests.Commands
             FileForProcessExtensions = FileExtension.JpegExtensions,
             ImageResizeLongSideLimit = _imageResizeLongSideLimit,
             ImageResizeMegaPixelsLimit = _megaPixelsLimit,
-            ResizedImageSubfolderName = _resizedImageSubfolderName
+            OutputSubfolderName = _resizedImageSubfolderName
         };
         private static readonly string _albumName = "Album1";
         private static readonly Mock<ILogger> _loggerMock = new Mock<ILogger>();

@@ -26,7 +26,7 @@ namespace Polo.UnitTests.Commands
         {
             FileForProcessExtensions = _jpegFileExtensions,
             WatermarkPath = "",
-            WatermarkOutputFolderName = _watermarkOutputFolderName,
+            OutputSubfolderName = _watermarkOutputFolderName,
             WatermarkPosition = "center-center",
             WatermarkTransparencyPercent = 20
         };
