@@ -61,7 +61,7 @@ namespace Polo.UnitTests.Parameters
             var exception = Assert.Throws<ParameterAbsentException>(() => _sut.Initialize(inputParameters, defaultValue));
 
             // Assert
-            Assert.Contains($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{OutputFolderNameParameter.Name}' parameter or setup setting value '{nameof(ApplicationSettingsReadOnly.WatermarkOutputFolderName)}'.", exception.Message);
+            Assert.Contains($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{OutputFolderNameParameter.Name}' parameter or setup setting value '{nameof(ApplicationSettingsReadOnly.OutputSubfolderName)}'.", exception.Message);
         }
 
         [Theory]
@@ -77,7 +77,7 @@ namespace Polo.UnitTests.Parameters
             var exception = Assert.Throws<ParameterAbsentException>(() => _sut.Initialize(inputParameters, parameterValue));
 
             // Assert
-            Assert.Contains($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{OutputFolderNameParameter.Name}' parameter or setup setting value '{nameof(ApplicationSettingsReadOnly.WatermarkOutputFolderName)}'.", exception.Message);
+            Assert.Contains($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{OutputFolderNameParameter.Name}' parameter or setup setting value '{nameof(ApplicationSettingsReadOnly.OutputSubfolderName)}'.", exception.Message);
         }
     }
 }

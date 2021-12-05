@@ -45,8 +45,8 @@ namespace Polo.Commands
             var directoryInfo = new DirectoryInfo(currentFolder);
             var folderName = directoryInfo.Name;
             var sourceFolderPath = ParameterHandler.SourceParameter.Initialize(parameters, currentFolder);
-            var outputSubfolderName = ParameterHandler.OutputFolderNameParameter.Initialize(parameters, _applicationSettings.OutputSubfolderName);
-            var outputDirectory = Path.Combine(sourceFolderPath, outputSubfolderName);
+            var outputFolderName = ParameterHandler.OutputFolderNameParameter.Initialize(parameters, _applicationSettings.OutputSubfolderName);
+            var destinationFolder = Path.GetFullPath(outputFolderName, sourceFolderPath);
 
             // TODO LA - Move secrets to Settings file
             var user = "user";
@@ -89,7 +89,7 @@ namespace Polo.Commands
             // TODO LA - Check in UTs duplicates
             var imagesForProcess = new List<string>();
             _applicationSettings.FileForProcessExtensions.Distinct().ToList()// TODO LA - Move this Select to some extension
-                .ForEach(x => imagesForProcess.AddRange(Directory.EnumerateFiles(outputDirectory, $"*{x}", SearchOption.TopDirectoryOnly)));
+                .ForEach(x => imagesForProcess.AddRange(Directory.EnumerateFiles(destinationFolder, $"*{x}", SearchOption.TopDirectoryOnly)));
             imagesForProcess.SortByFileName();
 
             foreach (var imageForProcess in imagesForProcess)

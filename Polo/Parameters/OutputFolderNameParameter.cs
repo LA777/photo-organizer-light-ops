@@ -25,7 +25,7 @@ namespace Polo.Parameters
 
             if (string.IsNullOrWhiteSpace(outputValue))
             {
-                throw new ParameterAbsentException($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{Name}' parameter or setup setting value '{nameof(ApplicationSettingsReadOnly.WatermarkOutputFolderName)}'.");
+                throw new ParameterAbsentException($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{Name}' parameter or setup setting value '{nameof(ApplicationSettingsReadOnly.OutputSubfolderName)}'.");
             }
 
             return outputValue;

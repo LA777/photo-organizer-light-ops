@@ -6,7 +6,6 @@ using Polo.Abstractions.Commands;
 using Polo.Abstractions.Options;
 using Polo.Commands;
 using Serilog;
-using Serilog.Core;
 using Serilog.Events;
 using System;
 using System.IO;
@@ -71,7 +70,6 @@ namespace Polo
             var logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
                 .Enrich.WithProperty("Version", version)
-                .WriteTo.Seq("http://localhost:5341", apiKey: "amlPYT4U7TP5u5w8GhWR", controlLevelSwitch: new LoggingLevelSwitch(LogEventLevel.Verbose))// TODO LA - Move logging setting to JSON file
                 .WriteTo.Console(restrictedToMinimumLevel: LogEventLevel.Information, outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} | {Message:lj}{NewLine}{Exception}")
                 .WriteTo.File(Path.Combine(AppContext.BaseDirectory, applicationSettings.LogFilePath), rollingInterval: RollingInterval.Day)
                 .CreateLogger();

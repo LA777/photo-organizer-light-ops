@@ -10,7 +10,7 @@ namespace Polo.Abstractions.Options
 
         public string RawFolderName { get; private set; }
 
-        public string ResizedImageSubfolderName { get; private set; }
+        //public string ResizedImageSubfolderName { get; private set; }
 
         public int ImageResizeLongSideLimit { get; private set; }
 
@@ -18,7 +18,7 @@ namespace Polo.Abstractions.Options
 
         public string WatermarkPath { get; private set; }
 
-        public string WatermarkOutputFolderName { get; private set; }
+        //public string WatermarkOutputFolderName { get; private set; }
 
         public string OutputSubfolderName { get; set; }
 
@@ -41,11 +41,11 @@ namespace Polo.Abstractions.Options
             LogFilePath = applicationSettings.LogFilePath;
             DefaultSourceFolderPath = applicationSettings.DefaultSourceFolderPath;
             RawFolderName = applicationSettings.RawFolderName;
-            ResizedImageSubfolderName = applicationSettings.ResizedImageSubfolderName;
+            //ResizedImageSubfolderName = applicationSettings.ResizedImageSubfolderName;
             ImageResizeLongSideLimit = applicationSettings.ImageResizeLongSideLimit;
             ImageResizeMegaPixelsLimit = applicationSettings.ImageResizeMegaPixelsLimit;
             WatermarkPath = applicationSettings.WatermarkPath;
-            WatermarkOutputFolderName = applicationSettings.WatermarkOutputFolderName;
+            //WatermarkOutputFolderName = applicationSettings.WatermarkOutputFolderName;
             OutputSubfolderName = applicationSettings.OutputSubfolderName;
             WatermarkPosition = applicationSettings.WatermarkPosition;
             ImageQuality = applicationSettings.ImageQuality;

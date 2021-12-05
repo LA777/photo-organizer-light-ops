@@ -104,8 +104,13 @@ namespace Polo.UnitTests.Commands
             var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
             Environment.CurrentDirectory = Path.Combine(testFolderFullPath, _albumName);
 
+            var parameters = new Dictionary<string, string>
+            {
+                { OutputFolderNameParameter.Name, _resizedImageSubfolderName}
+            };
+
             // Act
-            _sut.Action();
+            _sut.Action(parameters);
 
             // Assert
             var folderStructureActual = FileHelper.CreateFolderStructureByFolderAndFiles(testFolderFullPath);
@@ -122,7 +127,8 @@ namespace Polo.UnitTests.Commands
 
             var parameters = new Dictionary<string, string>
             {
-                { LongSideLimitParameter.Name, validLongSideLimitParameter }
+                { LongSideLimitParameter.Name, validLongSideLimitParameter },
+                { OutputFolderNameParameter.Name, _resizedImageSubfolderName}
             };
 
             // Act
@@ -166,7 +172,7 @@ namespace Polo.UnitTests.Commands
             {
                 FileForProcessExtensions = jpegFileExtensionsWithDuplicates,
                 ImageResizeLongSideLimit = _imageResizeLongSideLimit,
-                ResizedImageSubfolderName = _resizedImageSubfolderName,
+                OutputSubfolderName = _resizedImageSubfolderName,
                 ImageResizeMegaPixelsLimit = _megaPixelsLimit
             };
 
