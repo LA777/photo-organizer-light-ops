@@ -28,7 +28,7 @@ namespace Polo.Commands
 
         public string Name => "convert-exif-timezone";
 
-        public string ShortName => "cetz";
+        public string ShortName => "cet";
 
         public string Description => $"Convert EXIF from one timezone to another.";
 
@@ -44,7 +44,7 @@ namespace Polo.Commands
             var sourceFolderPath = ParameterHandler.SourceParameter.Initialize(parameters, Environment.CurrentDirectory);
             var outputFolderName = ParameterHandler.OutputFolderNameParameter.Initialize(parameters, _applicationSettings.OutputSubfolderName);
             var destinationFolder = Path.GetFullPath(outputFolderName, sourceFolderPath);
-            var timezonTimeDifference = ParameterHandler.TimeDifferenceParameter.Initialize(parameters);
+            var timezoneTimeDifference = ParameterHandler.TimeDifferenceParameter.Initialize(parameters);
 
             var imagesForProcess = new List<string>();
             _applicationSettings.FileForProcessExtensions.Distinct().ToList()
@@ -54,6 +54,7 @@ namespace Polo.Commands
             if (imagesForProcess.Any() && !Directory.Exists(destinationFolder))
             {
                 Directory.CreateDirectory(destinationFolder);
+                _logger.Information($"Destination directory created: {destinationFolder}");
             }
 
             foreach (var imageForProcess in imagesForProcess)
@@ -75,7 +76,7 @@ namespace Polo.Commands
                 var exifDateTimeDigitized = exifProfile.GetValue(ExifTag.DateTimeDigitized);
 
                 var currentTime = DateTime.ParseExact(exifDateTimeOriginal.Value, "yyyy:MM:dd HH:mm:ss", CultureInfo.InvariantCulture);
-                var updatedTime = currentTime.AddHours(timezonTimeDifference);
+                var updatedTime = currentTime.AddHours(timezoneTimeDifference);
 
                 //fileDateModified = Convert.ToDateTime(exifDateTime);
 
