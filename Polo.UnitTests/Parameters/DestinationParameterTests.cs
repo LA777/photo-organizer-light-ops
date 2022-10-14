@@ -21,7 +21,7 @@ namespace Polo.UnitTests.Parameters
             const string defaultValue = nameof(defaultValue);
             var inputParameters = new Dictionary<string, string>
             {
-                { DestinationParameter.Name, inputParameter }
+                { new DestinationParameter().Name, inputParameter }
             };
 
             // Act
@@ -55,14 +55,14 @@ namespace Polo.UnitTests.Parameters
             const string defaultValue = nameof(defaultValue);
             var inputParameters = new Dictionary<string, string>
             {
-                { DestinationParameter.Name, parameterValue }
+                { new DestinationParameter().Name, parameterValue }
             };
 
             // Act
             var exception = Assert.Throws<ParameterAbsentException>(() => _sut.Initialize(inputParameters, defaultValue));
 
             // Assert
-            Assert.Contains($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{DestinationParameter.Name}' parameter.", exception.Message);
+            Assert.Contains($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{new DestinationParameter().Name}' parameter.", exception.Message);
         }
 
         [Theory]
@@ -78,7 +78,7 @@ namespace Polo.UnitTests.Parameters
             var exception = Assert.Throws<ParameterAbsentException>(() => _sut.Initialize(inputParameter, parameterValue));
 
             // Assert
-            Assert.Contains($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{DestinationParameter.Name}' parameter.", exception.Message);
+            Assert.Contains($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{new DestinationParameter().Name}' parameter.", exception.Message);
         }
 
         [Fact]
@@ -89,7 +89,7 @@ namespace Polo.UnitTests.Parameters
             const string inputParameter = nameof(inputParameter);
             var inputParameters = new Dictionary<string, string>
             {
-                { DestinationParameter.Name, inputParameter }
+                { new DestinationParameter().Name, inputParameter }
             };
 
             // Act

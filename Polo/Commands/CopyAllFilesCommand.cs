@@ -1,25 +1,19 @@
 ﻿using Microsoft.Extensions.Options;
 using Polo.Abstractions.Commands;
 using Polo.Abstractions.Options;
+using Polo.Abstractions.Parameters.Handler;
 using Polo.Parameters;
 using Polo.Parameters.Handler;
 using Serilog;
-using System;
-using System.Collections.Generic;
-using System.IO;
 
 namespace Polo.Commands
 {
     public class CopyAllFilesCommand : ICommand
     {
-        private readonly ILogger _logger;
+        public const string NameLong = "copy-all-files";
+        public const string NameShort = "caf";
         private readonly ApplicationSettingsReadOnly _applicationSettings;
-
-        public readonly ParameterHandler ParameterHandler = new ParameterHandler()
-        {
-            SourceParameter = new SourceParameter(),
-            DestinationParameter = new DestinationParameter()
-        };
+        private readonly ILogger _logger;
 
         public CopyAllFilesCommand(IOptions<ApplicationSettingsReadOnly> applicationOptions, ILogger logger)
         {
@@ -27,11 +21,19 @@ namespace Polo.Commands
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public string Name => "copy-all-files";
+        public string Name => NameLong;
 
-        public string ShortName => "caf";
+        public string ShortName => NameShort;
 
-        public string Description => $"Copy all files from source folder to the current folder. Setup path for the source folder in settings or in argument. Setup path to the destination folder in the argument. Example: polo.exe {CommandParser.CommandPrefix}{Name} {CommandParser.ShortCommandPrefix}{SourceParameter.Name}:'e:\\DCIM' {CommandParser.ShortCommandPrefix}{DestinationParameter.Name}:'c:\\photo'";
+        public string Description => "Copy all files from source folder to the current folder. Setup path for the source folder in settings or in argument. Setup path to the destination folder in the argument.";
+
+        public string Example => "polo.exe {CommandParser.CommandPrefix}{Name} {CommandParser.ShortCommandPrefix}{ParameterHandler.SourceParameter.Name}:'e:\\DCIM' {CommandParser.ShortCommandPrefix}{ParameterHandler.DestinationParameter.Name}:'c:\\photo'"; // TODO LA
+
+        public IParameterHandler ParameterHandler => new ParameterHandler
+        {
+            SourceParameter = new SourceParameter(),
+            DestinationParameter = new DestinationParameter()
+        };
 
         public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
         {

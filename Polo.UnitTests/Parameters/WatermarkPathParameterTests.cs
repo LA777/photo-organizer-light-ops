@@ -30,7 +30,7 @@ namespace Polo.UnitTests.Parameters
             const string defaultValue = nameof(defaultValue);
             var inputParameters = new Dictionary<string, string>
             {
-                { WatermarkPathParameter.Name, inputParameter }
+                { new WatermarkPathParameter().Name, inputParameter }
             };
 
             // Act
@@ -64,14 +64,14 @@ namespace Polo.UnitTests.Parameters
             const string defaultValue = nameof(defaultValue);
             var inputParameters = new Dictionary<string, string>
             {
-                { WatermarkPathParameter.Name, parameterValue }
+                { new WatermarkPathParameter().Name, parameterValue }
             };
 
             // Act
             var exception = Assert.Throws<ParameterAbsentException>(() => _sut.Initialize(inputParameters, defaultValue));
 
             // Assert
-            Assert.Contains($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{WatermarkPathParameter.Name}' parameter or setup setting value '{nameof(ApplicationSettingsReadOnly.WatermarkPath)}'.", exception.Message);
+            Assert.Contains($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{new WatermarkPathParameter().Name}' parameter or setup setting value '{nameof(ApplicationSettingsReadOnly.WatermarkPath)}'.", exception.Message);
         }
 
         [Theory]
@@ -87,7 +87,7 @@ namespace Polo.UnitTests.Parameters
             var exception = Assert.Throws<ParameterAbsentException>(() => _sut.Initialize(inputParameters, parameterValue));
 
             // Assert
-            Assert.Contains($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{WatermarkPathParameter.Name}' parameter or setup setting value '{nameof(ApplicationSettingsReadOnly.WatermarkPath)}'.", exception.Message);
+            Assert.Contains($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{new WatermarkPathParameter().Name}' parameter or setup setting value '{nameof(ApplicationSettingsReadOnly.WatermarkPath)}'.", exception.Message);
         }
 
         [Fact]
@@ -98,7 +98,7 @@ namespace Polo.UnitTests.Parameters
             const string inputParameter = nameof(inputParameter);
             var inputParameters = new Dictionary<string, string>
             {
-                { SourceParameter.Name, inputParameter }
+                { new SourceParameter().Name, inputParameter }
             };
 
             // Act

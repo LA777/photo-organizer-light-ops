@@ -1,27 +1,20 @@
 ﻿using Microsoft.Extensions.Options;
 using Polo.Abstractions.Commands;
 using Polo.Abstractions.Options;
+using Polo.Abstractions.Parameters.Handler;
 using Polo.Comparers;
 using Polo.Parameters;
 using Polo.Parameters.Handler;
 using Serilog;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
 namespace Polo.Commands
 {
     public class CompareFileNamesCommand : ICommand
     {
-        private readonly ILogger _logger;
+        public const string NameLong = "compare-file-names";
+        public const string NameShort = "cfn";
         private readonly ApplicationSettingsReadOnly _applicationSettings;
-
-        public readonly ParameterHandler ParameterHandler = new ParameterHandler()
-        {
-            SourceParameter = new SourceParameter(),
-            DestinationParameter = new DestinationParameter()
-        };
+        private readonly ILogger _logger;
 
         public CompareFileNamesCommand(IOptions<ApplicationSettingsReadOnly> applicationOptions, ILogger logger)
         {
@@ -29,11 +22,18 @@ namespace Polo.Commands
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public string Name => "compare-file-names";
+        public string Name => NameLong;
 
-        public string ShortName => "cfn";
+        public string ShortName => NameShort;
 
-        public string Description => $"Compares all files by file names only from the source (current) and destination directory.";
+        public string Description => "Compares all files by file names only from the source (current) and destination directory.";
+        public string Example { get; } // TODO LA
+
+        public IParameterHandler ParameterHandler => new ParameterHandler
+        {
+            SourceParameter = new SourceParameter(),
+            DestinationParameter = new DestinationParameter()
+        };
 
         public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
         {
@@ -50,7 +50,7 @@ namespace Polo.Commands
 
             if (!differenceSourceFolder.Any() && !differenceDestinationFolder.Any())
             {
-                _logger.Information($"Folders are equal.");
+                _logger.Information("Folders are equal.");
 
                 return;
             }

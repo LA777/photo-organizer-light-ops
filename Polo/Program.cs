@@ -4,14 +4,13 @@ using Microsoft.Extensions.Options;
 using Polo.Abstractions;
 using Polo.Abstractions.Commands;
 using Polo.Abstractions.Options;
+using Polo.Abstractions.Parameters.Handler;
 using Polo.Commands;
+using Polo.Parameters.Handler;
 using Serilog;
 using Serilog.Events;
-using System;
-using System.IO;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Polo
 {
@@ -19,7 +18,7 @@ namespace Polo
     {
         private static IConfiguration Configuration { get; } = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile(Path.Combine(AppContext.BaseDirectory, @"settings\settings.json"), optional: false, reloadOnChange: false)
+            .AddJsonFile(Path.Combine(AppContext.BaseDirectory, @"settings\settings.json"), false, false)
             .Build();
 
         private static void Main(string[] args)
@@ -63,21 +62,20 @@ namespace Polo
 
             var applicationSettings = Configuration.Get<ApplicationSettings>();
             var applicationSettingsReadOnly = new ApplicationSettingsReadOnly(applicationSettings);
-            IOptions<ApplicationSettingsReadOnly> applicationSettingsReadOnlyOptions = Options.Create(applicationSettingsReadOnly);
+            var applicationSettingsReadOnlyOptions = Options.Create(applicationSettingsReadOnly);
 
             var version = Assembly.GetExecutingAssembly().GetName().Version;
 
             var logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
                 .Enrich.WithProperty("Version", version)
-                .WriteTo.Console(restrictedToMinimumLevel: LogEventLevel.Information, outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} | {Message:lj}{NewLine}{Exception}")
+                .WriteTo.Console(LogEventLevel.Information, "{Timestamp:yyyy-MM-dd HH:mm:ss} | {Message:lj}{NewLine}{Exception}")
                 .WriteTo.File(Path.Combine(AppContext.BaseDirectory, applicationSettings.LogFilePath), rollingInterval: RollingInterval.Day)
                 .CreateLogger();
 
-            services.AddLogging(loggingBuilder =>
-            {
-                loggingBuilder.AddSerilog(logger: logger, dispose: true);
-            });
+            services.AddLogging(loggingBuilder => { loggingBuilder.AddSerilog(logger, true); });
+
+            services.AddTransient<IParameterHandler, ParameterHandler>();
 
             services.AddSingleton<ILogger>(logger);
             services.AddSingleton(applicationSettingsReadOnlyOptions);

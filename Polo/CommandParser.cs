@@ -2,18 +2,15 @@
 using Polo.Abstractions.Commands;
 using Polo.Abstractions.Exceptions;
 using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Polo
 {
     public class CommandParser : ICommandParser
     {
-        private readonly ILogger _logger;
         public const string ShortCommandPrefix = "-";
         public const string CommandPrefix = "--";
         public const string ParameterDelimiter = ":";
+        private readonly ILogger _logger;
 
         public CommandParser(ILogger logger)
         {

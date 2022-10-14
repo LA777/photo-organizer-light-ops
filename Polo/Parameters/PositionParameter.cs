@@ -1,16 +1,17 @@
-﻿using Polo.Abstractions.Exceptions;
+﻿using Polo.Abstractions.Commands;
+using Polo.Abstractions.Exceptions;
 using Polo.Abstractions.Options;
 using Polo.Abstractions.Parameters;
 using Polo.Extensions;
-using System.Collections.Generic;
 
 namespace Polo.Parameters
 {
-    public class PositionParameter : IParameter<string>, IParameterInfo
+    public class PositionParameter : IParameter<string>
     {
-        public static string Name => "position";
+        public string Name => "position";
 
-        public static IReadOnlyCollection<string> PossibleValues => new List<string>() {
+        public IReadOnlyCollection<string> PossibleValues => new List<string>
+        {
             "right-bottom",
             "right-center",
             "right-top",
@@ -22,9 +23,9 @@ namespace Polo.Parameters
             "center-bottom"
         };
 
-        public static string Description => "Describes position.";
+        public string Description => "Describes position.";
 
-        public string Initialize(IReadOnlyDictionary<string, string> inputParameters, string defaultValue)
+        public string Initialize(IReadOnlyDictionary<string, string> inputParameters, string defaultValue, IEnumerable<ICommand> commands = null)
         {
             var outputValue = defaultValue;
 

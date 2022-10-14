@@ -20,7 +20,7 @@ namespace Polo.UnitTests.Parameters
             const int defaultValue = 1234;
             var inputParameters = new Dictionary<string, string>
             {
-                { LongSideLimitParameter.Name, inputParameter.ToString() }
+                { new LongSideLimitParameter().Name, inputParameter.ToString() }
             };
 
             // Act
@@ -52,14 +52,14 @@ namespace Polo.UnitTests.Parameters
             const int defaultValue = 1234;
             var inputParameters = new Dictionary<string, string>
             {
-                { LongSideLimitParameter.Name, inputParameter.ToString() }
+                { new LongSideLimitParameter().Name, inputParameter.ToString() }
             };
 
             // Act
             var exception = Assert.Throws<ArgumentOutOfRangeException>(() => _sut.Initialize(inputParameters, defaultValue));
 
             // Assert
-            Assert.Contains($"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{LongSideLimitParameter.Name}' should be higher than {LongSideLimitParameter.Min - 1}.", exception.Message);
+            Assert.Contains($"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{new LongSideLimitParameter().Name}' should be higher than {LongSideLimitParameter.Min - 1}.", exception.Message);
         }
 
         [Fact]
@@ -73,7 +73,7 @@ namespace Polo.UnitTests.Parameters
             var exception = Assert.Throws<ArgumentOutOfRangeException>(() => _sut.Initialize(inputParameters, defaultValue));
 
             // Assert
-            Assert.Contains($"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{LongSideLimitParameter.Name}' should be higher than {LongSideLimitParameter.Min - 1}.", exception.Message);
+            Assert.Contains($"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{new LongSideLimitParameter().Name}' should be higher than {LongSideLimitParameter.Min - 1}.", exception.Message);
         }
 
         [Fact]
@@ -84,14 +84,14 @@ namespace Polo.UnitTests.Parameters
             const int defaultValue = 1234;
             var inputParameters = new Dictionary<string, string>
             {
-                { LongSideLimitParameter.Name, inputParameter }
+                { new LongSideLimitParameter().Name, inputParameter }
             };
 
             // Act
             var exception = Assert.Throws<ParameterParseException>(() => _sut.Initialize(inputParameters, defaultValue));
 
             // Assert
-            Assert.Contains($"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{LongSideLimitParameter.Name}' is not a number.", exception.Message);
+            Assert.Contains($"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{new LongSideLimitParameter().Name}' is not a number.", exception.Message);
         }
     }
 }

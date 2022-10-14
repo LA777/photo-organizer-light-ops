@@ -2,23 +2,38 @@
 using Microsoft.Extensions.Options;
 using Polo.Abstractions.Commands;
 using Polo.Abstractions.Options;
+using Polo.Abstractions.Parameters.Handler;
 using Polo.Extensions;
 using Polo.Parameters;
 using Polo.Parameters.Handler;
 using Serilog;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+using System.Reflection;
 
 namespace Polo.Commands
 {
     public class ResizeCommand : ICommand
     {
-        private readonly ILogger _logger;
+        public const string NameLong = "resize";
+        public const string NameShort = "rs";
         private readonly ApplicationSettingsReadOnly _applicationSettings;
+        private readonly ILogger _logger;
 
-        public readonly ParameterHandler ParameterHandler = new ParameterHandler()
+        public ResizeCommand(IOptions<ApplicationSettingsReadOnly> applicationOptions, ILogger logger)
+        {
+            _applicationSettings = applicationOptions.Value ?? throw new ArgumentNullException(nameof(applicationOptions));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
+
+        public string Name => NameLong;
+
+        public string ShortName => NameShort;
+
+        public string Description => "Resizes all JPEG images in the current folder and saves them to a sub-folder.";
+
+        // TODO LA - example should include all Parameters
+        public string Example => $"{Assembly.GetExecutingAssembly().GetName().Name} {CommandParser.CommandPrefix}{Name} {CommandParser.ShortCommandPrefix}{ParameterHandler.LongSideLimitParameter.Name}{CommandParser.ParameterDelimiter}1600";
+
+        public IParameterHandler ParameterHandler => new ParameterHandler
         {
             SourceParameter = new SourceParameter(),
             LongSideLimitParameter = new LongSideLimitParameter(),
@@ -26,18 +41,6 @@ namespace Polo.Commands
             OutputFolderNameParameter = new OutputFolderNameParameter(),
             ImageQualityParameter = new ImageQualityParameter()
         };
-
-        public string Name => "resize";
-
-        public string ShortName => "rs";
-
-        public string Description => $"Resizes all JPEG images in the current folder and saves them to a sub-folder. Example: polo.exe {CommandParser.CommandPrefix}{Name} {CommandParser.ShortCommandPrefix}{LongSideLimitParameter.Name}:1600";
-
-        public ResizeCommand(IOptions<ApplicationSettingsReadOnly> applicationOptions, ILogger logger)
-        {
-            _applicationSettings = applicationOptions.Value ?? throw new ArgumentNullException(nameof(applicationOptions));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        }
 
         public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
         {
@@ -59,7 +62,7 @@ namespace Polo.Commands
                 Directory.CreateDirectory(destinationFolder);
             }
 
-            int index = 0;
+            var index = 0;
             foreach (var jpegFile in imagesForProcess)
             {
                 var jpegFileInfo = new FileInfo(jpegFile);
@@ -80,7 +83,7 @@ namespace Polo.Commands
                 {
                     image.Resize(0, sizeLimit);
                 }
-                else if ((width * height) > (megaPixelsLimit * 1000000))
+                else if (width * height > megaPixelsLimit * 1000000)
                 {
                     image.ResizeByMegapixelsLimit(megaPixelsLimit, magickImageInfo);
                 }

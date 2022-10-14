@@ -1,25 +1,18 @@
 ﻿using Microsoft.Extensions.Options;
 using Polo.Abstractions.Commands;
 using Polo.Abstractions.Options;
+using Polo.Abstractions.Parameters.Handler;
 using Polo.Comparers;
 using Serilog;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
 namespace Polo.Commands
 {
     public class MoveRawToJpegFolderCommand : ICommand
     {
-        private readonly ILogger _logger;
+        public const string NameLong = "move-raw";
+        public const string NameShort = "mr";
         private readonly ApplicationSettingsReadOnly _applicationSettings;
-
-        public string Name => "move-raw";
-
-        public string ShortName => "mr";
-
-        public string Description => "Move RAW files to the RAW sub-folder in the JPEG folder.";
+        private readonly ILogger _logger;
 
         public MoveRawToJpegFolderCommand(IOptions<ApplicationSettingsReadOnly> applicationOptions, ILogger logger)
         {
@@ -27,11 +20,21 @@ namespace Polo.Commands
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        public string Name => NameLong;
+
+        public string ShortName => NameShort;
+
+        public string Description => "Move RAW files to the RAW sub-folder in the JPEG folder.";
+
+        public string Example { get; } // TODO LA
+
+        public IParameterHandler ParameterHandler { get; }
+
         public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
         {
             // TODO LA - Cover new logic with UTs
             var currentDirectory = Environment.CurrentDirectory;
-            var rawFolderPath = Path.Join(currentDirectory, _applicationSettings.RawFolderName);// TODO LA - Create RAW input parameter
+            var rawFolderPath = Path.Join(currentDirectory, _applicationSettings.RawFolderName); // TODO LA - Create RAW input parameter
 
             var rawFiles = new List<string>();
             _applicationSettings.RawFileExtensions.Distinct().ToList()
@@ -41,13 +44,13 @@ namespace Polo.Commands
             _applicationSettings.FileForProcessExtensions.Distinct().ToList()
                 .ForEach(x => jpegFilesInCurrentFolder.AddRange(Directory.EnumerateFiles(currentDirectory, $"*{x}", SearchOption.TopDirectoryOnly)));
 
-            var fileNameWithoutExtensionComparer = new FileNameWithoutExtensionComparer();// TODO LA - Use Comparer via DI
+            var fileNameWithoutExtensionComparer = new FileNameWithoutExtensionComparer(); // TODO LA - Use Comparer via DI
             var orphanageRawFiles = rawFiles.Except(jpegFilesInCurrentFolder, fileNameWithoutExtensionComparer);
 
             var parentFolder = Directory.GetParent(currentDirectory).FullName;
             var jpegFilesInParentFolder = new List<string>();
             _applicationSettings.FileForProcessExtensions.Distinct().ToList()
-            .ForEach(x => jpegFilesInParentFolder.AddRange(Directory.EnumerateFiles(parentFolder, $"*{x}", SearchOption.AllDirectories)));
+                .ForEach(x => jpegFilesInParentFolder.AddRange(Directory.EnumerateFiles(parentFolder, $"*{x}", SearchOption.AllDirectories)));
             var jpegFilesRelatedToOrphanageRawFiles = jpegFilesInParentFolder.Intersect(orphanageRawFiles, fileNameWithoutExtensionComparer);
 
             var index = 0;

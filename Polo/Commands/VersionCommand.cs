@@ -1,25 +1,30 @@
 ﻿using Polo.Abstractions.Commands;
+using Polo.Abstractions.Parameters.Handler;
 using Serilog;
-using System;
-using System.Collections.Generic;
 using System.Reflection;
 
 namespace Polo.Commands
 {
     public class VersionCommand : ICommand
     {
+        public const string NameLong = "version";
+        public const string NameShort = "v";
         private readonly ILogger _logger;
-
-        public string Name => "version";
-
-        public string ShortName => "v";
-
-        public string Description => "Shows application version.";
 
         public VersionCommand(ILogger logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
+
+        public string Name => NameLong;
+
+        public string ShortName => NameShort;
+
+        public string Description => "Shows application version.";
+
+        public string Example { get; } // TODO LA
+
+        public IParameterHandler ParameterHandler { get; }
 
         public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
         {

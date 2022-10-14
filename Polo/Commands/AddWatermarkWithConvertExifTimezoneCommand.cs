@@ -2,24 +2,37 @@
 using Microsoft.Extensions.Options;
 using Polo.Abstractions.Commands;
 using Polo.Abstractions.Options;
+using Polo.Abstractions.Parameters.Handler;
 using Polo.Extensions;
 using Polo.Parameters;
 using Polo.Parameters.Handler;
 using Serilog;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
-using System.Linq;
 
 namespace Polo.Commands
 {
     public class AddWatermarkWithConvertExifTimezoneCommand : ICommand
     {
-        private readonly ILogger _logger;
+        public const string NameLong = "add-watermark-with-convert-exif-timezone";
+        public const string NameShort = "awwcet";
         private readonly ApplicationSettingsReadOnly _applicationSettings;
+        private readonly ILogger _logger;
 
-        public readonly ParameterHandler ParameterHandler = new ParameterHandler()
+        public AddWatermarkWithConvertExifTimezoneCommand(IOptions<ApplicationSettingsReadOnly> applicationOptions, ILogger logger)
+        {
+            _applicationSettings = applicationOptions.Value ?? throw new ArgumentNullException(nameof(applicationOptions));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
+
+        public string Name => NameLong;
+
+        public string ShortName => NameShort;
+
+        public string Description => "Adds watermarks with converting EXIF from one timezone to another to all JPG files and copies to the output folder.";
+
+        public string Example => "polo.exe {CommandParser.CommandPrefix}{Name}"; // TODO LA
+
+        public IParameterHandler ParameterHandler => new ParameterHandler
         {
             SourceParameter = new SourceParameter(),
             WatermarkPathParameter = new WatermarkPathParameter(),
@@ -29,18 +42,6 @@ namespace Polo.Commands
             ImageQualityParameter = new ImageQualityParameter(),
             TimeDifferenceParameter = new TimeDifferenceParameter()
         };
-
-        public string Name => "add-watermark-with-convert-exif-timezone";
-
-        public string ShortName => "awwcet";
-
-        public string Description => $"Adds watermarks with converting EXIF from one timezone to another to all JPG files and copies to the output folder. Example: polo.exe {CommandParser.CommandPrefix}{Name}";
-
-        public AddWatermarkWithConvertExifTimezoneCommand(IOptions<ApplicationSettingsReadOnly> applicationOptions, ILogger logger)
-        {
-            _applicationSettings = applicationOptions.Value ?? throw new ArgumentNullException(nameof(applicationOptions));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        }
 
         public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
         {
@@ -54,12 +55,12 @@ namespace Polo.Commands
             var watermarkPositionMagick = watermarkPosition.ParsePosition();
             var watermarkTransparencyPercent = ParameterHandler.TransparencyParameter.Initialize(parameters, _applicationSettings.WatermarkTransparencyPercent);
             var imageQuality = ParameterHandler.ImageQualityParameter.Initialize(parameters, _applicationSettings.ImageQuality);
-            var timezoneTimeDifference = ParameterHandler.TimeDifferenceParameter.Initialize(parameters);
+            var timezoneTimeDifference = ParameterHandler.TimeDifferenceParameter.Initialize(parameters, 0);
 
             _logger.Information("Seeking files...");
             // TODO LA - Check in UTs duplicates
             var imagesForProcess = new List<string>();
-            _applicationSettings.FileForProcessExtensions.Distinct().ToList()// TODO LA - Move this Select to some extension
+            _applicationSettings.FileForProcessExtensions.Distinct().ToList() // TODO LA - Move this Select to some extension
                 .ForEach(x => imagesForProcess.AddRange(Directory.EnumerateFiles(sourceFolderPath, $"*{x}", SearchOption.TopDirectoryOnly)));
             _logger.Information($"Files for process: {imagesForProcess.Count}");
             imagesForProcess.SortByFileName();
@@ -73,7 +74,7 @@ namespace Polo.Commands
             using var watermark = new MagickImage(watermarkPath);
             using var transparentWatermark = watermark.ConvertToTransparentMagickImage(watermarkTransparencyPercent);
 
-            int index = 0;
+            var index = 0;
             foreach (var imageForProcess in imagesForProcess)
             {
                 var fileName = Path.GetFileName(imageForProcess);

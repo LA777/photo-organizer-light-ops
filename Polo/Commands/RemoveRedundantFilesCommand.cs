@@ -2,37 +2,39 @@
 using Microsoft.VisualBasic.FileIO;
 using Polo.Abstractions.Commands;
 using Polo.Abstractions.Options;
+using Polo.Abstractions.Parameters.Handler;
 using Polo.Parameters;
 using Polo.Parameters.Handler;
 using Serilog;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+using SearchOption = System.IO.SearchOption;
 
 namespace Polo.Commands
 {
     public class RemoveRedundantFilesCommand : ICommand
     {
-        private readonly ILogger _logger;
+        public const string NameLong = "remove-redundant-files";
+        public const string NameShort = "rrf";
         private readonly ApplicationSettingsReadOnly _applicationSettings;
-
-        public readonly ParameterHandler ParameterHandler = new ParameterHandler()
-        {
-            SourceParameter = new SourceParameter(),
-        };
-
-        public string Name => "remove-redundant-files";
-
-        public string ShortName => "rrf";
-
-        public string Description => "Removes redundant files from the folder and sub folders.";
+        private readonly ILogger _logger;
 
         public RemoveRedundantFilesCommand(IOptions<ApplicationSettingsReadOnly> applicationOptions, ILogger logger)
         {
             _applicationSettings = applicationOptions.Value ?? throw new ArgumentNullException(nameof(applicationOptions));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
+
+        public string Name => NameLong;
+
+        public string ShortName => NameShort;
+
+        public string Description => "Removes redundant files from the folder and sub folders.";
+
+        public string Example { get; } // TODO LA
+
+        public IParameterHandler ParameterHandler => new ParameterHandler
+        {
+            SourceParameter = new SourceParameter()
+        };
 
         public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
         {
@@ -44,7 +46,7 @@ namespace Polo.Commands
             // TODO LA - add Parameter for RedundatFiles names
             var reduntantFiles = new List<string>();
             _applicationSettings.RedundantFiles.Distinct().ToList()
-                .ForEach(x => reduntantFiles.AddRange(Directory.EnumerateFiles(currentDirectory, $"{x}", System.IO.SearchOption.AllDirectories)));// TODO LA - Refactor
+                .ForEach(x => reduntantFiles.AddRange(Directory.EnumerateFiles(currentDirectory, $"{x}", SearchOption.AllDirectories))); // TODO LA - Refactor
 
             foreach (var reduntantFile in reduntantFiles)
             {

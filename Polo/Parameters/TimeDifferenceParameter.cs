@@ -1,23 +1,25 @@
-﻿using Polo.Abstractions.Exceptions;
+﻿using Polo.Abstractions.Commands;
+using Polo.Abstractions.Exceptions;
 using Polo.Abstractions.Parameters;
 using Polo.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Polo.Parameters
 {
-    public class TimeDifferenceParameter : IParameter<double>, IParameterInfo
+    public class TimeDifferenceParameter : IParameter<double>
     {
-        public static double Min => -24f;// TODO LA - Combine min and max with Options validation
+        public static double Min => -24f; // TODO LA - Combine min and max with Options validation
         public static double Max => 24f;
 
-        public static string Name => "time-difference";
+        public string Name => "time-difference";
 
-        public static IReadOnlyCollection<double> PossibleValues => new List<double>() { Min, 4.5f, Max };
+        public IReadOnlyCollection<string> PossibleValues => new List<string> { Min.ToString(CultureInfo.InvariantCulture), "4.5f", Max.ToString(CultureInfo.InvariantCulture) };
 
-        public static string Description => "Time difference in hours.";
+        public string Description => "Time difference in hours.";
 
-        public double Initialize(IReadOnlyDictionary<string, string> inputParameters, double defaultValue = 0)
+        public double Initialize(IReadOnlyDictionary<string, string> inputParameters, double defaultValue = 0, IEnumerable<ICommand> commands = null)
         {
             // TODO LA - Cover with UTs
             var outputValue = defaultValue;

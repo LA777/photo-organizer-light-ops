@@ -4,40 +4,40 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Polo.Abstractions.Commands;
 using Polo.Abstractions.Options;
+using Polo.Abstractions.Parameters.Handler;
 using Polo.Extensions;
 using Polo.Parameters;
 using Polo.Parameters.Handler;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net;
-using System.Net.Http;
 
 namespace Polo.Commands
 {
     public class GooglePhotoUploadCommand : ICommand
     {
-        private readonly ILogger<GooglePhotoUploadCommand> _logger;
+        public const string NameLong = "google-photo-upload";
+        public const string NameShort = "gpu";
         private readonly ApplicationSettingsReadOnly _applicationSettings;
-
-        public readonly ParameterHandler ParameterHandler = new ParameterHandler()
-        {
-            SourceParameter = new SourceParameter(),
-            OutputFolderNameParameter = new OutputFolderNameParameter()
-        };
-
-        public string Name => "google-photo-upload";
-
-        public string ShortName => "gpu";
-
-        public string Description => "Uploads to the Google Photo.";
+        private readonly ILogger<GooglePhotoUploadCommand> _logger;
 
         public GooglePhotoUploadCommand(IOptions<ApplicationSettingsReadOnly> applicationOptions, ILogger<GooglePhotoUploadCommand> logger)
         {
             _applicationSettings = applicationOptions.Value ?? throw new ArgumentNullException(nameof(applicationOptions));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
+
+        public string Name => NameLong;
+
+        public string ShortName => NameShort;
+
+        public string Description => "Uploads to the Google Photo.";
+
+        public string Example { get; } // TODO LA
+
+        public IParameterHandler ParameterHandler => new ParameterHandler
+        {
+            SourceParameter = new SourceParameter(),
+            OutputFolderNameParameter = new OutputFolderNameParameter()
+        };
 
         public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
         {
@@ -58,17 +58,14 @@ namespace Polo.Commands
                 User = user,
                 ClientId = clientId,
                 ClientSecret = clientSecret,
-                Scopes = new[] { GooglePhotosScope.Access, GooglePhotosScope.Sharing },//Access+Sharing == full access
+                Scopes = new[] { GooglePhotosScope.Access, GooglePhotosScope.Sharing } //Access+Sharing == full access
             };
 
             var handler = new HttpClientHandler { AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate };
             var client = new HttpClient(handler) { BaseAddress = new Uri(options.BaseAddress) };
 
 
-            var loggerFactory = LoggerFactory.Create(builder =>
-            {
-
-            });
+            var loggerFactory = LoggerFactory.Create(builder => { });
             var logger = loggerFactory.CreateLogger<GooglePhotosService>();
 
             // TODO LA - Move to DI container
@@ -88,7 +85,7 @@ namespace Polo.Commands
             _logger.LogInformation($"Album created: {album.title} ID: {album.id} Items count: {album.mediaItemsCount}");
             // TODO LA - Check in UTs duplicates
             var imagesForProcess = new List<string>();
-            _applicationSettings.FileForProcessExtensions.Distinct().ToList()// TODO LA - Move this Select to some extension
+            _applicationSettings.FileForProcessExtensions.Distinct().ToList() // TODO LA - Move this Select to some extension
                 .ForEach(x => imagesForProcess.AddRange(Directory.EnumerateFiles(destinationFolder, $"*{x}", SearchOption.TopDirectoryOnly)));
             imagesForProcess.SortByFileName();
 
@@ -96,12 +93,20 @@ namespace Polo.Commands
             {
                 _logger.LogInformation($"Uploading photo: {Path.GetFileName(imageForProcess)}");
                 var newMediaItemResult = googlePhotosService.UploadSingle(imageForProcess, album.id, null, GooglePhotosUploadMethod.ResumableSingle).GetAwaiter().GetResult();
-                if (newMediaItemResult is null) throw new Exception("media item upload failed!");
+                if (newMediaItemResult is null)
+                {
+                    throw new Exception("media item upload failed!");
+                }
+
                 _logger.LogInformation($"Photo uploaded: {newMediaItemResult.mediaItem.filename} ID: {newMediaItemResult.mediaItem.id}");
             }
 
             var albumMediaItems = googlePhotosService.GetMediaItemsByAlbumAsync(album.id).GetAwaiter().GetResult();
-            if (albumMediaItems is null) throw new Exception("retrieve media items by album id failed!");
+            if (albumMediaItems is null)
+            {
+                throw new Exception("retrieve media items by album id failed!");
+            }
+
             _logger.LogInformation($"Album photos count: {albumMediaItems.Count}");
             _logger.LogInformation($"Contributor: {albumMediaItems.FirstOrDefault()?.contributorInfo?.displayName}");
         }

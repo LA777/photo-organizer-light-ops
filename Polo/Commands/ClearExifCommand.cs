@@ -2,39 +2,40 @@
 using Microsoft.Extensions.Options;
 using Polo.Abstractions.Commands;
 using Polo.Abstractions.Options;
+using Polo.Abstractions.Parameters.Handler;
 using Polo.Extensions;
 using Polo.Parameters;
 using Polo.Parameters.Handler;
 using Serilog;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
 namespace Polo.Commands
 {
     public class ClearExifCommand : ICommand
     {
-        private readonly ILogger _logger;
+        public const string NameLong = "clear-exif";
+        public const string NameShort = "ce";
         private readonly ApplicationSettingsReadOnly _applicationSettings;
-
-        public readonly ParameterHandler ParameterHandler = new ParameterHandler()
-        {
-            SourceParameter = new SourceParameter(),
-            OutputFolderNameParameter = new OutputFolderNameParameter()
-        };
-
-        public string Name => "clear-exif";
-
-        public string ShortName => "ce";
-
-        public string Description => $"Clears all EXIF data.";
+        private readonly ILogger _logger;
 
         public ClearExifCommand(IOptions<ApplicationSettingsReadOnly> applicationOptions, ILogger logger)
         {
             _applicationSettings = applicationOptions.Value ?? throw new ArgumentNullException(nameof(applicationOptions));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
+
+        public string Name => NameLong;
+
+        public string ShortName => NameShort;
+
+        public string Description => "Clears all EXIF data.";
+
+        public string Example => $"{CommandParser.CommandPrefix}{Name}";
+
+        public IParameterHandler ParameterHandler => new ParameterHandler
+        {
+            SourceParameter = new SourceParameter(),
+            OutputFolderNameParameter = new OutputFolderNameParameter()
+        };
 
         public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
         {

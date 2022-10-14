@@ -1,21 +1,20 @@
-﻿using Polo.Abstractions.Exceptions;
+﻿using Polo.Abstractions.Commands;
+using Polo.Abstractions.Exceptions;
 using Polo.Abstractions.Options;
 using Polo.Abstractions.Parameters;
 using Polo.Extensions;
-using System.Collections.Generic;
-using System.IO;
 
 namespace Polo.Parameters
 {
-    public class SourceParameter : IParameter<string>, IParameterInfo
+    public class SourceParameter : IParameter<string>
     {
-        public static string Name => "source";
+        public string Name => "source";
 
-        public static IReadOnlyCollection<string> PossibleValues => new List<string>() { @"c:\images" };
+        public IReadOnlyCollection<string> PossibleValues => new List<string> { @"""c:\images""" };
 
-        public static string Description => "Source folder full path.";
+        public string Description => "Source folder full path.";
 
-        public string Initialize(IReadOnlyDictionary<string, string> inputParameters, string defaultValue)
+        public string Initialize(IReadOnlyDictionary<string, string> inputParameters, string defaultValue, IEnumerable<ICommand> commands = null)
         {
             var outputValue = defaultValue;
 

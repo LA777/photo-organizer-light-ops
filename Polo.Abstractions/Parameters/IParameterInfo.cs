@@ -1,14 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using Polo.Abstractions.Commands;
 
 namespace Polo.Abstractions.Parameters
 {
     public interface IParameterInfo
     {
-        // TODO LA - Remove
-        public static string Name { get; }
+        public string Name { get; }
 
-        public static IReadOnlyCollection<string> PossibleValues { get; }
+        public IReadOnlyCollection<string> PossibleValues { get; }
 
-        public static string Description { get; }
+        public string Description { get; }
     }
 }

@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30011.22
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32825.248
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Polo", "Polo\Polo.csproj", "{04CBD06B-E752-4A09-BEFB-BF9C29341F4A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Polo.UnitTests", "Polo.UnitTests\Polo.UnitTests.csproj", "{2A333B91-90FA-4F0D-9110-DE62C7545810}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Polo.Abstractions", "Polo.Abstractions\Polo.Abstractions.csproj", "{18D77E56-DE69-4E88-9B80-8DDF3F1D395A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Polo.Abstractions", "Polo.Abstractions\Polo.Abstractions.csproj", "{18D77E56-DE69-4E88-9B80-8DDF3F1D395A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -4,40 +4,40 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Polo.Abstractions.Commands;
 using Polo.Abstractions.Options;
+using Polo.Abstractions.Parameters.Handler;
 using Polo.Comparers;
 using Polo.Parameters;
 using Polo.Parameters.Handler;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net;
-using System.Net.Http;
 
 namespace Polo.Commands
 {
     public class GooglePhotoCompareCommand : ICommand
     {
-        private readonly ILogger<GooglePhotoCompareCommand> _logger;
+        public const string NameLong = "google-photo-compare";
+        public const string NameShort = "gpc";
         private readonly ApplicationSettingsReadOnly _applicationSettings;
-
-        public readonly ParameterHandler ParameterHandler = new ParameterHandler()
-        {
-            SourceParameter = new SourceParameter(),
-            OutputFolderNameParameter = new OutputFolderNameParameter()
-        };
-
-        public string Name => "google-photo-compare";
-
-        public string ShortName => "gpc";
-
-        public string Description => "Compares Google Photo album with current folder.";
+        private readonly ILogger<GooglePhotoCompareCommand> _logger;
 
         public GooglePhotoCompareCommand(IOptions<ApplicationSettingsReadOnly> applicationOptions, ILogger<GooglePhotoCompareCommand> logger)
         {
             _applicationSettings = applicationOptions.Value ?? throw new ArgumentNullException(nameof(applicationOptions));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
+
+        public string Name => NameLong;
+
+        public string ShortName => NameShort;
+
+        public string Description => "Compares Google Photo album with current folder.";
+
+        public string Example { get; } // TODO LA
+
+        public IParameterHandler ParameterHandler => new ParameterHandler
+        {
+            SourceParameter = new SourceParameter(),
+            OutputFolderNameParameter = new OutputFolderNameParameter()
+        };
 
         public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
         {
@@ -56,7 +56,7 @@ namespace Polo.Commands
                 User = user,
                 ClientId = clientId,
                 ClientSecret = clientSecret,
-                Scopes = new[] { GooglePhotosScope.Access, GooglePhotosScope.Sharing },//Access+Sharing == full access
+                Scopes = new[] { GooglePhotosScope.Access, GooglePhotosScope.Sharing } //Access+Sharing == full access
             };
 
             var handler = new HttpClientHandler { AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate };
@@ -87,7 +87,7 @@ namespace Polo.Commands
 
             // TODO LA - Check in UTs duplicates
             var imagesLocal = new List<string>();
-            _applicationSettings.FileForProcessExtensions.Distinct().ToList()// TODO LA - Move this Select to some extension
+            _applicationSettings.FileForProcessExtensions.Distinct().ToList() // TODO LA - Move this Select to some extension
                 .ForEach(x => imagesLocal.AddRange(Directory.EnumerateFiles(sourceFolderPath, $"*{x}", SearchOption.TopDirectoryOnly)));
             _logger.LogInformation($"Local files count: {imagesLocal.Count}");
 

@@ -2,35 +2,21 @@
 using Microsoft.Extensions.Options;
 using Polo.Abstractions.Commands;
 using Polo.Abstractions.Options;
+using Polo.Abstractions.Parameters.Handler;
 using Polo.Extensions;
 using Polo.Parameters;
 using Polo.Parameters.Handler;
 using Serilog;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
-using System.Linq;
 
 namespace Polo.Commands
 {
     public class ConvertExifTimezoneCommand : ICommand
     {
-        private readonly ILogger _logger;
+        public const string NameLong = "convert-exif-timezone";
+        public const string NameShort = "cet";
         private readonly ApplicationSettingsReadOnly _applicationSettings;
-
-        public readonly ParameterHandler ParameterHandler = new ParameterHandler()
-        {
-            SourceParameter = new SourceParameter(),
-            OutputFolderNameParameter = new OutputFolderNameParameter(),
-            TimeDifferenceParameter = new TimeDifferenceParameter()
-        };
-
-        public string Name => "convert-exif-timezone";
-
-        public string ShortName => "cet";
-
-        public string Description => $"Convert EXIF from one timezone to another.";
+        private readonly ILogger _logger;
 
         public ConvertExifTimezoneCommand(IOptions<ApplicationSettingsReadOnly> applicationOptions, ILogger logger)
         {
@@ -38,13 +24,28 @@ namespace Polo.Commands
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        public string Name => NameLong;
+
+        public string ShortName => NameShort;
+
+        public string Description => "Convert EXIF from one timezone to another.";
+
+        public string Example { get; } // TODO LA
+
+        public IParameterHandler ParameterHandler => new ParameterHandler
+        {
+            SourceParameter = new SourceParameter(),
+            OutputFolderNameParameter = new OutputFolderNameParameter(),
+            TimeDifferenceParameter = new TimeDifferenceParameter()
+        };
+
         public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
         {
             // TODO LA - Cover with UTs
             var sourceFolderPath = ParameterHandler.SourceParameter.Initialize(parameters, Environment.CurrentDirectory);
             var outputFolderName = ParameterHandler.OutputFolderNameParameter.Initialize(parameters, _applicationSettings.OutputSubfolderName);
             var destinationFolder = Path.GetFullPath(outputFolderName, sourceFolderPath);
-            var timezoneTimeDifference = ParameterHandler.TimeDifferenceParameter.Initialize(parameters);
+            var timezoneTimeDifference = ParameterHandler.TimeDifferenceParameter.Initialize(parameters, 0);
 
             var imagesForProcess = new List<string>();
             _applicationSettings.FileForProcessExtensions.Distinct().ToList()

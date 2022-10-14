@@ -2,7 +2,7 @@
   "profiles": {
     "Polo": {
       "commandName": "Project",
-      "commandLineArgs": "--add-watermark-with-convert-exif-timezone -time-difference:-10 -source:\"h:\\Photos\\2021 USA Stenford Liuba\"",
+      "commandLineArgs": "--help -command:clear-exif",
       "remoteDebugEnabled": false,
       "nativeDebugging": false
     }

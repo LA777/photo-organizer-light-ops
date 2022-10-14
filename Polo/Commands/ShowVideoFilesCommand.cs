@@ -1,25 +1,19 @@
 ﻿using Microsoft.Extensions.Options;
 using Polo.Abstractions.Commands;
 using Polo.Abstractions.Options;
+using Polo.Abstractions.Parameters.Handler;
 using Polo.Parameters;
 using Polo.Parameters.Handler;
 using Serilog;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
 namespace Polo.Commands
 {
     public class ShowVideoFilesCommand : ICommand
     {
-        private readonly ILogger _logger;
+        public const string NameLong = "show-video-files";
+        public const string NameShort = "svf";
         private readonly ApplicationSettingsReadOnly _applicationSettings;
-
-        public readonly ParameterHandler ParameterHandler = new ParameterHandler()
-        {
-            SourceParameter = new SourceParameter()
-        };
+        private readonly ILogger _logger;
 
         public ShowVideoFilesCommand(IOptions<ApplicationSettingsReadOnly> applicationOptions, ILogger logger)
         {
@@ -27,11 +21,19 @@ namespace Polo.Commands
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public string Name => "show-video-files";
+        public string Name => NameLong;
 
-        public string ShortName => "svf";
+        public string ShortName => NameShort;
 
-        public string Description => $"Shows full paths of the all video files in all subfolders.";
+        public string Description => "Shows full paths of the all video files in all subfolders.";
+
+        public string Example { get; } // TODO LA
+
+        public IParameterHandler ParameterHandler => new ParameterHandler
+        {
+            SourceParameter = new SourceParameter()
+        };
+
 
         public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
         {

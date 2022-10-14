@@ -1,21 +1,20 @@
-﻿using Polo.Abstractions.Exceptions;
+﻿using Polo.Abstractions.Commands;
+using Polo.Abstractions.Exceptions;
 using Polo.Abstractions.Options;
 using Polo.Abstractions.Parameters;
 using Polo.Extensions;
-using System.Collections.Generic;
-using System.IO;
 
 namespace Polo.Parameters
 {
-    public class WatermarkPathParameter : IParameter<string>, IParameterInfo
+    public class WatermarkPathParameter : IParameter<string>
     {
-        public static string Name => "watermark-path";
+        public string Name => "watermark-path";
 
-        public static IReadOnlyCollection<string> PossibleValues => new List<string>() { @"c:\sign\my_watermark.png" };
+        public IReadOnlyCollection<string> PossibleValues => new List<string> { @"""c:\sign\my_watermark.png""" };
 
-        public static string Description => "Watermark image full path.";
+        public string Description => "Watermark image full path.";
 
-        public string Initialize(IReadOnlyDictionary<string, string> inputParameters, string defaultValue)
+        public string Initialize(IReadOnlyDictionary<string, string> inputParameters, string defaultValue, IEnumerable<ICommand> commands = null)
         {
             var outputValue = defaultValue;
             var parametersEmpty = inputParameters.IsNullOrEmpty();

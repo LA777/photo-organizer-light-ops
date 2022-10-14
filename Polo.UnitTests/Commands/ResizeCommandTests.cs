@@ -20,82 +20,85 @@ namespace Polo.UnitTests.Commands
         private static readonly int _imageResizeLongSideLimit = 100;
         private static readonly float _megaPixelsLimit = 16.0f;
         private static readonly string _resizedImageSubfolderName = "small";
-        private static readonly ApplicationSettings _validApplicationSettings = new ApplicationSettings()
+
+        private static readonly ApplicationSettings _validApplicationSettings = new()
         {
             FileForProcessExtensions = FileExtension.JpegExtensions,
             ImageResizeLongSideLimit = _imageResizeLongSideLimit,
             ImageResizeMegaPixelsLimit = _megaPixelsLimit,
             OutputSubfolderName = _resizedImageSubfolderName
         };
+
         private static readonly string _albumName = "Album1";
-        private static readonly Mock<ILogger> _loggerMock = new Mock<ILogger>();
-        private readonly ICommand _sut = new ResizeCommand(GetOptions(_validApplicationSettings), _loggerMock.Object);
+        private static readonly Mock<ILogger> _loggerMock = new();
 
-        private readonly Folder _folderStructureInitial = new Folder()
+        private readonly Folder _folderStructureExpected = new()
         {
-            SubFolders = new List<Folder>()
+            SubFolders = new List<Folder>
             {
-                new Folder()
+                new()
                 {
                     Name = _albumName,
-                    Files = new List<FotoFile>()
+                    Files = new List<FotoFile>
                     {
-                        new FotoFile("video-1", FileExtension.Mp4),
-                        new FotoFile("UTP-1", FileExtension.Orf),
-                        new FotoFile("UTP-1", FileExtension.Jpg, 90, 30),
-                        new FotoFile("UTP-2", FileExtension.Jpeg, 30, 90),
-                        new FotoFile("UTP-3", FileExtension.Jpeg, 120, 90),
-                        new FotoFile("UTP-4", FileExtension.Jpeg, 90, 120),
-                        new FotoFile("UTP-5", FileExtension.Jpeg, 120, 120),
-                        new FotoFile("UTP-6", FileExtension.Jpeg, 100, 90),
-                        new FotoFile("UTP-7", FileExtension.Jpeg, 90, 100),
-                        new FotoFile("UTP-8", FileExtension.Jpeg, 100, 100)
-                    }
-                }
-            }
-        };
-
-        private readonly Folder _folderStructureExpected = new Folder()
-        {
-            SubFolders = new List<Folder>()
-            {
-                new Folder()
-                {
-                    Name = _albumName,
-                    Files = new List<FotoFile>()
-                    {
-                        new FotoFile("video-1", FileExtension.Mp4),
-                        new FotoFile("UTP-1", FileExtension.Orf),
-                        new FotoFile("UTP-1", FileExtension.Jpg, 90, 30),
-                        new FotoFile("UTP-2", FileExtension.Jpeg, 30, 90),
-                        new FotoFile("UTP-3", FileExtension.Jpeg, 120, 90),
-                        new FotoFile("UTP-4", FileExtension.Jpeg, 90, 120),
-                        new FotoFile("UTP-5", FileExtension.Jpeg, 120, 120),
-                        new FotoFile("UTP-6", FileExtension.Jpeg, 100, 90),
-                        new FotoFile("UTP-7", FileExtension.Jpeg, 90, 100),
-                        new FotoFile("UTP-8", FileExtension.Jpeg, 100, 100)
+                        new("video-1", FileExtension.Mp4),
+                        new("UTP-1", FileExtension.Orf),
+                        new("UTP-1", FileExtension.Jpg, 90, 30),
+                        new("UTP-2", FileExtension.Jpeg, 30, 90),
+                        new("UTP-3", FileExtension.Jpeg, 120, 90),
+                        new("UTP-4", FileExtension.Jpeg, 90, 120),
+                        new("UTP-5", FileExtension.Jpeg, 120, 120),
+                        new("UTP-6", FileExtension.Jpeg, 100, 90),
+                        new("UTP-7", FileExtension.Jpeg, 90, 100),
+                        new("UTP-8", FileExtension.Jpeg, 100, 100)
                     },
-                    SubFolders = new List<Folder>()
+                    SubFolders = new List<Folder>
                     {
-                        new Folder()
+                        new()
                         {
                             Name = _resizedImageSubfolderName,
-                            Files = new List<FotoFile>()
+                            Files = new List<FotoFile>
                             {
-                                new FotoFile("UTP-1", FileExtension.Jpg, 90, 30),
-                                new FotoFile("UTP-2", FileExtension.Jpeg, 30, 90),
-                                new FotoFile("UTP-3", FileExtension.Jpeg, 100, 75),
-                                new FotoFile("UTP-4", FileExtension.Jpeg, 75, 100),
-                                new FotoFile("UTP-5", FileExtension.Jpeg, 100, 100),
-                                new FotoFile("UTP-6", FileExtension.Jpeg, 100, 90),
-                                new FotoFile("UTP-7", FileExtension.Jpeg, 90, 100),
-                                new FotoFile("UTP-8", FileExtension.Jpeg, 100, 100)
+                                new("UTP-1", FileExtension.Jpg, 90, 30),
+                                new("UTP-2", FileExtension.Jpeg, 30, 90),
+                                new("UTP-3", FileExtension.Jpeg, 100, 75),
+                                new("UTP-4", FileExtension.Jpeg, 75, 100),
+                                new("UTP-5", FileExtension.Jpeg, 100, 100),
+                                new("UTP-6", FileExtension.Jpeg, 100, 90),
+                                new("UTP-7", FileExtension.Jpeg, 90, 100),
+                                new("UTP-8", FileExtension.Jpeg, 100, 100)
                             }
                         }
                     }
                 }
             }
         };
+
+        private readonly Folder _folderStructureInitial = new()
+        {
+            SubFolders = new List<Folder>
+            {
+                new()
+                {
+                    Name = _albumName,
+                    Files = new List<FotoFile>
+                    {
+                        new("video-1", FileExtension.Mp4),
+                        new("UTP-1", FileExtension.Orf),
+                        new("UTP-1", FileExtension.Jpg, 90, 30),
+                        new("UTP-2", FileExtension.Jpeg, 30, 90),
+                        new("UTP-3", FileExtension.Jpeg, 120, 90),
+                        new("UTP-4", FileExtension.Jpeg, 90, 120),
+                        new("UTP-5", FileExtension.Jpeg, 120, 120),
+                        new("UTP-6", FileExtension.Jpeg, 100, 90),
+                        new("UTP-7", FileExtension.Jpeg, 90, 100),
+                        new("UTP-8", FileExtension.Jpeg, 100, 100)
+                    }
+                }
+            }
+        };
+
+        private readonly ICommand _sut = new ResizeCommand(GetOptions(_validApplicationSettings), _loggerMock.Object);
 
         [Fact]
         public void Action_Should_Resize_Jpeg_Files_And_Copy_To_Output_Folder_Test()
@@ -106,7 +109,7 @@ namespace Polo.UnitTests.Commands
 
             var parameters = new Dictionary<string, string>
             {
-                { OutputFolderNameParameter.Name, _resizedImageSubfolderName}
+                { new OutputFolderNameParameter().Name, _resizedImageSubfolderName }
             };
 
             // Act
@@ -127,8 +130,8 @@ namespace Polo.UnitTests.Commands
 
             var parameters = new Dictionary<string, string>
             {
-                { LongSideLimitParameter.Name, validLongSideLimitParameter },
-                { OutputFolderNameParameter.Name, _resizedImageSubfolderName}
+                { new LongSideLimitParameter().Name, validLongSideLimitParameter },
+                { new OutputFolderNameParameter().Name, _resizedImageSubfolderName }
             };
 
             // Act
@@ -167,8 +170,8 @@ namespace Polo.UnitTests.Commands
             var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
             Environment.CurrentDirectory = Path.Combine(testFolderFullPath, _albumName);
 
-            var jpegFileExtensionsWithDuplicates = new List<string>() { FileExtension.Jpeg, FileExtension.Jpg, FileExtension.Jpeg, FileExtension.Jpg };
-            var applicationSettings = new ApplicationSettings()
+            var jpegFileExtensionsWithDuplicates = new List<string> { FileExtension.Jpeg, FileExtension.Jpg, FileExtension.Jpeg, FileExtension.Jpg };
+            var applicationSettings = new ApplicationSettings
             {
                 FileForProcessExtensions = jpegFileExtensionsWithDuplicates,
                 ImageResizeLongSideLimit = _imageResizeLongSideLimit,

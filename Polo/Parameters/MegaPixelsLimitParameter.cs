@@ -1,22 +1,24 @@
-﻿using Polo.Abstractions.Exceptions;
+﻿using Polo.Abstractions.Commands;
+using Polo.Abstractions.Exceptions;
 using Polo.Abstractions.Parameters;
 using Polo.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Polo.Parameters
 {
-    public class MegaPixelsLimitParameter : IParameter<float>, IParameterInfo
+    public class MegaPixelsLimitParameter : IParameter<float>
     {
         public static float Min => 0.001f;
 
-        public static string Name => "mega-pixels-limit";
+        public string Name => "mega-pixels-limit";
 
-        public static IReadOnlyCollection<float> PossibleValues => new List<float>() { Min, 16 };
+        public IReadOnlyCollection<string> PossibleValues => new List<string> { Min.ToString(CultureInfo.InvariantCulture), "16" };
 
-        public static string Description => "Mega pixels limit for image resolution.";
+        public string Description => "Mega pixels limit for image resolution.";
 
-        public float Initialize(IReadOnlyDictionary<string, string> inputParameters, float defaultValue)
+        public float Initialize(IReadOnlyDictionary<string, string> inputParameters, float defaultValue, IEnumerable<ICommand> commands = null)
         {
             // TODO LA - Cover with UTs
             // TODO LA - Refactor - Use abstract class for int parameters

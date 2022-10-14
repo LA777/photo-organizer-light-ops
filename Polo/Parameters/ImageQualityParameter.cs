@@ -1,4 +1,5 @@
-﻿using Polo.Abstractions.Exceptions;
+﻿using Polo.Abstractions.Commands;
+using Polo.Abstractions.Exceptions;
 using Polo.Abstractions.Parameters;
 using Polo.Extensions;
 using System;
@@ -6,18 +7,18 @@ using System.Collections.Generic;
 
 namespace Polo.Parameters
 {
-    public class ImageQualityParameter : IParameter<int>, IParameterInfo
+    public class ImageQualityParameter : IParameter<int>
     {
-        public static int Min => 0;// TODO LA - Combine min and max with Options validation
+        public static int Min => 0; // TODO LA - Combine min and max with Options validation
         public static int Max => 100;
 
-        public static string Name => "image-quality";
+        public string Name => "image-quality";
 
-        public static IReadOnlyCollection<int> PossibleValues => new List<int>() { Min, 42, Max };
+        public IReadOnlyCollection<string> PossibleValues => new List<string> { Min.ToString(), "42", Max.ToString() };
 
-        public static string Description => "Image quality.";
+        public string Description => "Image quality.";
 
-        public int Initialize(IReadOnlyDictionary<string, string> inputParameters, int defaultValue)
+        public int Initialize(IReadOnlyDictionary<string, string> inputParameters, int defaultValue, IEnumerable<ICommand> commands = null)
         {
             // TODO LA - Cover with UTs
 

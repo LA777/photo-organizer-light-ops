@@ -2,23 +2,37 @@
 using Microsoft.Extensions.Options;
 using Polo.Abstractions.Commands;
 using Polo.Abstractions.Options;
+using Polo.Abstractions.Parameters.Handler;
 using Polo.Extensions;
 using Polo.Parameters;
 using Polo.Parameters.Handler;
 using Serilog;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+using System.Reflection;
 
 namespace Polo.Commands
 {
     public class AddWatermarkCommand : ICommand
     {
-        private readonly ILogger _logger;
+        public const string NameLong = "add-watermark";
+        public const string NameShort = "aw";
         private readonly ApplicationSettingsReadOnly _applicationSettings;
+        private readonly ILogger _logger;
 
-        public readonly ParameterHandler ParameterHandler = new ParameterHandler()
+        public AddWatermarkCommand(IOptions<ApplicationSettingsReadOnly> applicationOptions, ILogger logger)
+        {
+            _applicationSettings = applicationOptions.Value ?? throw new ArgumentNullException(nameof(applicationOptions));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
+
+        public string Name => NameLong;
+
+        public string ShortName => NameShort;
+
+        public string Description => "Adds watermarks to all JPG files and copies to the output folder.";
+
+        public string Example => $"{Assembly.GetExecutingAssembly().GetName().Name} {CommandParser.CommandPrefix}{Name} {CommandParser.ShortCommandPrefix}{ParameterHandler.PositionParameter.Name}{CommandParser.ParameterDelimiter}1600";
+
+        public IParameterHandler ParameterHandler => new ParameterHandler
         {
             SourceParameter = new SourceParameter(),
             WatermarkPathParameter = new WatermarkPathParameter(),
@@ -27,18 +41,6 @@ namespace Polo.Commands
             TransparencyParameter = new TransparencyParameter(),
             ImageQualityParameter = new ImageQualityParameter()
         };
-
-        public string Name => "add-watermark";
-
-        public string ShortName => "aw";
-
-        public string Description => $"Adds watermarks to all JPG files and copies to the output folder. Example: polo.exe {CommandParser.CommandPrefix}{Name}";
-
-        public AddWatermarkCommand(IOptions<ApplicationSettingsReadOnly> applicationOptions, ILogger logger)
-        {
-            _applicationSettings = applicationOptions.Value ?? throw new ArgumentNullException(nameof(applicationOptions));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        }
 
         public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
         {
@@ -53,10 +55,10 @@ namespace Polo.Commands
             var watermarkTransparencyPercent = ParameterHandler.TransparencyParameter.Initialize(parameters, _applicationSettings.WatermarkTransparencyPercent);
             var imageQuality = ParameterHandler.ImageQualityParameter.Initialize(parameters, _applicationSettings.ImageQuality);
 
-            _logger.Information($"Seeking files...");
+            _logger.Information("Seeking files...");
             // TODO LA - Check in UTs duplicates
             var imagesForProcess = new List<string>();
-            _applicationSettings.FileForProcessExtensions.Distinct().ToList()// TODO LA - Move this Select to some extension
+            _applicationSettings.FileForProcessExtensions.Distinct().ToList() // TODO LA - Move this Select to some extension
                 .ForEach(x => imagesForProcess.AddRange(Directory.EnumerateFiles(sourceFolderPath, $"*{x}", SearchOption.TopDirectoryOnly)));
             _logger.Information($"Files for process: {imagesForProcess.Count}");
             imagesForProcess.SortByFileName();
@@ -70,7 +72,7 @@ namespace Polo.Commands
             using var watermark = new MagickImage(watermarkPath);
             using var transparentWatermark = watermark.ConvertToTransparentMagickImage(watermarkTransparencyPercent);
 
-            int index = 0;
+            var index = 0;
             foreach (var imageForProcess in imagesForProcess)
             {
                 var fileName = Path.GetFileName(imageForProcess);
