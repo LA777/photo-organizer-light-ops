@@ -30,8 +30,6 @@ namespace Polo.Commands
 
         public string Description => "Adds watermarks with converting EXIF from one timezone to another to all JPG files and copies to the output folder.";
 
-        public string Example => "polo.exe {CommandParser.CommandPrefix}{Name}"; // TODO LA
-
         public IParameterHandler ParameterHandler => new ParameterHandler
         {
             SourceParameter = new SourceParameter(),

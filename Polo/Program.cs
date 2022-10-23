@@ -100,6 +100,7 @@ namespace Polo
             services.AddSingleton<ICommand, ShowVideoFilesCommand>();
             services.AddSingleton<ICommand, ConvertExifTimezoneCommand>();
             services.AddSingleton<ICommand, AddWatermarkWithConvertExifTimezoneCommand>();
+            services.AddSingleton<ICommand, SaveFolderTreeCommand>();
         }
     }
 }

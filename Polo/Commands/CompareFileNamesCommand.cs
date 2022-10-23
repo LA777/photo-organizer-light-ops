@@ -27,7 +27,6 @@ namespace Polo.Commands
         public string ShortName => NameShort;
 
         public string Description => "Compares all files by file names only from the source (current) and destination directory.";
-        public string Example { get; } // TODO LA
 
         public IParameterHandler ParameterHandler => new ParameterHandler
         {

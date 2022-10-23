@@ -7,7 +7,6 @@ using Polo.Extensions;
 using Polo.Parameters;
 using Polo.Parameters.Handler;
 using Serilog;
-using System.Reflection;
 
 namespace Polo.Commands
 {
@@ -29,8 +28,6 @@ namespace Polo.Commands
         public string ShortName => NameShort;
 
         public string Description => "Adds watermarks to all JPG files and copies to the output folder.";
-
-        public string Example => $"{Assembly.GetExecutingAssembly().GetName().Name} {CommandParser.CommandPrefix}{Name} {CommandParser.ShortCommandPrefix}{ParameterHandler.PositionParameter.Name}{CommandParser.ParameterDelimiter}1600";
 
         public IParameterHandler ParameterHandler => new ParameterHandler
         {

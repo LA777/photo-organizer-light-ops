@@ -27,8 +27,6 @@ namespace Polo.Commands
 
         public string Description => "Copy all files from source folder to the current folder. Setup path for the source folder in settings or in argument. Setup path to the destination folder in the argument.";
 
-        public string Example => "polo.exe {CommandParser.CommandPrefix}{Name} {CommandParser.ShortCommandPrefix}{ParameterHandler.SourceParameter.Name}:'e:\\DCIM' {CommandParser.ShortCommandPrefix}{ParameterHandler.DestinationParameter.Name}:'c:\\photo'"; // TODO LA
-
         public IParameterHandler ParameterHandler => new ParameterHandler
         {
             SourceParameter = new SourceParameter(),

@@ -27,8 +27,6 @@ namespace Polo.Commands
 
         public string Description => "Removes orphanage raw files from the RAW folder.";
 
-        public string Example { get; } // TODO LA
-
         public IParameterHandler ParameterHandler { get; }
 
         public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)

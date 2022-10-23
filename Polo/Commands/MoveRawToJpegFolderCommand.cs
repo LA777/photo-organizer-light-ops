@@ -26,8 +26,6 @@ namespace Polo.Commands
 
         public string Description => "Move RAW files to the RAW sub-folder in the JPEG folder.";
 
-        public string Example { get; } // TODO LA
-
         public IParameterHandler ParameterHandler { get; }
 
         public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)

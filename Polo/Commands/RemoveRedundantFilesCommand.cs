@@ -29,8 +29,6 @@ namespace Polo.Commands
 
         public string Description => "Removes redundant files from the folder and sub folders.";
 
-        public string Example { get; } // TODO LA
-
         public IParameterHandler ParameterHandler => new ParameterHandler
         {
             SourceParameter = new SourceParameter()

@@ -27,8 +27,6 @@ namespace Polo.Commands
 
         public string Description => "Shows full paths of the all video files in all subfolders.";
 
-        public string Example { get; } // TODO LA
-
         public IParameterHandler ParameterHandler => new ParameterHandler
         {
             SourceParameter = new SourceParameter()

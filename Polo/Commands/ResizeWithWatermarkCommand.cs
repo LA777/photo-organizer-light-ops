@@ -29,8 +29,6 @@ namespace Polo.Commands
 
         public string Description => "Resizes all JPEG images in the current folder, adds watermark and saves them to a sub-folder."; // TODO LA - Show all possible parameters
 
-        public string Example => "polo.exe {CommandParser.CommandPrefix}{Name} {CommandParser.ShortCommandPrefix}{ParameterHandler.LongSideLimitParameter.Name}:1600"; // TODO LA
-
         public IParameterHandler ParameterHandler => new ParameterHandler
         {
             SourceParameter = new SourceParameter(),

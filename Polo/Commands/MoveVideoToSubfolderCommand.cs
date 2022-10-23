@@ -26,8 +26,6 @@ namespace Polo.Commands
 
         public string Description => "Creates Video sub-folder in the current folder and moves all video files to this sub-folder.";
 
-        public string Example { get; } // TODO LA
-
         public IParameterHandler ParameterHandler { get; }
 
         public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)

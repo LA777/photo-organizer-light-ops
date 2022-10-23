@@ -31,8 +31,6 @@ namespace Polo.Commands
 
         public string Description => "Compares Google Photo album with current folder.";
 
-        public string Example { get; } // TODO LA
-
         public IParameterHandler ParameterHandler => new ParameterHandler
         {
             SourceParameter = new SourceParameter(),

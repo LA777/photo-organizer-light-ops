@@ -30,8 +30,6 @@ namespace Polo.Commands
 
         public string Description => "Convert EXIF from one timezone to another.";
 
-        public string Example { get; } // TODO LA
-
         public IParameterHandler ParameterHandler => new ParameterHandler
         {
             SourceParameter = new SourceParameter(),

@@ -7,7 +7,6 @@ using Polo.Extensions;
 using Polo.Parameters;
 using Polo.Parameters.Handler;
 using Serilog;
-using System.Reflection;
 
 namespace Polo.Commands
 {
@@ -29,9 +28,6 @@ namespace Polo.Commands
         public string ShortName => NameShort;
 
         public string Description => "Resizes all JPEG images in the current folder and saves them to a sub-folder.";
-
-        // TODO LA - example should include all Parameters
-        public string Example => $"{Assembly.GetExecutingAssembly().GetName().Name} {CommandParser.CommandPrefix}{Name} {CommandParser.ShortCommandPrefix}{ParameterHandler.LongSideLimitParameter.Name}{CommandParser.ParameterDelimiter}1600";
 
         public IParameterHandler ParameterHandler => new ParameterHandler
         {

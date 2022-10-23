@@ -31,8 +31,6 @@ namespace Polo.Commands
 
         public string Description => "Uploads to the Google Photo.";
 
-        public string Example { get; } // TODO LA
-
         public IParameterHandler ParameterHandler => new ParameterHandler
         {
             SourceParameter = new SourceParameter(),

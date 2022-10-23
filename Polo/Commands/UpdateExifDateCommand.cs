@@ -29,8 +29,6 @@ namespace Polo.Commands
 
         public string Description => "Updates EXIF date and time according to file creation date and time.";
 
-        public string Example { get; } // TODO LA
-
         public IParameterHandler ParameterHandler => new ParameterHandler
         {
             SourceParameter = new SourceParameter(),

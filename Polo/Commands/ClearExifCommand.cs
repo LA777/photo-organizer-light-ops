@@ -29,8 +29,6 @@ namespace Polo.Commands
 
         public string Description => "Clears all EXIF data.";
 
-        public string Example => $"{CommandParser.CommandPrefix}{Name}";
-
         public IParameterHandler ParameterHandler => new ParameterHandler
         {
             SourceParameter = new SourceParameter(),

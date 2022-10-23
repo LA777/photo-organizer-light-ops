@@ -2,7 +2,7 @@
   "profiles": {
     "Polo": {
       "commandName": "Project",
-      "commandLineArgs": "--help -command:clear-exif",
+      "commandLineArgs": "--save-folder-tree -source:\"d:\\Army 2022\"",
       "remoteDebugEnabled": false,
       "nativeDebugging": false
     }
