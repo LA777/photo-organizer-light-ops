@@ -31,7 +31,7 @@ namespace Polo.Commands
             DestinationParameter = new DestinationParameter()
         };
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
+        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
             var currentDirectory = Environment.CurrentDirectory;
             var sourceFolderPath = ParameterHandler.SourceParameter.Initialize(parameters, currentDirectory);
@@ -41,7 +41,7 @@ namespace Polo.Commands
 
             var json = ConvertToNsJson(folderTree);
 
-            const string outputFileName = "FolderTree.json";
+            const string outputFileName = "_FolderTree.json";
             var outputFilePath = Path.Join(destinationFolder, outputFileName);
             System.IO.File.WriteAllText(outputFilePath, json, Encoding.Unicode);
 
@@ -50,7 +50,7 @@ namespace Polo.Commands
             _logger.Information(message);
         }
 
-        private string ConvertToNsJson(Folder folderTree)
+        private static string ConvertToNsJson(Folder folderTree)
         {
             var settings = new JsonSerializerSettings
             {

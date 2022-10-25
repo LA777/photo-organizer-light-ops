@@ -2,7 +2,7 @@
   "profiles": {
     "Polo": {
       "commandName": "Project",
-      "commandLineArgs": "--save-folder-tree -source:\"d:\\Army 2022\"",
+      "commandLineArgs": "--save-folder-tree -source:\"e:\\_h\"",
       "remoteDebugEnabled": false,
       "nativeDebugging": false
     }
