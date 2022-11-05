@@ -10,6 +10,7 @@
   "WatermarkTransparencyPercent": 64, // Min - 0; Max - 100;
   "ImageQuality": 83,
   "FileForProcessExtensions": [ ".jpg", ".jpeg" ],
+  "ImageFileExtensions": [ ".jpg", ".jpeg", ".png", ".bmp", ".gif", ".svg", ".webp", ".tiff" ],
   "RawFileExtensions": [ ".orf", ".crw", ".cr2", ".cr3", ".3fr", ".mef", ".nef", ".nrw", ".pef", ".ptx", ".rw2", ".arw", ".srf", ".sr2", ".gpr", ".raf", ".raw", ".rwl", ".dng", ".srw", ".x3f" ],
   "VideoFileExtensions": [ ".mkv", ".avi", ".m2ts", ".ts", ".mp4", ".m4p", ".m4v", ".mpg", ".mpeg", ".mov", ".3gp" ],
   "RedundantFiles": [ "thumbs.db", ".picasa.ini", "Desktop.ini" ]

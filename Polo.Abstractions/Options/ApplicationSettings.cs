@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Polo.Abstractions.Options
 {
@@ -36,6 +35,9 @@ namespace Polo.Abstractions.Options
 
         [MinLength(1, ErrorMessage = "ERROR: Value for {0} should contain some data.")]
         public ICollection<string> FileForProcessExtensions { get; set; } = new List<string>();
+
+        [MinLength(1, ErrorMessage = "ERROR: Value for {0} should contain some data.")]
+        public ICollection<string> ImageFileExtensions { get; set; } = new List<string>();
 
         [MinLength(1, ErrorMessage = "ERROR: Value for {0} should contain some data.")]
         public ICollection<string> RawFileExtensions { get; set; } = new List<string>();

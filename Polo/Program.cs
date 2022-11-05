@@ -101,6 +101,8 @@ namespace Polo
             services.AddSingleton<ICommand, ConvertExifTimezoneCommand>();
             services.AddSingleton<ICommand, AddWatermarkWithConvertExifTimezoneCommand>();
             services.AddSingleton<ICommand, SaveFolderTreeCommand>();
+            services.AddSingleton<ICommand, CopyValidImagesCommand>();
+            services.AddSingleton<ICommand, MoveCorruptedImagesCommand>();
         }
     }
 }

@@ -6,7 +6,7 @@ using Polo.Extensions;
 
 namespace Polo.Parameters
 {
-    public class OutputFolderNameParameter : IParameter<string> // TODO LA - Refactor to OutputFolderPathParameter
+    public class OutputFolderNameParameter : IParameter<string> // TODO LA - Refactor to OutputSubFolderNameParameter
     {
         public string Name => "output-folder-name";
 
