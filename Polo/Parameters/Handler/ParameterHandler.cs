@@ -3,23 +3,25 @@ using Polo.Abstractions.Parameters;
 using Polo.Abstractions.Parameters.Handler;
 using System.Text;
 
+// ReSharper disable ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
 namespace Polo.Parameters.Handler
 {
     public class ParameterHandler : IParameterHandler
     {
-        public IParameter<int>? FsivThumbnailSizeParameter { get; init; }
-        public IParameter<bool>? RecursiveParameter { get; init; }
+        public IParameter<string> ExtensionParameter { get; init; } = null!;
+        public IParameter<int> FsivThumbnailSizeParameter { get; init; } = null!;
+        public IParameter<bool> RecursiveParameter { get; init; } = null!;
         public IParameter<string> SourceParameter { get; init; } = null!;
-        public IParameter<string>? WatermarkPathParameter { get; init; }
-        public IParameter<string>? OutputFolderNameParameter { get; init; }
-        public IParameter<string>? PositionParameter { get; init; }
-        public IParameter<int>? TransparencyParameter { get; init; }
-        public IParameter<int>? LongSideLimitParameter { get; init; }
-        public IParameter<float>? MegaPixelsLimitParameter { get; init; }
-        public IParameter<string>? DestinationParameter { get; init; }
-        public IParameter<int>? ImageQualityParameter { get; init; }
-        public IParameter<double>? TimeDifferenceParameter { get; init; }
-        public IParameter<ICommand>? CommandParameter { get; init; }
+        public IParameter<string> WatermarkPathParameter { get; init; } = null!;
+        public IParameter<string> OutputFolderNameParameter { get; init; } = null!;
+        public IParameter<string> PositionParameter { get; init; } = null!;
+        public IParameter<int> TransparencyParameter { get; init; } = null!;
+        public IParameter<int> LongSideLimitParameter { get; init; } = null!;
+        public IParameter<float> MegaPixelsLimitParameter { get; init; } = null!;
+        public IParameter<string> DestinationParameter { get; init; } = null!;
+        public IParameter<int> ImageQualityParameter { get; init; } = null!;
+        public IParameter<double> TimeDifferenceParameter { get; init; } = null!;
+        public IParameter<ICommand> CommandParameter { get; init; } = null!;
 
         public string GetParametersDescription()
         {
@@ -44,7 +46,6 @@ namespace Polo.Parameters.Handler
         {
             var parameters = new List<IParameterInfo?>();
 
-            // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
             if (SourceParameter != null)
             {
                 parameters.Add(SourceParameter);
@@ -101,6 +102,11 @@ namespace Polo.Parameters.Handler
             }
 
             if (FsivThumbnailSizeParameter != null)
+            {
+                parameters.Add(FsivThumbnailSizeParameter);
+            }
+
+            if (ExtensionParameter != null)
             {
                 parameters.Add(FsivThumbnailSizeParameter);
             }

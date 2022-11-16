@@ -121,6 +121,7 @@ namespace Polo
             services.AddSingleton<ICommand, CopyValidImagesCommand>();
             services.AddSingleton<ICommand, MoveCorruptedImagesCommand>();
             services.AddSingleton<ICommand, FsivCreateThumbnailsCommand>();
+            services.AddSingleton<ICommand, DeleteFilesByExtensionCommand>();
         }
     }
 }
