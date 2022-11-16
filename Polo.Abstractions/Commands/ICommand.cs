@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using Polo.Abstractions.Parameters.Handler;
 
 namespace Polo.Abstractions.Commands
 {
@@ -10,6 +10,8 @@ namespace Polo.Abstractions.Commands
 
         public string Description { get; }
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null);
+        public IParameterHandler ParameterHandler { get; }
+
+        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!);
     }
 }

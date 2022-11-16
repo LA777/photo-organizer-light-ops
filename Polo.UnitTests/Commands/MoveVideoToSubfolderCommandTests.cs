@@ -17,9 +17,7 @@ namespace Polo.UnitTests.Commands
     [Collection("Sequential")]
     public class MoveVideoToSubfolderCommandTests : CommandTestBase
     {
-        private static readonly ICollection<string> _videoFileExtensions = new List<string>() { "mkv", "avi", "m2ts", "ts", "mp4", "m4p", "m4v", "mpg", "mpeg" };
-        private static readonly ApplicationSettings _validApplicationSettings = new ApplicationSettings() { VideoFileExtensions = _videoFileExtensions };
-        private static readonly string _videoSubfolderName = "video";
+        private static readonly ApplicationSettings _validApplicationSettings = new ApplicationSettings() { VideoFileExtensions = FileExtension.VideoExtensions };
         private static readonly string _albumName = "Album1";
         private static readonly Mock<ILogger> _loggerMock = new Mock<ILogger>();
         private readonly ICommand _sut = new MoveVideoToSubfolderCommand(GetOptions(_validApplicationSettings), _loggerMock.Object);
@@ -33,9 +31,9 @@ namespace Polo.UnitTests.Commands
                     Name = _albumName,
                     Files = new List<FotoFile>()
                     {
-                        new FotoFile("video-1", "mp4"),
-                        new FotoFile("UTP-1", "ORF"),
-                        new FotoFile("UTP-1", "jpg")
+                        new FotoFile("video-1", FileExtension.Mp4),
+                        new FotoFile("UTP-1", FileExtension.Orf),
+                        new FotoFile("UTP-1", FileExtension.Jpg)
                     }
                 }
             }
@@ -50,17 +48,17 @@ namespace Polo.UnitTests.Commands
                     Name = _albumName,
                     Files = new List<FotoFile>()
                     {
-                        new FotoFile("UTP-1", "ORF"),
-                        new FotoFile("UTP-1", "jpg")
+                        new FotoFile("UTP-1", FileExtension.Orf),
+                        new FotoFile("UTP-1", FileExtension.Jpg)
                     },
                     SubFolders = new List<Folder>()
                     {
                         new Folder()
                         {
-                            Name = _videoSubfolderName,
+                            Name = Constants.VideoFolderName,
                             Files = new List<FotoFile>()
                             {
-                                new FotoFile("video-1", "mp4")
+                                new FotoFile("video-1", FileExtension.Mp4)
                             }
                         }
                     }
@@ -75,11 +73,11 @@ namespace Polo.UnitTests.Commands
 
         private void AddVideoFilesToFolderStructure()
         {
-            var videoFiles = _videoFileExtensions.Select(extension => new FotoFile($"video-{extension}", extension)).ToList();
+            var videoFiles = FileExtension.VideoExtensions.Select(extension => new FotoFile($"video-{extension.TrimStart('.')}", extension)).ToList();
 
             _folderStructureInitial.SubFolders.Where(x => x.Name == _albumName).ToList().ForEach(x => x.Files.AddRange(videoFiles));
             _folderStructureExpected.SubFolders.Where(x => x.Name == _albumName).ToList()
-                .ForEach(x => x.SubFolders.Where(folder => folder.Name == _videoSubfolderName).ToList()
+                .ForEach(x => x.SubFolders.Where(folder => folder.Name == Constants.VideoFolderName).ToList()
                     .ForEach(folder => folder.Files.AddRange(videoFiles)));
         }
 

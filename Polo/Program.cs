@@ -4,13 +4,15 @@ using Microsoft.Extensions.Options;
 using Polo.Abstractions;
 using Polo.Abstractions.Commands;
 using Polo.Abstractions.Options;
+using Polo.Abstractions.Parameters.Handler;
+using Polo.Abstractions.Wrappers;
 using Polo.Commands;
+using Polo.Parameters.Handler;
+using Polo.Wrappers;
 using Serilog;
 using Serilog.Events;
-using System;
-using System.IO;
 using System.Reflection;
-using System.Threading.Tasks;
+using System.Text;
 
 namespace Polo
 {
@@ -18,11 +20,12 @@ namespace Polo
     {
         private static IConfiguration Configuration { get; } = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile(Path.Combine(AppContext.BaseDirectory, @"settings\settings.json"), optional: false, reloadOnChange: false)
+            .AddJsonFile(Path.Combine(AppContext.BaseDirectory, @"settings\settings.json"), false, false)
             .Build();
 
         private static void Main(string[] args)
         {
+            Console.OutputEncoding = Encoding.UTF8;
             var services = new ServiceCollection();
             ConfigureServices(services);
             var serviceProvider = services.BuildServiceProvider();
@@ -59,19 +62,37 @@ namespace Polo
                 .Bind(Configuration)
                 .ValidateDataAnnotations();
 
-            var applicationSettings = Configuration.Get<ApplicationSettings>();
-            var applicationSettingsReadOnly = new ApplicationSettingsReadOnly(applicationSettings);
-            IOptions<ApplicationSettingsReadOnly> applicationSettingsReadOnlyOptions = Options.Create(applicationSettingsReadOnly);
-
             var version = Assembly.GetExecutingAssembly().GetName().Version;
+            if (version == null)
+            {
+                throw new ArgumentException("Version is null.", nameof(Version));
+            }
+
+            var applicationSettings = Configuration.Get<ApplicationSettings>();
+            if (applicationSettings == null)
+            {
+                throw new ArgumentException("ApplicationSettings is null.", nameof(ApplicationSettings));
+            }
+
+            if (applicationSettings.LogFilePath == null)
+            {
+                throw new ArgumentException("LogFilePath in ApplicationSettings is null.");
+            }
 
             var logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
                 .Enrich.WithProperty("Version", version)
-                .WriteTo.Console(restrictedToMinimumLevel: LogEventLevel.Information,
-                outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} | {Message:lj}{NewLine}{Exception}")
+                .WriteTo.Console(LogEventLevel.Information, "{Timestamp:yyyy-MM-dd HH:mm:ss} | {Message:lj}{NewLine}{Exception}")
                 .WriteTo.File(Path.Combine(AppContext.BaseDirectory, applicationSettings.LogFilePath), rollingInterval: RollingInterval.Day)
                 .CreateLogger();
+
+            var applicationSettingsReadOnly = new ApplicationSettingsReadOnly(applicationSettings);
+            var applicationSettingsReadOnlyOptions = Options.Create(applicationSettingsReadOnly);
+
+            services.AddLogging(loggingBuilder => { loggingBuilder.AddSerilog(logger, true); });
+
+            services.AddTransient<IParameterHandler, ParameterHandler>();
+            services.AddTransient<IConsoleWrapper, ConsoleWrapper>();
 
             services.AddSingleton<ILogger>(logger);
             services.AddSingleton(applicationSettingsReadOnlyOptions);
@@ -85,8 +106,21 @@ namespace Polo
             services.AddSingleton<ICommand, MoveAllFilesCommand>();
             services.AddSingleton<ICommand, MoveVideoToSubfolderCommand>();
             services.AddSingleton<ICommand, AddWatermarkCommand>();
+            services.AddSingleton<ICommand, ResizeCommand>();
             services.AddSingleton<ICommand, ResizeWithWatermarkCommand>();
             services.AddSingleton<ICommand, ClearExifCommand>();
+            services.AddSingleton<ICommand, UpdateExifDateCommand>();
+            services.AddSingleton<ICommand, GooglePhotoUploadCommand>();
+            services.AddSingleton<ICommand, RemoveRedundantFilesCommand>();
+            services.AddSingleton<ICommand, GooglePhotoCompareCommand>();
+            services.AddSingleton<ICommand, CompareFileNamesCommand>();
+            services.AddSingleton<ICommand, ShowVideoFilesCommand>();
+            services.AddSingleton<ICommand, ConvertExifTimezoneCommand>();
+            services.AddSingleton<ICommand, AddWatermarkWithConvertExifTimezoneCommand>();
+            services.AddSingleton<ICommand, SaveFolderTreeCommand>();
+            services.AddSingleton<ICommand, CopyValidImagesCommand>();
+            services.AddSingleton<ICommand, MoveCorruptedImagesCommand>();
+            services.AddSingleton<ICommand, FsivCreateThumbnailsCommand>();
         }
     }
 }

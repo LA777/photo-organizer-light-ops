@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using Xunit;
 
 namespace Polo.UnitTests.Commands
@@ -25,7 +26,7 @@ namespace Polo.UnitTests.Commands
         {
             FileForProcessExtensions = _jpegFileExtensions,
             WatermarkPath = "",
-            WatermarkOutputFolderName = _watermarkOutputFolderName,
+            OutputSubfolderName = _watermarkOutputFolderName,
             WatermarkPosition = "center-center",
             WatermarkTransparencyPercent = 20
         };
@@ -97,6 +98,31 @@ namespace Polo.UnitTests.Commands
                 }
             }
         };
+
+
+        [Theory]
+        [InlineData("asdasda")]
+        [InlineData("asdasda\\")]
+        [InlineData("/asdasda")]
+        [InlineData("//asdasda")]
+        [InlineData(@"\asdasda")]
+        [InlineData(@"..\asdasda")]
+        [InlineData(@".\asdasda")]
+        [InlineData("../asdasda")]
+        [InlineData("./asdasda")]
+        [InlineData("~asdasda")]
+        [InlineData(@"e:\Photos\OLD for upload\")]
+        [InlineData(@"e:\Photos\OLD for upload")]
+        [InlineData(@"e:\")]
+        [InlineData(@"e:")]
+        [InlineData(@"e:/")]
+        public void Test_Path(string path)
+        {
+            //var path = @"asdasda";
+            var fullPath = Path.GetFullPath(path);
+            Console.WriteLine(fullPath);
+
+        }
 
         public void Action_Should_Add_Watermark_And_Copy_To_Output_Folder_Test()
         {

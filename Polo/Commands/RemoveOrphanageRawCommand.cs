@@ -1,25 +1,19 @@
 ﻿using Microsoft.Extensions.Options;
 using Polo.Abstractions.Commands;
 using Polo.Abstractions.Options;
+using Polo.Abstractions.Parameters.Handler;
+using Polo.Comparers;
 using Polo.Extensions;
 using Serilog;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
 namespace Polo.Commands
 {
     public class RemoveOrphanageRawCommand : ICommand
     {
-        private readonly ILogger _logger;
+        public const string NameLong = "remove-orphanage-raw";
+        public const string NameShort = "ror";
         private readonly ApplicationSettingsReadOnly _applicationSettings;
-
-        public string Name => "remove-orphanage-raw";
-
-        public string ShortName => "ror";
-
-        public string Description => "Removes orphanage raw files from the RAW folder.";
+        private readonly ILogger _logger;
 
         public RemoveOrphanageRawCommand(IOptions<ApplicationSettingsReadOnly> applicationOptions, ILogger logger)
         {
@@ -27,39 +21,46 @@ namespace Polo.Commands
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
+        public string Name => NameLong;
+
+        public string ShortName => NameShort;
+
+        public string Description => "Removes orphanage raw files from the RAW folder.";
+
+        public IParameterHandler ParameterHandler { get; } = null!;
+
+        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
+            // TODO LA - Cover new logic with UTs
             var currentDirectory = Environment.CurrentDirectory;
-            var rawFolderPath = Path.Join(currentDirectory, _applicationSettings.RawFolderName);
+            var rawFolderPath = Path.Join(currentDirectory, _applicationSettings.RawFolderName); // TODO LA - Add RawFolder parameter
 
             var rawFiles = new List<string>();
             _applicationSettings.RawFileExtensions.Distinct().ToList()
-                .ForEach(x => rawFiles.AddRange(Directory.EnumerateFiles(rawFolderPath, $"*.{x}", SearchOption.TopDirectoryOnly)));
+                .ForEach(x => rawFiles.AddRange(Directory.EnumerateFiles(rawFolderPath, $"*{x}", SearchOption.TopDirectoryOnly)));
 
-            var orphanageRawFiles = new List<string>();
+            var jpegFilesInCurrentFolder = new List<string>();
+            _applicationSettings.FileForProcessExtensions.Distinct().ToList()
+                .ForEach(x => jpegFilesInCurrentFolder.AddRange(Directory.EnumerateFiles(currentDirectory, $"*{x}", SearchOption.TopDirectoryOnly)));
 
-            foreach (var rawFile in rawFiles)
-            {
-                var rawFileInfo = new FileInfo(rawFile);
-                var rawFileShortName = Path.GetFileNameWithoutExtension(rawFileInfo.Name);
+            var fileNameWithoutExtensionComparer = new FileNameWithoutExtensionComparer(); // TODO LA - Use Comparer via DI
+            var orphanageRawFiles = rawFiles.Except(jpegFilesInCurrentFolder, fileNameWithoutExtensionComparer);
 
-                var jpegFiles = new List<string>();
-                _applicationSettings.FileForProcessExtensions.Distinct().ToList()
-                    .ForEach(x => jpegFiles.AddRange(Directory.EnumerateFiles(currentDirectory, $"{rawFileShortName}.{x}", SearchOption.TopDirectoryOnly)));
+            var parentFolder = Directory.GetParent(currentDirectory)!.FullName;
+            var jpegFilesInParentFolder = new List<string>();
+            _applicationSettings.FileForProcessExtensions.Distinct().ToList()
+                .ForEach(x => jpegFilesInParentFolder.AddRange(Directory.EnumerateFiles(parentFolder, $"*{x}", SearchOption.AllDirectories)));
 
-                if (!jpegFiles.Any())
-                {
-                    orphanageRawFiles.Add(rawFile);
-                }
-            }
+            var orphanageRawFilesToDelete = orphanageRawFiles.Except(jpegFilesInParentFolder, fileNameWithoutExtensionComparer).ToList();
 
-            foreach (var rawFile in orphanageRawFiles)
+            var index = 0;
+            foreach (var rawFile in orphanageRawFilesToDelete)
             {
                 var fileInfo = new FileInfo(rawFile);
                 var isDeleted = fileInfo.DeleteToRecycleBin();
 
                 _logger.Information(isDeleted
-                    ? $"RAW file deleted: {fileInfo.Name}"
+                    ? $"[{++index}/{orphanageRawFilesToDelete.Count()}] RAW file deleted: {fileInfo.Name}"
                     : $"RAW file not found: {fileInfo.Name}");
             }
         }

@@ -163,3 +163,56 @@ polo.exe --add-watermark -source:'d:\tmp dev\images\' -watermark-path:'d:\tmp de
 
 
 --resize-with-watermark -source:"d:\tmp dev\images 2"
+
+-ce -source:"d:\Downloads\tmp photo\2021.04.21" -output-folder-name:"exif-output"
+
+
+--add-watermark-with-convert-exif-timezone -time-difference:-10 -source:"h:\Photos\2021 USA Stenford Liuba"
+
+--help -command:resize
+
+
+
+
+
+--help
+{
+POLO - photo organizer light operations.
+Utility that helps arrange and deal with images.
+
+Commands:
+Command Name		Short Name		Info
+--help				-h				Help for application. Select command to see more datails: <polo -h -command:resize>
+--add-watermark		-aw				Adds watermarks to all JPG files and copies to the output folder.
+}
+
+
+
+
+
+--help -command:resize
+{
+
+Command Name		Short Name		Info
+--resize			-r				Resizes all JPEG images in the current folder and saves them to a sub-folder.
+
+
+Example:
+polo --resize -source:"d:\Downloads\photo\2021.04" -output-folder-name:"output"
+
+
+Parameters:
+Name						Info
+-source						Source folder full path.
+Possible values: "c:\images"
+
+Name						Info
+-output-folder-name			Name of the folder, where all processed files will be placed.
+Possible values: "output", "processed"
+
+
+
+}
+
+
+

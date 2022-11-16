@@ -20,7 +20,7 @@ namespace Polo.UnitTests.Parameters
             const string defaultValue = nameof(defaultValue);
             var inputParameters = new Dictionary<string, string>
             {
-                { OutputFolderNameParameter.Name, inputParameter }
+                { new OutputFolderNameParameter().Name, inputParameter }
             };
 
             // Act
@@ -54,14 +54,14 @@ namespace Polo.UnitTests.Parameters
             const string defaultValue = nameof(defaultValue);
             var inputParameters = new Dictionary<string, string>
             {
-                { OutputFolderNameParameter.Name, parameterValue }
+                { new OutputFolderNameParameter().Name, parameterValue }
             };
 
             // Act
             var exception = Assert.Throws<ParameterAbsentException>(() => _sut.Initialize(inputParameters, defaultValue));
 
             // Assert
-            Assert.Contains($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{OutputFolderNameParameter.Name}' parameter or setup setting value '{nameof(ApplicationSettingsReadOnly.WatermarkOutputFolderName)}'.", exception.Message);
+            Assert.Contains($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{new OutputFolderNameParameter().Name}' parameter or setup setting value '{nameof(ApplicationSettingsReadOnly.OutputSubfolderName)}'.", exception.Message);
         }
 
         [Theory]
@@ -77,7 +77,7 @@ namespace Polo.UnitTests.Parameters
             var exception = Assert.Throws<ParameterAbsentException>(() => _sut.Initialize(inputParameters, parameterValue));
 
             // Assert
-            Assert.Contains($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{OutputFolderNameParameter.Name}' parameter or setup setting value '{nameof(ApplicationSettingsReadOnly.WatermarkOutputFolderName)}'.", exception.Message);
+            Assert.Contains($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{new OutputFolderNameParameter().Name}' parameter or setup setting value '{nameof(ApplicationSettingsReadOnly.OutputSubfolderName)}'.", exception.Message);
         }
     }
 }

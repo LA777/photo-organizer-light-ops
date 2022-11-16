@@ -2,7 +2,7 @@
   "profiles": {
     "Polo": {
       "commandName": "Project",
-      "commandLineArgs": "-ce -source:\"d:\\Downloads\\tmp photo\\2021.04.21\" -output-folder-name:\"exif-output\"",
+      "commandLineArgs": "-h -command:h",
       "remoteDebugEnabled": false,
       "nativeDebugging": false
     }

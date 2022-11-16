@@ -1,24 +1,18 @@
 ﻿using Microsoft.Extensions.Options;
 using Polo.Abstractions.Commands;
 using Polo.Abstractions.Options;
+using Polo.Abstractions.Parameters.Handler;
+using Polo.Comparers;
 using Serilog;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
 namespace Polo.Commands
 {
     public class MoveRawToJpegFolderCommand : ICommand
     {
-        private readonly ILogger _logger;
+        public const string NameLong = "move-raw";
+        public const string NameShort = "mr";
         private readonly ApplicationSettingsReadOnly _applicationSettings;
-
-        public string Name => "move-raw";
-
-        public string ShortName => "mr";
-
-        public string Description => "Move RAW files to the RAW sub-folder in the JPEG folder.";
+        private readonly ILogger _logger;
 
         public MoveRawToJpegFolderCommand(IOptions<ApplicationSettingsReadOnly> applicationOptions, ILogger logger)
         {
@@ -26,40 +20,57 @@ namespace Polo.Commands
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
+        public string Name => NameLong;
+
+        public string ShortName => NameShort;
+
+        public string Description => "Move RAW files to the RAW sub-folder in the JPEG folder.";
+
+        public IParameterHandler ParameterHandler { get; } = null!;
+
+        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
+            // TODO LA - Cover new logic with UTs
             var currentDirectory = Environment.CurrentDirectory;
-            var rawFolderPath = Path.Join(currentDirectory, _applicationSettings.RawFolderName);// TODO LA - Create RAW input parameter
+            var rawFolderPath = Path.Join(currentDirectory, _applicationSettings.RawFolderName); // TODO LA - Create RAW input parameter
 
             var rawFiles = new List<string>();
-
             _applicationSettings.RawFileExtensions.Distinct().ToList()
-                .ForEach(x => rawFiles.AddRange(Directory.EnumerateFiles(rawFolderPath, $"*.{x}", SearchOption.TopDirectoryOnly)));
+                .ForEach(x => rawFiles.AddRange(Directory.EnumerateFiles(rawFolderPath, $"*{x}", SearchOption.TopDirectoryOnly)));
 
-            foreach (var rawFilePath in rawFiles)
+            var jpegFilesInCurrentFolder = new List<string>();
+            _applicationSettings.FileForProcessExtensions.Distinct().ToList()
+                .ForEach(x => jpegFilesInCurrentFolder.AddRange(Directory.EnumerateFiles(currentDirectory, $"*{x}", SearchOption.TopDirectoryOnly)));
+
+            var fileNameWithoutExtensionComparer = new FileNameWithoutExtensionComparer(); // TODO LA - Use Comparer via DI
+            var orphanageRawFiles = rawFiles.Except(jpegFilesInCurrentFolder, fileNameWithoutExtensionComparer).ToList();
+
+            var parentFolder = Directory.GetParent(currentDirectory)!.FullName;
+            var jpegFilesInParentFolder = new List<string>();
+            _applicationSettings.FileForProcessExtensions.Distinct().ToList()
+                .ForEach(x => jpegFilesInParentFolder.AddRange(Directory.EnumerateFiles(parentFolder, $"*{x}", SearchOption.AllDirectories)));
+            var jpegFilesRelatedToOrphanageRawFiles = jpegFilesInParentFolder.Intersect(orphanageRawFiles, fileNameWithoutExtensionComparer).ToList();
+
+            var index = 0;
+            foreach (var jpegFile in jpegFilesRelatedToOrphanageRawFiles)
             {
-                var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(rawFilePath);
-                var allFotosFolder = Directory.GetParent(currentDirectory).FullName;
+                var jpegFolder = Directory.GetParent(jpegFile)!.FullName;
 
-                var jpegFiles = new List<string>();
-                _applicationSettings.FileForProcessExtensions.Distinct().ToList()
-                    .ForEach(x => jpegFiles.AddRange(Directory.EnumerateFiles(allFotosFolder, $"{fileNameWithoutExtension}.{x}", SearchOption.AllDirectories)));
-
-                if (jpegFiles.Count() > 1)
+                var rawSubfolderPath = Path.Combine(jpegFolder, _applicationSettings.RawFolderName);
+                if (!Directory.Exists(rawSubfolderPath))
                 {
-                    throw new Exception($"Files more than one. {jpegFiles.First()}");
+                    Directory.CreateDirectory(rawSubfolderPath);
                 }
 
-                foreach (var jpegFile in jpegFiles)
-                {
-                    var parentFolderFullPath = Directory.GetParent(jpegFile).FullName;
-                    var rawSubFolderPath = Path.Combine(parentFolderFullPath, _applicationSettings.RawFolderName);
-                    Directory.CreateDirectory(rawSubFolderPath);
+                var rawFilesForProcess = orphanageRawFiles.Where(x => fileNameWithoutExtensionComparer.Equals(x, jpegFile)).Select(x => x);
 
-                    var fileInfo = new FileInfo(rawFilePath);
-                    var destinationFilePath = Path.Join(rawSubFolderPath, fileInfo.Name);
-                    fileInfo.MoveTo(destinationFilePath);
-                    _logger.Information($"Moved: {fileInfo.Name}");
+                foreach (var rawFileForProcess in rawFilesForProcess)
+                {
+                    var rawFileName = Path.GetFileName(rawFileForProcess);
+                    var destinationRawFilePath = Path.Combine(rawSubfolderPath, rawFileName);
+
+                    File.Move(rawFileForProcess, destinationRawFilePath);
+                    _logger.Information($"[{++index}/{jpegFilesRelatedToOrphanageRawFiles.Count}] Moved: {rawFileName} to '{Path.Combine(jpegFolder, _applicationSettings.RawFolderName)}'");
                 }
             }
         }

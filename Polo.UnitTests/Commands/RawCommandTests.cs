@@ -18,14 +18,12 @@ namespace Polo.UnitTests.Commands
     public class RawCommandTests : CommandTestBase
     {
         private static readonly string _albumName = "Album1";
-        private static readonly string _rawFolderName = "RAW";
-        private static readonly ICollection<string> _rawFileExtensions = new List<string>() { "orf", "crw", "cr2", "cr3", "3fr", "mef", "nef", "nrw", "pef", "ptx", "rw2", "arw", "srf", "sr2", "gpr", "raf", "raw", "rwl", "dng", "srw", "x3f" };
-        private static readonly ICollection<string> _jpegFileExtensions = new List<string>() { "jpg", "jpeg" };
+        private static readonly ICollection<string> _jpegFileExtensions = new List<string>() { FileExtension.Jpg, FileExtension.Jpeg };
         private static readonly ApplicationSettings _validApplicationSettings = new ApplicationSettings()
         {
-            FileForProcessExtensions = _jpegFileExtensions,
-            RawFileExtensions = _rawFileExtensions,
-            RawFolderName = _rawFolderName
+            FileForProcessExtensions = FileExtension.JpegExtensions,
+            RawFileExtensions = FileExtension.RawExtensions,
+            RawFolderName = Constants.RawFolderName
         };
         private static readonly Mock<ILogger> _loggerMock = new Mock<ILogger>();
         private readonly ICommand _sut = new RawCommand(GetOptions(_validApplicationSettings), _loggerMock.Object);
@@ -40,12 +38,12 @@ namespace Polo.UnitTests.Commands
                     Name = _albumName,
                     Files = new List<FotoFile>()
                     {
-                        new FotoFile("UTP-1", "ORF"),
-                        new FotoFile("UTP-2", "ORF"),
-                        new FotoFile("UTP-3", "ORF"),
-                        new FotoFile("UTP-1", "jpg"),
-                        new FotoFile("UTP-2", "JPEG"),
-                        new FotoFile("UTP-3", "JPG")
+                        new FotoFile("UTP-1", FileExtension.Orf),
+                        new FotoFile("UTP-2", FileExtension.Orf),
+                        new FotoFile("UTP-3", FileExtension.Orf),
+                        new FotoFile("UTP-1", FileExtension.Jpg),
+                        new FotoFile("UTP-2", FileExtension.Jpeg.ToUpper()),
+                        new FotoFile("UTP-3", FileExtension.Jpg.ToUpper())
                     }
                 }
             }
@@ -60,20 +58,20 @@ namespace Polo.UnitTests.Commands
                     Name = _albumName,
                     Files = new List<FotoFile>()
                     {
-                        new FotoFile("UTP-1", "jpg"),
-                        new FotoFile("UTP-2", "JPEG"),
-                        new FotoFile("UTP-3", "JPG")
+                        new FotoFile("UTP-1", FileExtension.Jpg),
+                        new FotoFile("UTP-2", FileExtension.Jpeg.ToUpper()),
+                        new FotoFile("UTP-3", FileExtension.Jpg.ToUpper())
                     },
                     SubFolders = new List<Folder>()
                     {
                         new Folder()
                         {
-                            Name = _rawFolderName,
+                            Name = Constants.RawFolderName,
                             Files = new List<FotoFile>()
                             {
-                                new FotoFile("UTP-1", "ORF"),
-                                new FotoFile("UTP-2", "ORF"),
-                                new FotoFile("UTP-3", "ORF")
+                                new FotoFile("UTP-1", FileExtension.Orf),
+                                new FotoFile("UTP-2", FileExtension.Orf),
+                                new FotoFile("UTP-3", FileExtension.Orf)
                             }
                         }
 
@@ -92,10 +90,10 @@ namespace Polo.UnitTests.Commands
             var rawFiles = new List<FotoFile>();
             var jpgFiles = new List<FotoFile>();
 
-            foreach (var extension in _rawFileExtensions)
+            foreach (var extension in FileExtension.RawExtensions)
             {
-                var rawFile = new FotoFile($"image-{extension}", extension);
-                var jpgFile = new FotoFile($"image-{extension}", "jpg");
+                var rawFile = new FotoFile($"image-{extension.TrimStart('.')}", extension);
+                var jpgFile = new FotoFile($"image-{extension.TrimStart('.')}", FileExtension.Jpg);
                 rawFiles.Add(rawFile);
                 jpgFiles.Add(jpgFile);
             }
@@ -111,7 +109,7 @@ namespace Polo.UnitTests.Commands
                 .ForEach(x =>
                 {
                     x.Files.AddRange(jpgFiles);
-                    x.SubFolders.Where(folder => folder.Name == _rawFolderName).ToList().ForEach(folder => folder.Files.AddRange(rawFiles));
+                    x.SubFolders.Where(folder => folder.Name == Constants.RawFolderName).ToList().ForEach(folder => folder.Files.AddRange(rawFiles));
                 });
         }
 
@@ -137,12 +135,12 @@ namespace Polo.UnitTests.Commands
             var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
             Environment.CurrentDirectory = Path.Combine(testFolderFullPath, _albumName);
 
-            var jpegFileExtensionsWithDuplicates = new List<string>() { "jpeg", "jpg", "jpeg", "jpg" };
+            var jpegFileExtensionsWithDuplicates = new List<string>() { FileExtension.Jpeg, FileExtension.Jpg, FileExtension.Jpeg, FileExtension.Jpg };
             var applicationSettings = new ApplicationSettings()
             {
                 FileForProcessExtensions = jpegFileExtensionsWithDuplicates,
-                RawFileExtensions = _rawFileExtensions,
-                RawFolderName = _rawFolderName
+                RawFileExtensions = FileExtension.RawExtensions,
+                RawFolderName = Constants.RawFolderName
             };
             var sut = new RawCommand(GetOptions(applicationSettings), _loggerMock.Object);
 
@@ -161,13 +159,14 @@ namespace Polo.UnitTests.Commands
             var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
             Environment.CurrentDirectory = Path.Combine(testFolderFullPath, _albumName);
 
-            var rawFileExtensionsWithDuplicates = new List<string>() { "orf", "crw", "cr2", "cr3", "3fr", "mef", "nef", "nrw", "pef", "ptx", "rw2", "arw", "srf", "sr2", "gpr", "raf", "raw", "rwl", "dng", "srw", "x3f",
-                                                                       "orf", "crw", "cr2", "cr3", "3fr", "mef", "nef", "nrw", "pef", "ptx", "rw2", "arw", "srf", "sr2", "gpr", "raf", "raw", "rwl", "dng", "srw", "x3f" };
+            var rawFileExtensionsWithDuplicates = new List<string>();
+            rawFileExtensionsWithDuplicates.AddRange(FileExtension.RawExtensions);
+            rawFileExtensionsWithDuplicates.AddRange(FileExtension.RawExtensions);
             var applicationSettings = new ApplicationSettings()
             {
                 FileForProcessExtensions = _jpegFileExtensions,
                 RawFileExtensions = rawFileExtensionsWithDuplicates,
-                RawFolderName = _rawFolderName
+                RawFolderName = Constants.RawFolderName
             };
             var sut = new RawCommand(GetOptions(applicationSettings), _loggerMock.Object);
 

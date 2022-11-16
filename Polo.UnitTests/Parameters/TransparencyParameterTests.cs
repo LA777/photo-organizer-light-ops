@@ -22,7 +22,7 @@ namespace Polo.UnitTests.Parameters
             const int defaultValue = 73;
             var inputParameters = new Dictionary<string, string>
             {
-                { TransparencyParameter.Name, inputParameter.ToString() }
+                { new TransparencyParameter().Name, inputParameter.ToString() }
             };
 
             // Act
@@ -56,14 +56,14 @@ namespace Polo.UnitTests.Parameters
             const int defaultValue = 12;
             var inputParameters = new Dictionary<string, string>
             {
-                { TransparencyParameter.Name, inputParameter.ToString() }
+                { new TransparencyParameter().Name, inputParameter.ToString() }
             };
 
             // Act
             var exception = Assert.Throws<ArgumentOutOfRangeException>(() => _sut.Initialize(inputParameters, defaultValue));
 
             // Assert
-            Assert.Contains($"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{TransparencyParameter.Name}' should be in the range from '{TransparencyParameter.Min}' to '{TransparencyParameter.Max}'.", exception.Message);
+            Assert.Contains($"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{new TransparencyParameter().Name}' should be in the range from '{TransparencyParameter.Min}' to '{TransparencyParameter.Max}'.", exception.Message);
         }
 
         [Theory]
@@ -79,7 +79,7 @@ namespace Polo.UnitTests.Parameters
             var exception = Assert.Throws<ArgumentOutOfRangeException>(() => _sut.Initialize(inputParameters, defaultValue));
 
             // Assert
-            Assert.Contains($"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{TransparencyParameter.Name}' should be in the range from '{TransparencyParameter.Min}' to '{TransparencyParameter.Max}'.", exception.Message);
+            Assert.Contains($"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{new TransparencyParameter().Name}' should be in the range from '{TransparencyParameter.Min}' to '{TransparencyParameter.Max}'.", exception.Message);
         }
 
         [Fact]
@@ -90,14 +90,14 @@ namespace Polo.UnitTests.Parameters
             const int defaultValue = 12;
             var inputParameters = new Dictionary<string, string>
             {
-                { TransparencyParameter.Name, inputParameter }
+                { new TransparencyParameter().Name, inputParameter }
             };
 
             // Act
             var exception = Assert.Throws<ParameterParseException>(() => _sut.Initialize(inputParameters, defaultValue));
 
             // Assert
-            Assert.Contains($"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{TransparencyParameter.Name}' is not a number.", exception.Message);
+            Assert.Contains($"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{new TransparencyParameter().Name}' is not a number.", exception.Message);
         }
     }
 }

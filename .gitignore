@@ -351,3 +351,4 @@ MigrationBackup/
 /local.runsettings
 
 .vscode
+/Polo/settings/client_secret.json

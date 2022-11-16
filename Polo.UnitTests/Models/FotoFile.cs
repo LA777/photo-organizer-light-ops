@@ -17,7 +17,7 @@
 
         public string GetNameWithExtension()
         {
-            return $"{Name}.{Extension}";
+            return $"{Name}{Extension}";
         }
     }
 }
