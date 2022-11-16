@@ -34,23 +34,24 @@ namespace Polo.Commands
             SourceParameter = new SourceParameter()
         };
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
+        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
             // TODO LA - Cover with UTs
+            // TODO LA - Add RecursiveParameter
             var currentDirectory = Environment.CurrentDirectory;
             var sourceFolderPath = ParameterHandler.SourceParameter.Initialize(parameters, currentDirectory);
 
             // TODO LA - Cover with UTs - check for duplicates
-            // TODO LA - add Parameter for RedundatFiles names
-            var reduntantFiles = new List<string>();
+            // TODO LA - add Parameter for RedundantFiles names
+            var redundantFiles = new List<string>();
             _applicationSettings.RedundantFiles.Distinct().ToList()
-                .ForEach(x => reduntantFiles.AddRange(Directory.EnumerateFiles(currentDirectory, $"{x}", SearchOption.AllDirectories))); // TODO LA - Refactor
+                .ForEach(x => redundantFiles.AddRange(Directory.EnumerateFiles(sourceFolderPath, $"{x}", SearchOption.AllDirectories))); // TODO LA - Refactor
 
-            foreach (var reduntantFile in reduntantFiles)
+            foreach (var redundantFile in redundantFiles)
             {
-                FileSystem.DeleteFile(reduntantFile, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+                FileSystem.DeleteFile(redundantFile, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
 
-                _logger.Information($"File deleted: {reduntantFile}");
+                _logger.Information($"File deleted: {redundantFile}");
             }
         }
     }

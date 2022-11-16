@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Polo.Abstractions.Enums
+﻿namespace Polo.Abstractions.Enums
 {
     [Flags]
     public enum ScreenPosition : short

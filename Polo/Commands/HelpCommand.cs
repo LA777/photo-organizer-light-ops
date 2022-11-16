@@ -32,7 +32,7 @@ namespace Polo.Commands
             CommandParameter = new CommandParameter()
         };
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
+        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
             // TODO LA - Cover with UTs
             if (commands == null)
@@ -72,7 +72,7 @@ namespace Polo.Commands
                     throw new ArgumentException();
                 }
 
-                var parameterCommand = ParameterHandler.CommandParameter.Initialize(parameters, null, commands);
+                var parameterCommand = ParameterHandler.CommandParameter!.Initialize(parameters, null!, commands);
 
                 if (parameterCommand == null)
                 {
@@ -89,12 +89,11 @@ namespace Polo.Commands
                 var applicationName = Assembly.GetExecutingAssembly().GetName().Name?.ToLower() ?? "polo";
                 stringBuilder.Append($"{applicationName} {CommandParser.CommandPrefix}{parameterCommand.Name} ");
 
-                var commandParameters = parameterCommand.ParameterHandler.GetParameters()
-                    .OrderBy(x => x.Name).ToList();
+                var commandParameters = parameterCommand.ParameterHandler.GetParameters().OrderBy(x => x!.Name).ToList();
 
                 foreach (var parameter in commandParameters)
                 {
-                    stringBuilder.Append($"{CommandParser.ShortCommandPrefix}{parameter.Name}{CommandParser.ParameterDelimiter}{parameter.PossibleValues.Last()} ");
+                    stringBuilder.Append($"{CommandParser.ShortCommandPrefix}{parameter!.Name}{CommandParser.ParameterDelimiter}{parameter.PossibleValues.Last()} ");
                 }
 
                 stringBuilder.AppendLine();
@@ -104,7 +103,7 @@ namespace Polo.Commands
 
                 foreach (var parameter in commandParameters)
                 {
-                    stringBuilder.AppendLine($"\tParameter Name:\t\t{CommandParser.ShortCommandPrefix}{parameter.Name}");
+                    stringBuilder.AppendLine($"\tParameter Name:\t\t{CommandParser.ShortCommandPrefix}{parameter!.Name}");
                     stringBuilder.AppendLine($"\tDescription:\t\t{parameter.Description}");
                     var possibleValues = string.Join("; ", parameter.PossibleValues);
                     stringBuilder.AppendLine($"\tPossible values:\t{possibleValues}");

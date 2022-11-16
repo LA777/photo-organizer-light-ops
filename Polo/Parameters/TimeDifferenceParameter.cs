@@ -2,8 +2,6 @@
 using Polo.Abstractions.Exceptions;
 using Polo.Abstractions.Parameters;
 using Polo.Extensions;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
 
 namespace Polo.Parameters
@@ -19,7 +17,7 @@ namespace Polo.Parameters
 
         public string Description => "Time difference in hours.";
 
-        public double Initialize(IReadOnlyDictionary<string, string> inputParameters, double defaultValue = 0, IEnumerable<ICommand> commands = null)
+        public double Initialize(IReadOnlyDictionary<string, string> inputParameters, double defaultValue = 0, IEnumerable<ICommand> commands = null!)
         {
             // TODO LA - Cover with UTs
             var outputValue = defaultValue;

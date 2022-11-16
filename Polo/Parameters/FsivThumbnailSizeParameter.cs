@@ -5,21 +5,20 @@ using Polo.Extensions;
 
 namespace Polo.Parameters
 {
-    public class TransparencyParameter : IParameter<int>
+    public class FsivThumbnailSizeParameter : IParameter<int>
     {
-        public static int Min => 0; // TODO LA - Combine min and max with Options validation
-        public static int Max => 100;
+        private readonly List<int> _possibleValues = new() { Min, 80, 120, 160, 200, Max };
+        public static int Min => 60;
+        public static int Max => 260;
 
-        public string Name => "transparency";
+        public string Name => "fsiv-thumbnail-size";
 
-        public IReadOnlyCollection<string> PossibleValues => new List<string> { Min.ToString(), "42", Max.ToString() };
+        public IReadOnlyCollection<string> PossibleValues => new List<string>(_possibleValues.Select(x => x.ToString()));
 
-        public string Description => "Watermark transparency percent.";
+        public string Description => "FS Image Viewer thumbnail size parameter.";
 
         public int Initialize(IReadOnlyDictionary<string, string> inputParameters, int defaultValue, IEnumerable<ICommand> commands = null!)
         {
-            // TODO LA - Cover with UTs
-
             var outputValue = defaultValue;
 
             if (!inputParameters.IsNullOrEmpty() && inputParameters.TryGetValue(Name, out var parameterValue))
@@ -34,9 +33,9 @@ namespace Polo.Parameters
                 }
             }
 
-            if (outputValue < Min || outputValue > Max)
+            if (!_possibleValues.Contains(outputValue))
             {
-                throw new ArgumentOutOfRangeException($"{CommandParser.ShortCommandPrefix}{Name}", $"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{Name}' should be in the range from '{Min}' to '{Max}'.");
+                throw new ArgumentOutOfRangeException($"{CommandParser.ShortCommandPrefix}{Name}", $"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{Name}' should be one of any possible values. See HELP.");
             }
 
             return outputValue;

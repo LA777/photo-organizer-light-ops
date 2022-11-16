@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Options;
-using Polo.Abstractions.Commands;
-using Polo.Abstractions.Options;
+﻿using Polo.Abstractions.Commands;
 using Polo.Abstractions.Parameters.Handler;
 using Polo.Comparers;
 using Polo.Parameters;
@@ -13,12 +11,10 @@ namespace Polo.Commands
     {
         public const string NameLong = "compare-file-names";
         public const string NameShort = "cfn";
-        private readonly ApplicationSettingsReadOnly _applicationSettings;
         private readonly ILogger _logger;
 
-        public CompareFileNamesCommand(IOptions<ApplicationSettingsReadOnly> applicationOptions, ILogger logger)
+        public CompareFileNamesCommand(ILogger logger)
         {
-            _applicationSettings = applicationOptions.Value ?? throw new ArgumentNullException(nameof(applicationOptions));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -34,18 +30,18 @@ namespace Polo.Commands
             DestinationParameter = new DestinationParameter()
         };
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
+        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
             // TODO LA - Cover with UTs
             var sourceFolder = ParameterHandler.SourceParameter.Initialize(parameters, Environment.CurrentDirectory);
-            var destinationFolder = ParameterHandler.DestinationParameter.Initialize(parameters, null);
+            var destinationFolder = ParameterHandler.DestinationParameter!.Initialize(parameters, null!);
 
             var allFilesSourceFolder = Directory.EnumerateFiles(sourceFolder, "*.*", SearchOption.TopDirectoryOnly).ToList();
             var allFilesDestinationFolder = Directory.EnumerateFiles(destinationFolder, "*.*", SearchOption.TopDirectoryOnly).ToList();
 
             var fileNameComparer = new FileNameComparer();
-            var differenceSourceFolder = allFilesSourceFolder.Except(allFilesDestinationFolder, fileNameComparer);
-            var differenceDestinationFolder = allFilesDestinationFolder.Except(allFilesSourceFolder, fileNameComparer);
+            var differenceSourceFolder = allFilesSourceFolder.Except(allFilesDestinationFolder, fileNameComparer).ToList();
+            var differenceDestinationFolder = allFilesDestinationFolder.Except(allFilesSourceFolder, fileNameComparer).ToList();
 
             if (!differenceSourceFolder.Any() && !differenceDestinationFolder.Any())
             {
@@ -58,16 +54,18 @@ namespace Polo.Commands
             ShowFolderDifferenceFiles(destinationFolder, differenceDestinationFolder);
         }
 
-        private void ShowFolderDifferenceFiles(string folderFullPath, IEnumerable<string> differenceFiles)
+        private void ShowFolderDifferenceFiles(string folderFullPath, IList<string> differenceFiles)
         {
-            if (differenceFiles.Any())
+            if (!differenceFiles.Any())
             {
-                _logger.Information($"Folder path: {folderFullPath}");
+                return;
+            }
 
-                foreach (var file in differenceFiles)
-                {
-                    _logger.Information($"File: {Path.GetFileName(file)}");
-                }
+            _logger.Information($"Folder path: {folderFullPath}");
+
+            foreach (var file in differenceFiles)
+            {
+                _logger.Information($"File: {Path.GetFileName(file)}");
             }
         }
     }

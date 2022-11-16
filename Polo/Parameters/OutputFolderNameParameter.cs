@@ -14,7 +14,7 @@ namespace Polo.Parameters
 
         public string Description => "Name of the folder, where all processed files will be placed.";
 
-        public string Initialize(IReadOnlyDictionary<string, string> inputParameters, string defaultValue, IEnumerable<ICommand> commands = null)
+        public string Initialize(IReadOnlyDictionary<string, string> inputParameters, string defaultValue, IEnumerable<ICommand> commands = null!)
         {
             var outputValue = defaultValue;
 

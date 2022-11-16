@@ -12,6 +12,6 @@ namespace Polo.Abstractions.Commands
 
         public IParameterHandler ParameterHandler { get; }
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null);
+        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!);
     }
 }

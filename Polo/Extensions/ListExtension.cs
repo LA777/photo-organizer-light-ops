@@ -1,15 +1,19 @@
 ﻿using Polo.Comparers;
-using System.Collections.Generic;
 
 namespace Polo.Extensions
 {
     public static class ListExtension
     {
-        private static FileNameComparer _fileNameComparer = new FileNameComparer();
+        private static readonly FileNameComparer FileNameComparer = new();
 
         public static void SortByFileName(this List<string> collection)
         {
-            collection.Sort(_fileNameComparer);
+            collection.Sort(FileNameComparer);
+        }
+
+        public static IEnumerable<(T item, int index)> WithIndex<T>(this IEnumerable<T> source)
+        {
+            return source.Select((item, index) => (item, index));
         }
     }
 }

@@ -35,7 +35,7 @@ namespace Polo.Commands
         {
             var currentDirectory = Environment.CurrentDirectory;
             var sourceFolderPath = ParameterHandler.SourceParameter.Initialize(parameters, currentDirectory);
-            var destinationFolder = ParameterHandler.DestinationParameter.Initialize(parameters, sourceFolderPath);
+            var destinationFolder = ParameterHandler.DestinationParameter!.Initialize(parameters, sourceFolderPath);
 
             var folderTree = CreateFolderTree(sourceFolderPath);
 

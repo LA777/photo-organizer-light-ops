@@ -37,13 +37,13 @@ namespace Polo.Commands
             OutputFolderNameParameter = new OutputFolderNameParameter()
         };
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
+        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
             var currentFolder = Environment.CurrentDirectory;
             var directoryInfo = new DirectoryInfo(currentFolder);
             var folderName = directoryInfo.Name;
             var sourceFolderPath = ParameterHandler.SourceParameter.Initialize(parameters, currentFolder);
-            var outputFolderName = ParameterHandler.OutputFolderNameParameter.Initialize(parameters, _applicationSettings.OutputSubfolderName);
+            var outputFolderName = ParameterHandler.OutputFolderNameParameter!.Initialize(parameters, _applicationSettings.OutputSubfolderName);
             var destinationFolder = Path.GetFullPath(outputFolderName, sourceFolderPath);
 
             // TODO LA - Move secrets to Settings file
@@ -63,13 +63,13 @@ namespace Polo.Commands
             var client = new HttpClient(handler) { BaseAddress = new Uri(options.BaseAddress) };
 
 
-            var loggerFactory = LoggerFactory.Create(builder => { });
+            var loggerFactory = LoggerFactory.Create(_ => { });
             var logger = loggerFactory.CreateLogger<GooglePhotosService>();
 
             // TODO LA - Move to DI container
             var googlePhotosService = new GooglePhotosService(logger, Options.Create(options), client);
-            var isLogined = googlePhotosService.LoginAsync().GetAwaiter().GetResult();
-            if (!isLogined)
+            var isLoggedIn = googlePhotosService.LoginAsync().GetAwaiter().GetResult();
+            if (!isLoggedIn)
             {
                 throw new UnauthorizedAccessException("Unauthorized access");
             }
@@ -80,7 +80,7 @@ namespace Polo.Commands
 
             var album = googlePhotosService.GetOrCreateAlbumAsync(folderName).GetAwaiter().GetResult();
 
-            _logger.LogInformation($"Album created: {album.title} ID: {album.id} Items count: {album.mediaItemsCount}");
+            _logger.LogInformation($"Album created: {album!.title} ID: {album.id} Items count: {album.mediaItemsCount}");
             // TODO LA - Check in UTs duplicates
             var imagesForProcess = new List<string>();
             _applicationSettings.FileForProcessExtensions.Distinct().ToList() // TODO LA - Move this Select to some extension

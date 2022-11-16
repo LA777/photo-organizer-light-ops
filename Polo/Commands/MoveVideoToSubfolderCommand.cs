@@ -12,7 +12,7 @@ namespace Polo.Commands
         public const string NameShort = "mv";
         private readonly ApplicationSettingsReadOnly _applicationSettings;
         private readonly ILogger _logger;
-        private readonly string VideoSubfolderName = "video"; // TODO LA - Create Parameter and Setting for Video folder name
+        private readonly string _videoSubfolderName = "video"; // TODO LA - Create Parameter and Setting for Video folder name
 
         public MoveVideoToSubfolderCommand(IOptions<ApplicationSettingsReadOnly> applicationOptions, ILogger logger)
         {
@@ -26,12 +26,12 @@ namespace Polo.Commands
 
         public string Description => "Creates Video sub-folder in the current folder and moves all video files to this sub-folder.";
 
-        public IParameterHandler ParameterHandler { get; }
+        public IParameterHandler ParameterHandler { get; } = null!;
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
+        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
             var currentDirectory = Environment.CurrentDirectory;
-            var videoFolderPath = Path.Join(currentDirectory, VideoSubfolderName); // TODO LA - Use parameter VideoSubfolderName
+            var videoFolderPath = Path.Join(currentDirectory, _videoSubfolderName); // TODO LA - Use parameter VideoSubfolderName
             Directory.CreateDirectory(videoFolderPath);
 
             var videoFiles = new List<string>();
@@ -42,9 +42,9 @@ namespace Polo.Commands
             foreach (var filePath in videoFiles)
             {
                 var fileInfo = new FileInfo(filePath);
-                var destinationFilePath = Path.Join(fileInfo.DirectoryName, VideoSubfolderName, fileInfo.Name);
+                var destinationFilePath = Path.Join(fileInfo.DirectoryName, _videoSubfolderName, fileInfo.Name);
                 File.Move(filePath, destinationFilePath);
-                _logger.Information($"Moved: {fileInfo.Name} to '{VideoSubfolderName}'");
+                _logger.Information($"Moved: {fileInfo.Name} to '{_videoSubfolderName}'");
             }
         }
     }

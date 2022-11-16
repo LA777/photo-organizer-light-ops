@@ -13,6 +13,7 @@
             OutputSubfolderName = applicationSettings.OutputSubfolderName;
             WatermarkPosition = applicationSettings.WatermarkPosition;
             ImageQuality = applicationSettings.ImageQuality;
+            FsivThumbnailSize = applicationSettings.FsivThumbnailSize;
             WatermarkTransparencyPercent = applicationSettings.WatermarkTransparencyPercent;
             FileForProcessExtensions = new List<string>(applicationSettings.FileForProcessExtensions);
             ImageFileExtensions = new List<string>(applicationSettings.ImageFileExtensions);
@@ -21,7 +22,7 @@
             RedundantFiles = new List<string>(applicationSettings.RedundantFiles);
         }
 
-        public string LogFilePath { get; }
+        public string? LogFilePath { get; }
 
         public string DefaultSourceFolderPath { get; }
 
@@ -40,6 +41,8 @@
         public int WatermarkTransparencyPercent { get; }
 
         public int ImageQuality { get; }
+
+        public int FsivThumbnailSize { get; }
 
         public IReadOnlyCollection<string> FileForProcessExtensions { get; } = new List<string>();
 

@@ -2,7 +2,7 @@
   "profiles": {
     "Polo": {
       "commandName": "Project",
-      "commandLineArgs": "-mci -source:\"E:\\_h_tree\\OK\" -destination:\"e:\\_h_tree\\test_corrupted\"",
+      "commandLineArgs": "-h -command:h",
       "remoteDebugEnabled": false,
       "nativeDebugging": false
     }

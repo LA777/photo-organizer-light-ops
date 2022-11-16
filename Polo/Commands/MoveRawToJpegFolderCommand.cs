@@ -26,9 +26,9 @@ namespace Polo.Commands
 
         public string Description => "Move RAW files to the RAW sub-folder in the JPEG folder.";
 
-        public IParameterHandler ParameterHandler { get; }
+        public IParameterHandler ParameterHandler { get; } = null!;
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
+        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
             // TODO LA - Cover new logic with UTs
             var currentDirectory = Environment.CurrentDirectory;
@@ -43,18 +43,18 @@ namespace Polo.Commands
                 .ForEach(x => jpegFilesInCurrentFolder.AddRange(Directory.EnumerateFiles(currentDirectory, $"*{x}", SearchOption.TopDirectoryOnly)));
 
             var fileNameWithoutExtensionComparer = new FileNameWithoutExtensionComparer(); // TODO LA - Use Comparer via DI
-            var orphanageRawFiles = rawFiles.Except(jpegFilesInCurrentFolder, fileNameWithoutExtensionComparer);
+            var orphanageRawFiles = rawFiles.Except(jpegFilesInCurrentFolder, fileNameWithoutExtensionComparer).ToList();
 
-            var parentFolder = Directory.GetParent(currentDirectory).FullName;
+            var parentFolder = Directory.GetParent(currentDirectory)!.FullName;
             var jpegFilesInParentFolder = new List<string>();
             _applicationSettings.FileForProcessExtensions.Distinct().ToList()
                 .ForEach(x => jpegFilesInParentFolder.AddRange(Directory.EnumerateFiles(parentFolder, $"*{x}", SearchOption.AllDirectories)));
-            var jpegFilesRelatedToOrphanageRawFiles = jpegFilesInParentFolder.Intersect(orphanageRawFiles, fileNameWithoutExtensionComparer);
+            var jpegFilesRelatedToOrphanageRawFiles = jpegFilesInParentFolder.Intersect(orphanageRawFiles, fileNameWithoutExtensionComparer).ToList();
 
             var index = 0;
             foreach (var jpegFile in jpegFilesRelatedToOrphanageRawFiles)
             {
-                var jpegFolder = Directory.GetParent(jpegFile).FullName;
+                var jpegFolder = Directory.GetParent(jpegFile)!.FullName;
 
                 var rawSubfolderPath = Path.Combine(jpegFolder, _applicationSettings.RawFolderName);
                 if (!Directory.Exists(rawSubfolderPath))
@@ -70,7 +70,7 @@ namespace Polo.Commands
                     var destinationRawFilePath = Path.Combine(rawSubfolderPath, rawFileName);
 
                     File.Move(rawFileForProcess, destinationRawFilePath);
-                    _logger.Information($"[{++index}/{jpegFilesRelatedToOrphanageRawFiles.Count()}] Moved: {rawFileName} to '{Path.Combine(jpegFolder, _applicationSettings.RawFolderName)}'");
+                    _logger.Information($"[{++index}/{jpegFilesRelatedToOrphanageRawFiles.Count}] Moved: {rawFileName} to '{Path.Combine(jpegFolder, _applicationSettings.RawFolderName)}'");
                 }
             }
         }

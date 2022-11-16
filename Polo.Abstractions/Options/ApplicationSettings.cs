@@ -4,7 +4,7 @@ namespace Polo.Abstractions.Options
 {
     public class ApplicationSettings
     {
-        public string LogFilePath { get; set; }
+        public string? LogFilePath { get; set; }
 
         [Required(ErrorMessage = "ERROR: Value for {0} should contain some data.")]
         public string DefaultSourceFolderPath { get; set; } = string.Empty;
@@ -32,6 +32,9 @@ namespace Polo.Abstractions.Options
 
         [Range(0, 100, ErrorMessage = "ERROR: Value for {0} should be between {1} and {2}.")]
         public int ImageQuality { get; set; }
+
+        [Range(1, int.MaxValue, ErrorMessage = "ERROR: Value for {0} should be between {1} and {2}.")]
+        public int FsivThumbnailSize { get; set; }
 
         [MinLength(1, ErrorMessage = "ERROR: Value for {0} should contain some data.")]
         public ICollection<string> FileForProcessExtensions { get; set; } = new List<string>();

@@ -37,13 +37,13 @@ namespace Polo.Commands
             TimeDifferenceParameter = new TimeDifferenceParameter()
         };
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
+        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
             // TODO LA - Cover with UTs
             var sourceFolderPath = ParameterHandler.SourceParameter.Initialize(parameters, Environment.CurrentDirectory);
-            var outputFolderName = ParameterHandler.OutputFolderNameParameter.Initialize(parameters, _applicationSettings.OutputSubfolderName);
+            var outputFolderName = ParameterHandler.OutputFolderNameParameter!.Initialize(parameters, _applicationSettings.OutputSubfolderName);
             var destinationFolder = Path.GetFullPath(outputFolderName, sourceFolderPath);
-            var timezoneTimeDifference = ParameterHandler.TimeDifferenceParameter.Initialize(parameters, 0);
+            var timezoneTimeDifference = ParameterHandler.TimeDifferenceParameter!.Initialize(parameters, 0);
 
             var imagesForProcess = new List<string>();
             _applicationSettings.FileForProcessExtensions.Distinct().ToList()
@@ -63,27 +63,27 @@ namespace Polo.Commands
 
                 using var image = new MagickImage(imageForProcess);
                 var exifProfile = image.GetExifProfile();
-                DateTime fileDateModified;
+                //DateTime fileDateModified;
                 if (exifProfile == null)
                 {
                     exifProfile = new ExifProfile();
-                    fileDateModified = File.GetLastWriteTime(imageForProcess);
+                    //var fileDateModified = File.GetLastWriteTime(imageForProcess);
                 }
 
                 var exifDateTimeOriginal = exifProfile.GetValue(ExifTag.DateTimeOriginal);
-                var exifDateTime = exifProfile.GetValue(ExifTag.DateTime);
-                var exifDateTimeDigitized = exifProfile.GetValue(ExifTag.DateTimeDigitized);
+                //var exifDateTime = exifProfile.GetValue(ExifTag.DateTime);
+                //var exifDateTimeDigitized = exifProfile.GetValue(ExifTag.DateTimeDigitized);
 
-                var currentTime = DateTime.ParseExact(exifDateTimeOriginal.Value, "yyyy:MM:dd HH:mm:ss", CultureInfo.InvariantCulture);
+                var currentTime = DateTime.ParseExact(exifDateTimeOriginal!.Value, "yyyy:MM:dd HH:mm:ss", CultureInfo.InvariantCulture);
                 var updatedTime = currentTime.AddHours(timezoneTimeDifference);
 
                 //fileDateModified = Convert.ToDateTime(exifDateTime);
 
-                var updatedTimeFormated = updatedTime.ToString("yyyy:MM:dd HH:mm:ss");
+                var updatedTimeFormatted = updatedTime.ToString("yyyy:MM:dd HH:mm:ss");
 
-                exifProfile.SetValue(ExifTag.DateTimeOriginal, updatedTimeFormated);
-                exifProfile.SetValue(ExifTag.DateTime, updatedTimeFormated);
-                exifProfile.SetValue(ExifTag.DateTimeDigitized, updatedTimeFormated);
+                exifProfile.SetValue(ExifTag.DateTimeOriginal, updatedTimeFormatted);
+                exifProfile.SetValue(ExifTag.DateTime, updatedTimeFormatted);
+                exifProfile.SetValue(ExifTag.DateTimeDigitized, updatedTimeFormatted);
 
                 image.SetProfile(exifProfile);
                 image.Write(destinationImagePath);
