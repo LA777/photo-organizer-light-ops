@@ -27,9 +27,9 @@ namespace Polo.Commands
 
         public string Description => "Removes orphanage raw files from the RAW folder.";
 
-        public IParameterHandler ParameterHandler { get; }
+        public IParameterHandler ParameterHandler { get; } = null!;
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
+        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
             // TODO LA - Cover new logic with UTs
             var currentDirectory = Environment.CurrentDirectory;
@@ -46,12 +46,12 @@ namespace Polo.Commands
             var fileNameWithoutExtensionComparer = new FileNameWithoutExtensionComparer(); // TODO LA - Use Comparer via DI
             var orphanageRawFiles = rawFiles.Except(jpegFilesInCurrentFolder, fileNameWithoutExtensionComparer);
 
-            var parentFolder = Directory.GetParent(currentDirectory).FullName;
+            var parentFolder = Directory.GetParent(currentDirectory)!.FullName;
             var jpegFilesInParentFolder = new List<string>();
             _applicationSettings.FileForProcessExtensions.Distinct().ToList()
                 .ForEach(x => jpegFilesInParentFolder.AddRange(Directory.EnumerateFiles(parentFolder, $"*{x}", SearchOption.AllDirectories)));
 
-            var orphanageRawFilesToDelete = orphanageRawFiles.Except(jpegFilesInParentFolder, fileNameWithoutExtensionComparer);
+            var orphanageRawFilesToDelete = orphanageRawFiles.Except(jpegFilesInParentFolder, fileNameWithoutExtensionComparer).ToList();
 
             var index = 0;
             foreach (var rawFile in orphanageRawFilesToDelete)

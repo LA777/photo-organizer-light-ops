@@ -3,10 +3,10 @@ using Microsoft.Extensions.Options;
 using Polo.Abstractions.Commands;
 using Polo.Abstractions.Options;
 using Polo.Abstractions.Parameters.Handler;
+using Polo.Extensions;
 using Polo.Parameters;
 using Polo.Parameters.Handler;
 using Serilog;
-using System.Text.RegularExpressions;
 
 namespace Polo.Commands
 {
@@ -35,11 +35,11 @@ namespace Polo.Commands
             DestinationParameter = new DestinationParameter()
         };
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
+        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
             var currentDirectory = Environment.CurrentDirectory;
             var sourceFolderPath = ParameterHandler.SourceParameter.Initialize(parameters, currentDirectory);
-            var destinationFolderPath = ParameterHandler.DestinationParameter.Initialize(parameters, string.Empty);
+            var destinationFolderPath = ParameterHandler.DestinationParameter!.Initialize(parameters, string.Empty);
 
             if (!Directory.Exists(destinationFolderPath))
             {
@@ -61,12 +61,12 @@ namespace Polo.Commands
                 {
                     using var image = new MagickImage(imageFilePath);
                     var imageFileInfo = new FileInfo(imageFilePath);
-                    var destinationImagePath = GenerateFileFullPath(imageFileInfo, destinationFolderFullPath);
+                    var destinationImagePath = imageFileInfo.GenerateFileFullPath(destinationFolderFullPath);
 
                     File.Copy(imageFilePath, destinationImagePath);
                     _logger.Information($"Valid file copied: {destinationImagePath}");
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     _logger.Information($"Invalid file skipped: {imageFilePath}");
                 }
@@ -77,54 +77,6 @@ namespace Polo.Commands
             {
                 CopyValidImages(subFolderPath, destinationFolderFullPath);
             }
-        }
-
-        private static string GenerateFileFullPath(FileInfo fileInfo, string destinationFolderFullPath)
-        {
-            var destinationImagePath = Path.Combine(destinationFolderFullPath, fileInfo.Name);
-            if (!File.Exists(destinationImagePath))
-            {
-                return destinationImagePath;
-            }
-
-            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileInfo.Name);
-
-            const string regexPattern = "\\([0-9]+\\)$";
-            var regex = new Regex(regexPattern, RegexOptions.IgnoreCase);
-
-            if (!regex.IsMatch(fileNameWithoutExtension))
-            {
-                destinationImagePath = Path.Combine(destinationFolderFullPath, $"{fileNameWithoutExtension} (0){fileInfo.Extension}");
-
-                if (!File.Exists(destinationImagePath))
-                {
-                    return destinationImagePath;
-                }
-            }
-
-            string nameWithoutIndex;
-            int index;
-
-            do
-            {
-                const string regexPatternForIndex = "[0-9]+";
-                var regexIndex = new Regex(regexPatternForIndex, RegexOptions.IgnoreCase);
-
-                var destinationFileNameWithoutExtension = Path.GetFileNameWithoutExtension(destinationImagePath); // '101 (0)'
-                var indexInBraces = regex.Match(destinationFileNameWithoutExtension); // '(0)'
-
-                var match = regexIndex.Match(indexInBraces.Value);
-                var value = match.Value; // '0'
-                index = Convert.ToInt32(value); // 0
-                index++;
-
-                var length = indexInBraces.Length;
-                nameWithoutIndex = destinationFileNameWithoutExtension.Substring(0, destinationFileNameWithoutExtension.Length - length); // '101'
-
-                destinationImagePath = Path.Combine(destinationFolderFullPath, $"{nameWithoutIndex}({index}){fileInfo.Extension}");
-            } while (File.Exists(destinationImagePath));
-
-            return destinationImagePath;
         }
     }
 }

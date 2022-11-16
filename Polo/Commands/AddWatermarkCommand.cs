@@ -7,6 +7,7 @@ using Polo.Extensions;
 using Polo.Parameters;
 using Polo.Parameters.Handler;
 using Serilog;
+using System.Runtime.Versioning;
 
 namespace Polo.Commands
 {
@@ -39,18 +40,19 @@ namespace Polo.Commands
             ImageQualityParameter = new ImageQualityParameter()
         };
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
+        [SupportedOSPlatform("windows")]
+        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
             // TODO LA - Add OverwriteFile parameter
 
             var sourceFolderPath = ParameterHandler.SourceParameter.Initialize(parameters, Environment.CurrentDirectory);
-            var watermarkPath = ParameterHandler.WatermarkPathParameter.Initialize(parameters, _applicationSettings.WatermarkPath);
-            var watermarkOutputFolderName = ParameterHandler.OutputFolderNameParameter.Initialize(parameters, _applicationSettings.OutputSubfolderName);
+            var watermarkPath = ParameterHandler.WatermarkPathParameter!.Initialize(parameters, _applicationSettings.WatermarkPath);
+            var watermarkOutputFolderName = ParameterHandler.OutputFolderNameParameter!.Initialize(parameters, _applicationSettings.OutputSubfolderName);
             var destinationFolder = Path.GetFullPath(watermarkOutputFolderName, sourceFolderPath); // TODO LA - Add possibility to add full path to Destination directory in settings
-            var watermarkPosition = ParameterHandler.PositionParameter.Initialize(parameters, _applicationSettings.WatermarkPosition);
+            var watermarkPosition = ParameterHandler.PositionParameter!.Initialize(parameters, _applicationSettings.WatermarkPosition);
             var watermarkPositionMagick = watermarkPosition.ParsePosition();
-            var watermarkTransparencyPercent = ParameterHandler.TransparencyParameter.Initialize(parameters, _applicationSettings.WatermarkTransparencyPercent);
-            var imageQuality = ParameterHandler.ImageQualityParameter.Initialize(parameters, _applicationSettings.ImageQuality);
+            var watermarkTransparencyPercent = ParameterHandler.TransparencyParameter!.Initialize(parameters, _applicationSettings.WatermarkTransparencyPercent);
+            var imageQuality = ParameterHandler.ImageQualityParameter!.Initialize(parameters, _applicationSettings.ImageQuality);
 
             _logger.Information("Seeking files...");
             // TODO LA - Check in UTs duplicates

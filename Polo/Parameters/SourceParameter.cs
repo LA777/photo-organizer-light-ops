@@ -14,7 +14,7 @@ namespace Polo.Parameters
 
         public string Description => "Source folder full path.";
 
-        public string Initialize(IReadOnlyDictionary<string, string> inputParameters, string defaultValue, IEnumerable<ICommand> commands = null)
+        public string Initialize(IReadOnlyDictionary<string, string> inputParameters, string defaultValue, IEnumerable<ICommand> commands = null!)
         {
             var outputValue = defaultValue;
 

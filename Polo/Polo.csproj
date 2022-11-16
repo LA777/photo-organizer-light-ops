@@ -1,25 +1,13 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <StartupObject>Polo.Program</StartupObject>
 
-    <RuntimeIdentifier>win10-x64</RuntimeIdentifier>
-
-    <!--<SelfContained>true</SelfContained>
-    <PublishSingleFile>true</PublishSingleFile>
-    <IncludeSymbolsInSingleFile>true</IncludeSymbolsInSingleFile>
-    <PublishTrimmed>true</PublishTrimmed>
-    <TrimMode>CopyUsed</TrimMode>-->
-
-    <!--<PublishTrimmed>true</PublishTrimmed>
-    <TrimMode>CopyUsed</TrimMode>-->
-
-    <ApplicationIcon>Icon\multimediaphotoviewer.ico</ApplicationIcon>
-    <Version>0.0.10.0</Version>
+      <ApplicationIcon>Icon\multimediaphotoviewer.ico</ApplicationIcon>
+    <Version>0.0.11.3</Version>
     <Description>Photo organizer</Description>
     <PackageProjectUrl>https://github.com/LA777/photo-organizer-light-ops</PackageProjectUrl>
     <PackageIcon>multimediaphotoviewer.ico</PackageIcon>
@@ -29,20 +17,22 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CasCap.Apis.GooglePhotos" Version="1.0.16" />
-    <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="7.23.4" />
-    <PackageReference Include="Magick.NET.SystemDrawing" Version="2.0.15" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" Version="5.0.0" />
-    <PackageReference Include="Serilog" Version="2.10.0" />
-    <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
-    <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
-    <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
-    <PackageReference Include="Serilog.Sinks.Seq" Version="5.0.1" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="5.0.0" />
+    <PackageReference Include="CasCap.Apis.GooglePhotos" Version="1.1.2" />
+    <PackageReference Include="Dapper" Version="2.0.123" />
+    <PackageReference Include="Dapper.Contrib" Version="2.0.78" />
+    <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="12.2.1" />
+    <PackageReference Include="Magick.NET.SystemDrawing" Version="6.1.2" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" Version="7.0.0" />
+    <PackageReference Include="Serilog" Version="2.12.0" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -60,6 +50,10 @@
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Wrappers\" />
   </ItemGroup>
 
 </Project>

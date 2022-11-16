@@ -35,11 +35,11 @@ namespace Polo.Commands
             OutputFolderNameParameter = new OutputFolderNameParameter()
         };
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
+        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
             // TODO LA - Cover with UTs
             var sourceFolderPath = ParameterHandler.SourceParameter.Initialize(parameters, Environment.CurrentDirectory);
-            var outputFolderName = ParameterHandler.OutputFolderNameParameter.Initialize(parameters, _applicationSettings.OutputSubfolderName);
+            var outputFolderName = ParameterHandler.OutputFolderNameParameter!.Initialize(parameters, _applicationSettings.OutputSubfolderName);
             var destinationFolder = Path.GetFullPath(outputFolderName, sourceFolderPath);
 
             var imagesForProcess = new List<string>();
@@ -58,18 +58,14 @@ namespace Polo.Commands
                 var destinationImagePath = Path.Combine(destinationFolder, fileName);
 
                 using var image = new MagickImage(imageForProcess);
-                var exifProfile = image.GetExifProfile();
-                if (exifProfile == null)
-                {
-                    exifProfile = new ExifProfile();
-                }
+                var exifProfile = image.GetExifProfile() ?? new ExifProfile();
 
                 var fileDateModified = File.GetLastWriteTime(imageForProcess);
-                var dateFormated = fileDateModified.ToString("yyyy:MM:dd HH:mm:ss");
+                var dateFormatted = fileDateModified.ToString("yyyy:MM:dd HH:mm:ss");
 
-                exifProfile.SetValue(ExifTag.DateTimeOriginal, dateFormated);
-                exifProfile.SetValue(ExifTag.DateTime, dateFormated);
-                exifProfile.SetValue(ExifTag.DateTimeDigitized, dateFormated);
+                exifProfile.SetValue(ExifTag.DateTimeOriginal, dateFormatted);
+                exifProfile.SetValue(ExifTag.DateTime, dateFormatted);
+                exifProfile.SetValue(ExifTag.DateTimeDigitized, dateFormatted);
 
                 image.SetProfile(exifProfile);
                 image.Write(destinationImagePath);

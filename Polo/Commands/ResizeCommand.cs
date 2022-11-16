@@ -38,19 +38,19 @@ namespace Polo.Commands
             ImageQualityParameter = new ImageQualityParameter()
         };
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
+        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
             var currentDirectory = Environment.CurrentDirectory;
-            var sourceFolderPath = ParameterHandler.SourceParameter.Initialize(parameters, Environment.CurrentDirectory);
-            var outputFolderName = ParameterHandler.OutputFolderNameParameter.Initialize(parameters, _applicationSettings.OutputSubfolderName);
+            var sourceFolderPath = ParameterHandler.SourceParameter.Initialize(parameters, currentDirectory);
+            var outputFolderName = ParameterHandler.OutputFolderNameParameter!.Initialize(parameters, _applicationSettings.OutputSubfolderName);
             var destinationFolder = Path.GetFullPath(outputFolderName, sourceFolderPath);
-            var sizeLimit = ParameterHandler.LongSideLimitParameter.Initialize(parameters, _applicationSettings.ImageResizeLongSideLimit);
-            var megaPixelsLimit = ParameterHandler.MegaPixelsLimitParameter.Initialize(parameters, _applicationSettings.ImageResizeMegaPixelsLimit);
-            var imageQuality = ParameterHandler.ImageQualityParameter.Initialize(parameters, _applicationSettings.ImageQuality);
+            var sizeLimit = ParameterHandler.LongSideLimitParameter!.Initialize(parameters, _applicationSettings.ImageResizeLongSideLimit);
+            var megaPixelsLimit = ParameterHandler.MegaPixelsLimitParameter!.Initialize(parameters, _applicationSettings.ImageResizeMegaPixelsLimit);
+            var imageQuality = ParameterHandler.ImageQualityParameter!.Initialize(parameters, _applicationSettings.ImageQuality);
 
             var imagesForProcess = new List<string>();
             _applicationSettings.FileForProcessExtensions.Distinct().ToList()
-                .ForEach(x => imagesForProcess.AddRange(Directory.EnumerateFiles(currentDirectory, $"*{x}", SearchOption.TopDirectoryOnly)));
+                .ForEach(x => imagesForProcess.AddRange(Directory.EnumerateFiles(sourceFolderPath, $"*{x}", SearchOption.TopDirectoryOnly)));
             imagesForProcess.SortByFileName();
 
             if (imagesForProcess.Any() && !Directory.Exists(destinationFolder))

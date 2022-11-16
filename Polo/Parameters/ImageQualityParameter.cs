@@ -2,8 +2,6 @@
 using Polo.Abstractions.Exceptions;
 using Polo.Abstractions.Parameters;
 using Polo.Extensions;
-using System;
-using System.Collections.Generic;
 
 namespace Polo.Parameters
 {
@@ -18,7 +16,7 @@ namespace Polo.Parameters
 
         public string Description => "Image quality.";
 
-        public int Initialize(IReadOnlyDictionary<string, string> inputParameters, int defaultValue, IEnumerable<ICommand> commands = null)
+        public int Initialize(IReadOnlyDictionary<string, string> inputParameters, int defaultValue, IEnumerable<ICommand> commands = null!)
         {
             // TODO LA - Cover with UTs
 

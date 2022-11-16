@@ -5,8 +5,10 @@ using Polo.Abstractions;
 using Polo.Abstractions.Commands;
 using Polo.Abstractions.Options;
 using Polo.Abstractions.Parameters.Handler;
+using Polo.Abstractions.Wrappers;
 using Polo.Commands;
 using Polo.Parameters.Handler;
+using Polo.Wrappers;
 using Serilog;
 using Serilog.Events;
 using System.Reflection;
@@ -60,11 +62,22 @@ namespace Polo
                 .Bind(Configuration)
                 .ValidateDataAnnotations();
 
-            var applicationSettings = Configuration.Get<ApplicationSettings>();
-            var applicationSettingsReadOnly = new ApplicationSettingsReadOnly(applicationSettings);
-            var applicationSettingsReadOnlyOptions = Options.Create(applicationSettingsReadOnly);
-
             var version = Assembly.GetExecutingAssembly().GetName().Version;
+            if (version == null)
+            {
+                throw new ArgumentException("Version is null.", nameof(Version));
+            }
+
+            var applicationSettings = Configuration.Get<ApplicationSettings>();
+            if (applicationSettings == null)
+            {
+                throw new ArgumentException("ApplicationSettings is null.", nameof(ApplicationSettings));
+            }
+
+            if (applicationSettings.LogFilePath == null)
+            {
+                throw new ArgumentException("LogFilePath in ApplicationSettings is null.");
+            }
 
             var logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
@@ -73,9 +86,13 @@ namespace Polo
                 .WriteTo.File(Path.Combine(AppContext.BaseDirectory, applicationSettings.LogFilePath), rollingInterval: RollingInterval.Day)
                 .CreateLogger();
 
+            var applicationSettingsReadOnly = new ApplicationSettingsReadOnly(applicationSettings);
+            var applicationSettingsReadOnlyOptions = Options.Create(applicationSettingsReadOnly);
+
             services.AddLogging(loggingBuilder => { loggingBuilder.AddSerilog(logger, true); });
 
             services.AddTransient<IParameterHandler, ParameterHandler>();
+            services.AddTransient<IConsoleWrapper, ConsoleWrapper>();
 
             services.AddSingleton<ILogger>(logger);
             services.AddSingleton(applicationSettingsReadOnlyOptions);
@@ -103,6 +120,7 @@ namespace Polo
             services.AddSingleton<ICommand, SaveFolderTreeCommand>();
             services.AddSingleton<ICommand, CopyValidImagesCommand>();
             services.AddSingleton<ICommand, MoveCorruptedImagesCommand>();
+            services.AddSingleton<ICommand, FsivCreateThumbnailsCommand>();
         }
     }
 }

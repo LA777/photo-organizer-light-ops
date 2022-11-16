@@ -35,11 +35,11 @@ namespace Polo.Commands
             OutputFolderNameParameter = new OutputFolderNameParameter()
         };
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
+        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
             // TODO LA - Cover with UTs
             var sourceFolderPath = ParameterHandler.SourceParameter.Initialize(parameters, Environment.CurrentDirectory);
-            var outputFolderName = ParameterHandler.OutputFolderNameParameter.Initialize(parameters, _applicationSettings.OutputSubfolderName);
+            var outputFolderName = ParameterHandler.OutputFolderNameParameter!.Initialize(parameters, _applicationSettings.OutputSubfolderName);
             var destinationFolder = Path.GetFullPath(outputFolderName, sourceFolderPath);
 
             var imagesForProcess = new List<string>();
@@ -59,7 +59,7 @@ namespace Polo.Commands
 
                 using var image = new MagickImage(imageForProcess);
                 var exifProfile = image.GetExifProfile();
-                image.RemoveProfile(exifProfile);
+                image.RemoveProfile(exifProfile!);
                 image.Write(destinationImagePath);
 
                 _logger.Information($"File copied without EXIF: {destinationImagePath}");

@@ -33,10 +33,10 @@ namespace Polo.Commands
             DestinationParameter = new DestinationParameter()
         };
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
+        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
             var sourceFolder = ParameterHandler.SourceParameter.Initialize(parameters, _applicationSettings.DefaultSourceFolderPath);
-            var destinationFolder = ParameterHandler.DestinationParameter.Initialize(parameters, Environment.CurrentDirectory);
+            var destinationFolder = ParameterHandler.DestinationParameter!.Initialize(parameters, Environment.CurrentDirectory);
             var allFiles = Directory.EnumerateFiles(sourceFolder, "*.*", SearchOption.TopDirectoryOnly);
 
             foreach (var file in allFiles)

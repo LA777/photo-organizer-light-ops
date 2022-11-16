@@ -3,10 +3,10 @@ using Microsoft.Extensions.Options;
 using Polo.Abstractions.Commands;
 using Polo.Abstractions.Options;
 using Polo.Abstractions.Parameters.Handler;
+using Polo.Extensions;
 using Polo.Parameters;
 using Polo.Parameters.Handler;
 using Serilog;
-using System.Text.RegularExpressions;
 
 namespace Polo.Commands
 {
@@ -32,31 +32,40 @@ namespace Polo.Commands
         public IParameterHandler ParameterHandler => new ParameterHandler
         {
             SourceParameter = new SourceParameter(),
-            DestinationParameter = new DestinationParameter()
+            DestinationParameter = new DestinationParameter(),
+            RecursiveParameter = new RecursiveParameter()
         };
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
+        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
             var currentDirectory = Environment.CurrentDirectory;
             var sourceFolderPath = ParameterHandler.SourceParameter.Initialize(parameters, currentDirectory);
-            var destinationFolderPath = ParameterHandler.DestinationParameter.Initialize(parameters, string.Empty);
+            var destinationFolderPath = ParameterHandler.DestinationParameter!.Initialize(parameters, string.Empty);
+            var isRecursive = ParameterHandler.RecursiveParameter!.Initialize(parameters, true);
 
             if (!Directory.Exists(destinationFolderPath))
             {
                 Directory.CreateDirectory(destinationFolderPath);
             }
 
-            MoveCorruptedImages(sourceFolderPath, destinationFolderPath);
+            MoveCorruptedImages(sourceFolderPath, destinationFolderPath, isRecursive);
         }
 
-        private void MoveCorruptedImages(string fullFolderPath, string destinationFolderFullPath)
+        private void MoveCorruptedImages(string fullFolderPath, string destinationFolderFullPath, bool isRecursive)
         {
+            var searchOption = isRecursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+
             var imageFiles = new List<string>();
             _applicationSettings.ImageFileExtensions.Distinct().ToList()
-                .ForEach(x => imageFiles.AddRange(Directory.EnumerateFiles(fullFolderPath, $"*{x}", SearchOption.TopDirectoryOnly)));
+                .ForEach(x => imageFiles.AddRange(Directory.EnumerateFiles(fullFolderPath, $"*{x}", searchOption)));
 
-            foreach (var imageFilePath in imageFiles)
+            var count = imageFiles.Count;
+
+            foreach (var (imageFilePath, index) in imageFiles.WithIndex())
             {
+                var imageFileInfo = new FileInfo(imageFilePath);
+                var destinationImagePath = imageFileInfo.GenerateFileFullPath(destinationFolderFullPath);
+
                 try
                 {
                     using var image = new MagickImage(imageFilePath);
@@ -65,76 +74,21 @@ namespace Polo.Commands
                     var color = lastPixel.ToColor();
                     const ushort grey = 32896;
 
-                    if (color.R != grey || color.G != grey || color.B != grey)
+                    if (color!.R != grey || color.G != grey || color.B != grey)
                     {
+                        _logger.Information($"[{index}/{count}] File skipped: {destinationImagePath}");
                         continue;
                     }
 
-                    var imageFileInfo = new FileInfo(imageFilePath);
-                    var destinationImagePath = GenerateFileFullPath(imageFileInfo, destinationFolderFullPath);
-
                     File.Move(imageFilePath, destinationImagePath);
-                    _logger.Information($"Corrupted file copied: {destinationImagePath}");
+                    _logger.Information($"[{index}/{count}] Corrupted file copied: {destinationImagePath}");
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    _logger.Information($"Invalid file: {imageFilePath}");
+                    File.Move(imageFilePath, destinationImagePath);
+                    _logger.Information($"[{index}/{count}] Invalid file copied: {imageFilePath}");
                 }
             }
-
-            //var subFolders = Directory.EnumerateDirectories(fullFolderPath);
-            //foreach (var subFolderPath in subFolders)
-            //{
-            //    CopyCorruptedImages(subFolderPath, destinationFolderFullPath);
-            //}
-        }
-
-        private static string GenerateFileFullPath(FileInfo fileInfo, string destinationFolderFullPath)
-        {
-            var destinationImagePath = Path.Combine(destinationFolderFullPath, fileInfo.Name);
-            if (!File.Exists(destinationImagePath))
-            {
-                return destinationImagePath;
-            }
-
-            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileInfo.Name);
-
-            const string regexPattern = "\\([0-9]+\\)$";
-            var regex = new Regex(regexPattern, RegexOptions.IgnoreCase);
-
-            if (!regex.IsMatch(fileNameWithoutExtension))
-            {
-                destinationImagePath = Path.Combine(destinationFolderFullPath, $"{fileNameWithoutExtension} (0){fileInfo.Extension}");
-
-                if (!File.Exists(destinationImagePath))
-                {
-                    return destinationImagePath;
-                }
-            }
-
-            string nameWithoutIndex;
-            int index;
-
-            do
-            {
-                const string regexPatternForIndex = "[0-9]+";
-                var regexIndex = new Regex(regexPatternForIndex, RegexOptions.IgnoreCase);
-
-                var destinationFileNameWithoutExtension = Path.GetFileNameWithoutExtension(destinationImagePath); // '101 (0)'
-                var indexInBraces = regex.Match(destinationFileNameWithoutExtension); // '(0)'
-
-                var match = regexIndex.Match(indexInBraces.Value);
-                var value = match.Value; // '0'
-                index = Convert.ToInt32(value); // 0
-                index++;
-
-                var length = indexInBraces.Length;
-                nameWithoutIndex = destinationFileNameWithoutExtension.Substring(0, destinationFileNameWithoutExtension.Length - length); // '101'
-
-                destinationImagePath = Path.Combine(destinationFolderFullPath, $"{nameWithoutIndex}({index}){fileInfo.Extension}");
-            } while (File.Exists(destinationImagePath));
-
-            return destinationImagePath;
         }
     }
 }

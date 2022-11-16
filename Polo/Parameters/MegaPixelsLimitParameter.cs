@@ -2,8 +2,6 @@
 using Polo.Abstractions.Exceptions;
 using Polo.Abstractions.Parameters;
 using Polo.Extensions;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
 
 namespace Polo.Parameters
@@ -18,7 +16,7 @@ namespace Polo.Parameters
 
         public string Description => "Mega pixels limit for image resolution.";
 
-        public float Initialize(IReadOnlyDictionary<string, string> inputParameters, float defaultValue, IEnumerable<ICommand> commands = null)
+        public float Initialize(IReadOnlyDictionary<string, string> inputParameters, float defaultValue, IEnumerable<ICommand> commands = null!)
         {
             // TODO LA - Cover with UTs
             // TODO LA - Refactor - Use abstract class for int parameters

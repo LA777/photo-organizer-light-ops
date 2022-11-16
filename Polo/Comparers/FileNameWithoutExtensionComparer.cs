@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
-
-namespace Polo.Comparers
+﻿namespace Polo.Comparers
 {
     public class FileNameWithoutExtensionComparer : IEqualityComparer<string>
     {
         // TODO LA - Cover with UTs
-        public bool Equals(string x, string y)
+        public bool Equals(string? x, string? y)
         {
             var fileNameWithoutExtensionX = Path.GetFileNameWithoutExtension(x);
             var fileNameWithoutExtensionY = Path.GetFileNameWithoutExtension(y);
@@ -16,7 +11,7 @@ namespace Polo.Comparers
             return string.Equals(fileNameWithoutExtensionX, fileNameWithoutExtensionY, StringComparison.OrdinalIgnoreCase);
         }
 
-        public int GetHashCode([DisallowNull] string fileFullPath)
+        public int GetHashCode(string fileFullPath)
         {
             // TODO LA - Cover with UTs
             var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileFullPath).ToUpper();

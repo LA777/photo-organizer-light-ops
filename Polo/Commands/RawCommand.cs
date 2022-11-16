@@ -25,9 +25,9 @@ namespace Polo.Commands
 
         public string Description => "Creates RAW sub-folder in the current folder and moves all RAW files to this sub-folder.";
 
-        public IParameterHandler ParameterHandler { get; }
+        public IParameterHandler ParameterHandler { get; } = null!;
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null, IEnumerable<ICommand> commands = null)
+        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
             var currentDirectory = Environment.CurrentDirectory;
             var rawFolderPath = Path.Join(currentDirectory, _applicationSettings.RawFolderName); // TODO LA - Add RawFolderName parameter
