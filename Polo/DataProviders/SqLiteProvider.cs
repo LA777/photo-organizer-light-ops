@@ -36,7 +36,7 @@ namespace Polo.DataProviders
 
         public FsivFile GetFsivFileByFileNameAndParentFolderId(string fileName, int folderId)
         {
-            const string sql = "select ID, fileName from FileList where fileName = @FileName and folderID = @FolderId";
+            const string sql = "select * from FileList where fileName = @FileName and folderID = @FolderId";
             var fsivFile = _sqliteConnection.QueryFirstOrDefault<FsivFile>(sql, new { FileName = fileName, FolderId = folderId });
             return fsivFile;
         }

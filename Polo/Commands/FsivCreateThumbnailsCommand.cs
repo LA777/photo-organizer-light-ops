@@ -67,7 +67,7 @@ namespace Polo.Commands
             catch (Exception exception)
             {
                 // ReSharper disable once StructuredMessageTemplateProblem
-                _logger.Information("ERROR!", exception);
+                _logger.Information($"ERROR! {exception.Message}");
             }
             finally
             {
@@ -135,30 +135,37 @@ namespace Polo.Commands
                     }
                 }
 
-                var magickImageInfo = new MagickImageInfo(imageFilePath);
-                using var image = new MagickImage(imageFilePath);
-
-                image.ResizeByLongSide(thumbnailSize, magickImageInfo);
-                var fileTime = fileInfo.LastWriteTime.ToUnixTime();
-                var fsivFileTime = (int)fileTime - epochTimeDifference;
-
-                var fsivFile = new FsivFile
+                try
                 {
-                    FolderId = fsivFolderDb.FolderId,
-                    FileName = fileInfo.Name.ToUpperInvariant(),
-                    ItemNo = index,
-                    IsFolder = FsivItemType.File,
-                    FileTime = fsivFileTime,
-                    FileSize = (int)fileInfo.Length,
-                    Width = magickImageInfo.Width,
-                    Height = magickImageInfo.Height,
-                    ImageType = GetFsivImageTypeByExtension(fileInfo.Extension),
-                    ImgSize1 = thumbnailSize,
-                    Img1 = image.ToByteArray()
-                };
+                    var magickImageInfo = new MagickImageInfo(imageFilePath);
+                    using var image = new MagickImage(imageFilePath);
 
-                _sqLiteProvider.AddFile(fsivFile);
-                _logger.Information($"Thumbnail added for file: {imageFilePath}");
+                    image.ResizeByLongSide(thumbnailSize, magickImageInfo);
+                    var fileTime = fileInfo.LastWriteTime.ToUnixTime();
+                    var fsivFileTime = (int)fileTime - epochTimeDifference;
+
+                    var fsivFile = new FsivFile
+                    {
+                        FolderId = fsivFolderDb.FolderId,
+                        FileName = fileInfo.Name.ToUpperInvariant(),
+                        ItemNo = index,
+                        IsFolder = FsivItemType.File,
+                        FileTime = fsivFileTime,
+                        FileSize = (int)fileInfo.Length,
+                        Width = magickImageInfo.Width,
+                        Height = magickImageInfo.Height,
+                        ImageType = GetFsivImageTypeByExtension(fileInfo.Extension),
+                        ImgSize1 = thumbnailSize,
+                        Img1 = image.ToByteArray()
+                    };
+
+                    _sqLiteProvider.AddFile(fsivFile);
+                    _logger.Information($"Thumbnail added for file: {imageFilePath}");
+                }
+                catch (Exception exception)
+                {
+                    _logger.Information($"ERROR! {exception.Message}");
+                }
             }
 
             if (!isRecursive)

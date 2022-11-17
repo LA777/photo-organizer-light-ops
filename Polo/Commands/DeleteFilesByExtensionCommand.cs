@@ -42,8 +42,8 @@ namespace Polo.Commands
             var isRecursive = ParameterHandler.RecursiveParameter.Initialize(parameters, true);
             var searchOption = isRecursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
 
-            var allFiles = Directory.EnumerateFiles(sourceFolder, $"*.{extension}", searchOption).ToList();
-            var filesCount = allFiles.Count;
+            var allFiles = Directory.GetFiles(sourceFolder, $"*.{extension}", searchOption);
+            var filesCount = allFiles.Count();
 
             foreach (var (fileFullPath, index) in allFiles.WithIndex())
             {

@@ -57,7 +57,7 @@ namespace Polo.Commands
 
             var imageFiles = new List<string>();
             _applicationSettings.ImageFileExtensions.Distinct().ToList()
-                .ForEach(x => imageFiles.AddRange(Directory.EnumerateFiles(fullFolderPath, $"*{x}", searchOption)));
+                .ForEach(x => imageFiles.AddRange(Directory.GetFiles(fullFolderPath, $"*{x}", searchOption)));
 
             var count = imageFiles.Count;
 
