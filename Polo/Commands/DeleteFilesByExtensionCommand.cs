@@ -2,6 +2,7 @@
 using Polo.Abstractions.Commands;
 using Polo.Abstractions.Options;
 using Polo.Abstractions.Parameters.Handler;
+using Polo.Extensions;
 using Polo.Parameters;
 using Polo.Parameters.Handler;
 using Serilog;
@@ -41,12 +42,13 @@ namespace Polo.Commands
             var isRecursive = ParameterHandler.RecursiveParameter.Initialize(parameters, true);
             var searchOption = isRecursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
 
-            var allFiles = Directory.EnumerateFiles(sourceFolder, $"*.{extension}", searchOption);
+            var allFiles = Directory.EnumerateFiles(sourceFolder, $"*.{extension}", searchOption).ToList();
+            var filesCount = allFiles.Count;
 
-            foreach (var fileFullPath in allFiles)
+            foreach (var (fileFullPath, index) in allFiles.WithIndex())
             {
                 File.Delete(fileFullPath);
-                _logger.Information($"File was deleted: {fileFullPath}");
+                _logger.Information($"[{index}/{filesCount}] File was deleted: {fileFullPath}");
             }
         }
     }
