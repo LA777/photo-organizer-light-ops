@@ -7,7 +7,7 @@
     <Nullable>enable</Nullable>
 
       <ApplicationIcon>Icon\multimediaphotoviewer.ico</ApplicationIcon>
-    <Version>0.0.12.3</Version>
+    <Version>0.0.12.4</Version>
     <Description>Photo organizer</Description>
     <PackageProjectUrl>https://github.com/LA777/photo-organizer-light-ops</PackageProjectUrl>
     <PackageIcon>multimediaphotoviewer.ico</PackageIcon>

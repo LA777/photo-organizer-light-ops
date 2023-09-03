@@ -34,7 +34,7 @@ namespace Polo.Commands
 
         public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
-            var sourceFolder = ParameterHandler.SourceParameter.Initialize(parameters, _applicationSettings.DefaultSourceFolderPath);
+            var sourceFolder = ParameterHandler.SourceParameter.Initialize(parameters, Environment.CurrentDirectory);
             var subFolders = Directory.EnumerateDirectories(sourceFolder, "*.*", SearchOption.TopDirectoryOnly);
 
             foreach (var subFolder in subFolders)
