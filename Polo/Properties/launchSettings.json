@@ -2,7 +2,7 @@
   "profiles": {
     "Polo": {
       "commandName": "Project",
-      "commandLineArgs": "-fct -recursive:false -source:\"c:\\Users\\LA\\OneDrive\\Images\\Pics\" -destination:\"d:\\Tmp\\dev\\FSViewer77\" -fsiv-thumbnail-size:260",
+      "commandLineArgs": "-di -source:\"d:\\Tmp\\FWNVA42w\" ",
       "remoteDebugEnabled": false,
       "nativeDebugging": false
     }
