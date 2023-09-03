@@ -78,9 +78,13 @@ namespace Polo.Commands
             var album = googlePhotosService.GetAlbumByTitleAsync(googlePhotoAlbumName).GetAwaiter().GetResult();
             _logger.LogInformation($"Album name: {album!.title} ID: {album.id} Items count: {album.mediaItemsCount}");
 
-            var albumItems = googlePhotosService.GetMediaItemsByAlbumAsync(album.id).GetAwaiter().GetResult();
+            var albumItems = googlePhotosService.GetMediaItemsByAlbumAsync(album.id).GetAsyncEnumerator();
             var uploadedFileNames = new List<string>();
-            albumItems.ForEach(x => uploadedFileNames.Add(x.filename));
+            while (albumItems.MoveNextAsync().GetAwaiter().GetResult())
+            {
+                uploadedFileNames.Add(albumItems.Current.filename);
+            }
+
             _logger.LogInformation($"Uploaded files count: {uploadedFileNames.Count}");
 
             // TODO LA - Check in UTs duplicates

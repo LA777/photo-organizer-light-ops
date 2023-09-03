@@ -99,14 +99,21 @@ namespace Polo.Commands
                 _logger.LogInformation($"Photo uploaded: {newMediaItemResult.mediaItem.filename} ID: {newMediaItemResult.mediaItem.id}");
             }
 
-            var albumMediaItems = googlePhotosService.GetMediaItemsByAlbumAsync(album.id).GetAwaiter().GetResult();
-            if (albumMediaItems is null)
+            var albumMediaItems = googlePhotosService.GetMediaItemsByAlbumAsync(album.id).GetAsyncEnumerator();
+            var mediaItemsList = new List<MediaItem>();
+            while (albumMediaItems.MoveNextAsync().GetAwaiter().GetResult())
+            {
+                mediaItemsList.Add(albumMediaItems.Current);
+            }
+
+
+            if (!mediaItemsList.Any())
             {
                 throw new Exception("retrieve media items by album id failed!");
             }
 
-            _logger.LogInformation($"Album photos count: {albumMediaItems.Count}");
-            _logger.LogInformation($"Contributor: {albumMediaItems.FirstOrDefault()?.contributorInfo?.displayName}");
+            _logger.LogInformation($"Album photos count: {mediaItemsList.Count}");
+            _logger.LogInformation($"Contributor: {mediaItemsList.FirstOrDefault()?.contributorInfo?.displayName}");
         }
     }
 }
