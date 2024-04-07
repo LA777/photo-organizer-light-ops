@@ -352,3 +352,6 @@ MigrationBackup/
 
 .vscode
 /Polo/settings/client_secret.json
+/Polo.UnitTests/testsettings.local.json
+/Polo.UnitTests/Properties/launchSettings.json
+/Polo/Properties/launchSettings.json
