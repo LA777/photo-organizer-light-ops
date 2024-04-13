@@ -1,11 +1,23 @@
 ﻿using ImageMagick;
 using Polo.Abstractions.Enums;
 using Polo.Abstractions.Exceptions;
+using System.Security.Cryptography;
 
 namespace Polo.Extensions
 {
     public static class StringExtension
     {
+
+        public static string GetHashSha256(this string text)
+        {
+            using var sha256 = SHA256.Create();
+            var textBytes = System.Text.Encoding.UTF8.GetBytes(text);
+            var hashBytes = sha256.ComputeHash(textBytes);
+            var result = BitConverter.ToString(hashBytes).Replace("-", string.Empty).ToLower();
+
+            return result;
+        }
+
         public static Gravity ParsePosition(this string position)
         {// TODO LA - Move this extension to MagickImage extensions
             var split = position.Split(CommandParser.ShortCommandPrefix);

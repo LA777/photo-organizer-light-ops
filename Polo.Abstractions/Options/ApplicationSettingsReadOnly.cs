@@ -15,6 +15,7 @@
             ImageQuality = applicationSettings.ImageQuality;
             FsivThumbnailSize = applicationSettings.FsivThumbnailSize;
             WatermarkTransparencyPercent = applicationSettings.WatermarkTransparencyPercent;
+            SqliteDbConnectionStrings = applicationSettings.SqliteDbConnectionStrings;
             FileForProcessExtensions = new List<string>(applicationSettings.FileForProcessExtensions);
             ImageFileExtensions = new List<string>(applicationSettings.ImageFileExtensions);
             RawFileExtensions = new List<string>(applicationSettings.RawFileExtensions);
@@ -34,7 +35,7 @@
 
         public string WatermarkPath { get; }
 
-        public string OutputSubfolderName { get; set; }
+        public string OutputSubfolderName { get; }
 
         public string WatermarkPosition { get; }
 
@@ -44,14 +45,16 @@
 
         public int FsivThumbnailSize { get; }
 
-        public IReadOnlyCollection<string> FileForProcessExtensions { get; } = new List<string>();
+        public string SqliteDbConnectionStrings { get; }
 
-        public IReadOnlyCollection<string> ImageFileExtensions { get; } = new List<string>();
+        public IReadOnlyCollection<string> FileForProcessExtensions { get; }
 
-        public IReadOnlyCollection<string> RawFileExtensions { get; } = new List<string>();
+        public IReadOnlyCollection<string> ImageFileExtensions { get; }
 
-        public IReadOnlyCollection<string> VideoFileExtensions { get; } = new List<string>();
+        public IReadOnlyCollection<string> RawFileExtensions { get; }
 
-        public IReadOnlyCollection<string> RedundantFiles { get; } = new List<string>();
+        public IReadOnlyCollection<string> VideoFileExtensions { get; }
+
+        public IReadOnlyCollection<string> RedundantFiles { get; }
     }
 }

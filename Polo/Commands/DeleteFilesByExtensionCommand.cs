@@ -11,8 +11,8 @@ namespace Polo.Commands
 {
     public class DeleteFilesByExtensionCommand : ICommand
     {
-        public const string NameLong = "delete-files-by-extension";
-        public const string NameShort = "dfbe";
+        private const string NameLong = "delete-files-by-extension";
+        private const string NameShort = "dfbe";
         private readonly ApplicationSettingsReadOnly _applicationSettings;
         private readonly ILogger _logger;
 
@@ -35,7 +35,7 @@ namespace Polo.Commands
             ExtensionParameter = new ExtensionParameter()
         };
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
+        public Task ActionAsync(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
             var sourceFolder = ParameterHandler.SourceParameter.Initialize(parameters, _applicationSettings.DefaultSourceFolderPath);
             var extension = ParameterHandler.ExtensionParameter.Initialize(parameters, null!);
@@ -50,6 +50,8 @@ namespace Polo.Commands
                 File.Delete(fileFullPath);
                 _logger.Information($"[{index}/{filesCount}] File was deleted: {fileFullPath}");
             }
+
+            return Task.CompletedTask;
         }
     }
 }

@@ -4,12 +4,12 @@ using Polo.Abstractions.Commands;
 using Polo.Abstractions.Options;
 using Polo.Commands;
 using Polo.Parameters;
-using Polo.UnitTests.FileUtils;
 using Polo.UnitTests.Models;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Polo.UnitTests.Commands
@@ -39,7 +39,7 @@ namespace Polo.UnitTests.Commands
                 new()
                 {
                     Name = _albumName,
-                    Files = new List<FotoFile>
+                    Files = new List<PhotoFile>
                     {
                         new("video-1", FileExtension.Mp4),
                         new("UTP-1", FileExtension.Orf),
@@ -57,7 +57,7 @@ namespace Polo.UnitTests.Commands
                         new()
                         {
                             Name = _resizedImageSubfolderName,
-                            Files = new List<FotoFile>
+                            Files = new List<PhotoFile>
                             {
                                 new("UTP-1", FileExtension.Jpg, 90, 30),
                                 new("UTP-2", FileExtension.Jpeg, 30, 90),
@@ -81,7 +81,7 @@ namespace Polo.UnitTests.Commands
                 new()
                 {
                     Name = _albumName,
-                    Files = new List<FotoFile>
+                    Files = new List<PhotoFile>
                     {
                         new("video-1", FileExtension.Mp4),
                         new("UTP-1", FileExtension.Orf),
@@ -101,7 +101,7 @@ namespace Polo.UnitTests.Commands
         private readonly ICommand _sut = new ResizeCommand(GetOptions(_validApplicationSettings), _loggerMock.Object);
 
         [Fact]
-        public void Action_Should_Resize_Jpeg_Files_And_Copy_To_Output_Folder_Test()
+        public async Task Action_Should_Resize_Jpeg_Files_And_Copy_To_Output_Folder_Test_Async()
         {
             // Arrange
             var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
@@ -113,7 +113,7 @@ namespace Polo.UnitTests.Commands
             };
 
             // Act
-            _sut.Action(parameters);
+            await _sut.ActionAsync(parameters);
 
             // Assert
             var folderStructureActual = FileHelper.CreateFolderStructureByFolderAndFiles(testFolderFullPath);
@@ -121,7 +121,7 @@ namespace Polo.UnitTests.Commands
         }
 
         [Fact]
-        public void Action_Should_Resize_Jpeg_Files_And_Copy_To_Output_Folder_With_Valid_LongSideLimitParameter_And_Valid_ImageResizeLongSideLimit_Setting_Test()
+        public async Task Action_Should_Resize_Jpeg_Files_And_Copy_To_Output_Folder_With_Valid_LongSideLimitParameter_And_Valid_ImageResizeLongSideLimit_Setting_Test_Async()
         {
             // Arrange
             var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
@@ -135,7 +135,7 @@ namespace Polo.UnitTests.Commands
             };
 
             // Act
-            _sut.Action(parameters);
+            await _sut.ActionAsync(parameters);
 
             // Assert
             var folderStructureActual = FileHelper.CreateFolderStructureByFolderAndFiles(testFolderFullPath);
@@ -164,7 +164,7 @@ namespace Polo.UnitTests.Commands
         //}
 
         [Fact]
-        public void Action_Should_Resize_Jpeg_Files_And_Copy_To_Output_Folder_If_Setting_Have_Duplicate_Extension_Test()
+        public async Task Action_Should_Resize_Jpeg_Files_And_Copy_To_Output_Folder_If_Setting_Have_Duplicate_Extension_Test_Async()
         {
             // Arrange
             var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
@@ -182,7 +182,7 @@ namespace Polo.UnitTests.Commands
             var sut = new ResizeCommand(GetOptions(applicationSettings), _loggerMock.Object);
 
             // Act
-            sut.Action();
+            await sut.ActionAsync();
 
             // Assert
             var folderStructureActual = FileHelper.CreateFolderStructureByFolderAndFiles(testFolderFullPath);

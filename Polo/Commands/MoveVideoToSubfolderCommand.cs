@@ -8,8 +8,8 @@ namespace Polo.Commands
 {
     public class MoveVideoToSubfolderCommand : ICommand
     {
-        public const string NameLong = "move-video";
-        public const string NameShort = "mv";
+        private const string NameLong = "move-video";
+        private const string NameShort = "mv";
         private readonly ApplicationSettingsReadOnly _applicationSettings;
         private readonly ILogger _logger;
         private readonly string _videoSubfolderName = "video"; // TODO LA - Create Parameter and Setting for Video folder name
@@ -28,7 +28,7 @@ namespace Polo.Commands
 
         public IParameterHandler ParameterHandler { get; } = null!;
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
+        public Task ActionAsync(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
             var currentDirectory = Environment.CurrentDirectory;
             var videoFolderPath = Path.Join(currentDirectory, _videoSubfolderName); // TODO LA - Use parameter VideoSubfolderName
@@ -46,6 +46,8 @@ namespace Polo.Commands
                 File.Move(filePath, destinationFilePath);
                 _logger.Information($"Moved: {fileInfo.Name} to '{_videoSubfolderName}'");
             }
+
+            return Task.CompletedTask;
         }
     }
 }

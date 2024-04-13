@@ -13,8 +13,8 @@ namespace Polo.Commands
 {
     public class ConvertExifTimezoneCommand : ICommand
     {
-        public const string NameLong = "convert-exif-timezone";
-        public const string NameShort = "cet";
+        private const string NameLong = "convert-exif-timezone";
+        private const string NameShort = "cet";
         private readonly ApplicationSettingsReadOnly _applicationSettings;
         private readonly ILogger _logger;
 
@@ -37,7 +37,7 @@ namespace Polo.Commands
             TimeDifferenceParameter = new TimeDifferenceParameter()
         };
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
+        public async Task ActionAsync(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
             // TODO LA - Cover with UTs
             var sourceFolderPath = ParameterHandler.SourceParameter.Initialize(parameters, Environment.CurrentDirectory);
@@ -86,7 +86,7 @@ namespace Polo.Commands
                 exifProfile.SetValue(ExifTag.DateTimeDigitized, updatedTimeFormatted);
 
                 image.SetProfile(exifProfile);
-                image.Write(destinationImagePath);
+                await image.WriteAsync(destinationImagePath);
 
                 _logger.Information($"File copied with updated EXIF: {destinationImagePath}");
             }

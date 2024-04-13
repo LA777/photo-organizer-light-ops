@@ -10,8 +10,8 @@ namespace Polo.Commands
 {
     public class CopyAllFilesCommand : ICommand
     {
-        public const string NameLong = "copy-all-files";
-        public const string NameShort = "caf";
+        private const string NameLong = "copy-all-files";
+        private const string NameShort = "caf";
         private readonly ApplicationSettingsReadOnly _applicationSettings;
         private readonly ILogger _logger;
 
@@ -33,7 +33,7 @@ namespace Polo.Commands
             DestinationParameter = new DestinationParameter()
         };
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
+        public Task ActionAsync(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
             var sourceFolder = ParameterHandler.SourceParameter.Initialize(parameters, _applicationSettings.DefaultSourceFolderPath);
             var destinationFolder = ParameterHandler.DestinationParameter!.Initialize(parameters, Environment.CurrentDirectory);
@@ -46,6 +46,8 @@ namespace Polo.Commands
                 File.Copy(file, destinationFilePath);
                 _logger.Information($"File copied: {destinationFileName}");
             }
+
+            return Task.CompletedTask;
         }
     }
 }

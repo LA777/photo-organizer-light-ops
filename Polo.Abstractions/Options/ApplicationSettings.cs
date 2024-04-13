@@ -36,6 +36,9 @@ namespace Polo.Abstractions.Options
         [Range(1, int.MaxValue, ErrorMessage = "ERROR: Value for {0} should be between {1} and {2}.")]
         public int FsivThumbnailSize { get; set; }
 
+        [Required(ErrorMessage = "ERROR: Value for {0} should contain some data.")]
+        public string SqliteDbConnectionStrings { get; set; } = string.Empty;
+
         [MinLength(1, ErrorMessage = "ERROR: Value for {0} should contain some data.")]
         public ICollection<string> FileForProcessExtensions { get; set; } = new List<string>();
 

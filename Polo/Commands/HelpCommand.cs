@@ -11,8 +11,8 @@ namespace Polo.Commands
 {
     public class HelpCommand : ICommand
     {
-        public const string NameLong = "help";
-        public const string NameShort = "h";
+        private const string NameLong = "help";
+        private const string NameShort = "h";
         private readonly ILogger _logger;
 
 
@@ -32,7 +32,7 @@ namespace Polo.Commands
             CommandParameter = new CommandParameter()
         };
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
+        public Task ActionAsync(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
             // TODO LA - Cover with UTs
             if (commands == null)
@@ -112,6 +112,8 @@ namespace Polo.Commands
 
                 DisplayAndLogText(stringBuilder.ToString());
             }
+
+            return Task.CompletedTask;
         }
 
         private void DisplayAndLogText(string text)

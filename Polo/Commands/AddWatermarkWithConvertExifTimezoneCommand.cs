@@ -14,8 +14,8 @@ namespace Polo.Commands
 {
     public class AddWatermarkWithConvertExifTimezoneCommand : ICommand
     {
-        public const string NameLong = "add-watermark-with-convert-exif-timezone";
-        public const string NameShort = "awwcet";
+        private const string NameLong = "add-watermark-with-convert-exif-timezone";
+        private const string NameShort = "awwcet";
         private readonly ApplicationSettingsReadOnly _applicationSettings;
         private readonly ILogger _logger;
 
@@ -43,7 +43,7 @@ namespace Polo.Commands
         };
 
         [SupportedOSPlatform("windows")]
-        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
+        public async Task ActionAsync(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
             // TODO LA - Add OverwriteFile parameter
 
@@ -112,7 +112,7 @@ namespace Polo.Commands
                 image.SetProfile(exifProfile);
                 // timezone end
 
-                image.Write(destinationImagePath);
+                await image.WriteAsync(destinationImagePath);
                 _logger.Information($"[{++index}/{imagesForProcess.Count}] Watermark added: {destinationImagePath}");
             }
         }

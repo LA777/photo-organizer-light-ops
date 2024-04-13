@@ -4,12 +4,12 @@ using Polo.Abstractions.Commands;
 using Polo.Abstractions.Options;
 using Polo.Commands;
 using Polo.Parameters;
-using Polo.UnitTests.FileUtils;
 using Polo.UnitTests.Models;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Polo.UnitTests.Commands
@@ -17,7 +17,7 @@ namespace Polo.UnitTests.Commands
     [Collection("Sequential")]
     public class CopyAllFilesCommandTests : CommandTestBase
     {
-        private const string DefaultSourceFolderPath = "c:\\";
+        private const string DefaultSourceFolderPath = "d:\\";
         private static readonly ApplicationSettings _validApplicationSettings = new() { DefaultSourceFolderPath = DefaultSourceFolderPath };
         private static readonly Mock<ILogger> _loggerMock = new();
 
@@ -28,7 +28,7 @@ namespace Polo.UnitTests.Commands
                 new()
                 {
                     Name = Constants.SourceFolderName,
-                    Files = new List<FotoFile>
+                    Files = new List<PhotoFile>
                     {
                         new("UTP-1", FileExtension.Orf),
                         new("UTP-2", FileExtension.Orf),
@@ -47,7 +47,7 @@ namespace Polo.UnitTests.Commands
                 new()
                 {
                     Name = Constants.DestinationFolderName,
-                    Files = new List<FotoFile>
+                    Files = new List<PhotoFile>
                     {
                         new("UTP-1", FileExtension.Orf),
                         new("UTP-2", FileExtension.Orf),
@@ -73,7 +73,7 @@ namespace Polo.UnitTests.Commands
                 new()
                 {
                     Name = Constants.SourceFolderName,
-                    Files = new List<FotoFile>
+                    Files = new List<PhotoFile>
                     {
                         new("UTP-1", FileExtension.Orf),
                         new("UTP-2", FileExtension.Orf),
@@ -99,7 +99,7 @@ namespace Polo.UnitTests.Commands
         private readonly ICommand _sut = new CopyAllFilesCommand(GetOptions(_validApplicationSettings), _loggerMock.Object);
 
         [Fact]
-        public void Action_Should_Copy_Files_With_Valid_Input_Parameters_Test()
+        public async Task Action_Should_Copy_Files_With_Valid_Input_Parameters_Test_Async()
         {
             // Arrange
             var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
@@ -113,7 +113,7 @@ namespace Polo.UnitTests.Commands
             };
 
             // Act
-            _sut.Action(parameters);
+            await _sut.ActionAsync(parameters);
 
             // Assert
             var folderStructureActual = FileHelper.CreateFolderStructureByFolderAndFiles(testFolderFullPath);
@@ -121,7 +121,7 @@ namespace Polo.UnitTests.Commands
         }
 
         [Fact]
-        public void Action_Should_Copy_Files_With_Valid_SourceFolder_Input_Parameter_Test()
+        public async Task Action_Should_Copy_Files_With_Valid_SourceFolder_Input_Parameter_Test_Async()
         {
             // Arrange
             var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
@@ -134,7 +134,7 @@ namespace Polo.UnitTests.Commands
             };
 
             // Act
-            _sut.Action(parameters);
+            await _sut.ActionAsync(parameters);
 
             // Assert
             var folderStructureActual = FileHelper.CreateFolderStructureByFolderAndFiles(testFolderFullPath);
@@ -142,7 +142,7 @@ namespace Polo.UnitTests.Commands
         }
 
         [Fact]
-        public void Action_Should_Copy_Files_Without_Input_Parameters_And_Valid_SourceFolder_Settings_Test()
+        public async Task Action_Should_Copy_Files_Without_Input_Parameters_And_Valid_SourceFolder_Settings_Test_Async()
         {
             // Arrange
             var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
@@ -158,7 +158,7 @@ namespace Polo.UnitTests.Commands
             var sut = new CopyAllFilesCommand(GetOptions(validApplicationSettings), _loggerMock.Object);
 
             // Act
-            sut.Action(parameters);
+            await sut.ActionAsync(parameters);
 
             // Assert
             var folderStructureActual = FileHelper.CreateFolderStructureByFolderAndFiles(testFolderFullPath);

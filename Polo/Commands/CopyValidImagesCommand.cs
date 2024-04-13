@@ -12,8 +12,8 @@ namespace Polo.Commands
 {
     public class CopyValidImagesCommand : ICommand
     {
-        public const string NameLong = "copy-valid-images";
-        public const string NameShort = "cvi";
+        private const string NameLong = "copy-valid-images";
+        private const string NameShort = "cvi";
         private readonly ApplicationSettingsReadOnly _applicationSettings;
         private readonly ILogger _logger;
 
@@ -35,7 +35,7 @@ namespace Polo.Commands
             DestinationParameter = new DestinationParameter()
         };
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
+        public Task ActionAsync(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
             var currentDirectory = Environment.CurrentDirectory;
             var sourceFolderPath = ParameterHandler.SourceParameter.Initialize(parameters, currentDirectory);
@@ -47,6 +47,8 @@ namespace Polo.Commands
             }
 
             CopyValidImages(sourceFolderPath, destinationFolderPath);
+
+            return Task.CompletedTask;
         }
 
         private void CopyValidImages(string fullFolderPath, string destinationFolderFullPath)

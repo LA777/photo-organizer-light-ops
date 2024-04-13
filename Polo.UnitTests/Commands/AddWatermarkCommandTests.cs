@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Polo.UnitTests.Commands
@@ -42,18 +43,18 @@ namespace Polo.UnitTests.Commands
                 new Folder()
                 {
                     Name = _albumName,
-                    Files = new List<FotoFile>()
+                    Files = new List<PhotoFile>()
                     {
-                        new FotoFile("video-1", "mp4"),
-                        new FotoFile("UTP-1", "ORF"),
-                        new FotoFile("UTP-1", "jpg", 120, 90),
-                        new FotoFile("UTP-2", "jpeg", 200, 100)
+                        new PhotoFile("video-1", "mp4"),
+                        new PhotoFile("UTP-1", "ORF"),
+                        new PhotoFile("UTP-1", "jpg", 120, 90),
+                        new PhotoFile("UTP-2", "jpeg", 200, 100)
                     }
                 },
                 new Folder()
                 {
                     Name = _watermarkFolderName,
-                    Files = new List<FotoFile>()
+                    Files = new List<PhotoFile>()
                     {
                         FileHelper.Watermark
                     }
@@ -68,22 +69,22 @@ namespace Polo.UnitTests.Commands
                 new Folder()
                 {
                     Name = _albumName,
-                    Files = new List<FotoFile>()
+                    Files = new List<PhotoFile>()
                     {
-                        new FotoFile("video-1", "mp4"),
-                        new FotoFile("UTP-1", "ORF"),
-                        new FotoFile("UTP-1", "jpg", 120, 90),
-                        new FotoFile("UTP-2", "jpeg", 200, 100)
+                        new PhotoFile("video-1", "mp4"),
+                        new PhotoFile("UTP-1", "ORF"),
+                        new PhotoFile("UTP-1", "jpg", 120, 90),
+                        new PhotoFile("UTP-2", "jpeg", 200, 100)
                     },
                     SubFolders = new List<Folder>()
                     {
                         new Folder()
                         {
                             Name = _watermarkOutputFolderName,
-                            Files = new List<FotoFile>()
+                            Files = new List<PhotoFile>()
                             {
-                                new FotoFile("UTP-1", "jpg", 120, 90),
-                                new FotoFile("UTP-2", "jpeg", 200, 100)
+                                new PhotoFile("UTP-1", "jpg", 120, 90),
+                                new PhotoFile("UTP-2", "jpeg", 200, 100)
                             }
                         }
                     }
@@ -91,14 +92,13 @@ namespace Polo.UnitTests.Commands
                 new Folder()
                 {
                     Name = _watermarkFolderName,
-                    Files = new List<FotoFile>()
+                    Files = new List<PhotoFile>()
                     {
                         FileHelper.Watermark
                     }
                 }
             }
         };
-
 
         [Theory]
         [InlineData("asdasda")]
@@ -124,7 +124,7 @@ namespace Polo.UnitTests.Commands
 
         }
 
-        public void Action_Should_Add_Watermark_And_Copy_To_Output_Folder_Test()
+        public async Task Action_Should_Add_Watermark_And_Copy_To_Output_Folder_Test_Async()
         {
             // TODO LA - Complete
             // TODO LA - Check transparency watermark
@@ -138,7 +138,7 @@ namespace Polo.UnitTests.Commands
             var sut = new AddWatermarkCommand(GetOptions(_validApplicationSettings), _loggerMock.Object);
 
             // Act
-            sut.Action();
+            await sut.ActionAsync();
 
             // Assert
             var folderStructureActual = FileHelper.CreateFolderStructureByFolderAndFiles(testFolderFullPath);
@@ -237,7 +237,7 @@ namespace Polo.UnitTests.Commands
         }
 
         // TODO LA - Complete
-        private List<Color> GetWatermarkPixels(string filePath, string position, FotoFile watermark)
+        private List<Color> GetWatermarkPixels(string filePath, string position, PhotoFile watermark)
         {
             // X - width
             // Y - height

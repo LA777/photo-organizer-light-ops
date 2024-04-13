@@ -17,7 +17,7 @@ namespace Polo
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public void Parse(string[] arguments, IEnumerable<ICommand> commands)
+        public async Task ParseAsync(string[] arguments, IEnumerable<ICommand> commands)
         {
             if (arguments == null || !arguments.Any())
             {
@@ -37,7 +37,7 @@ namespace Polo
             if (matchedCommand != null)
             {
                 _logger.Verbose($"Argument '{commandArgument}' matched to command '{matchedCommand.Name}'");
-                matchedCommand.Action(parameters, commandsList);
+                await matchedCommand.ActionAsync(parameters, commandsList);
             }
             else
             {
@@ -46,7 +46,7 @@ namespace Polo
                 if (matchedShortCommand != null)
                 {
                     _logger.Verbose($"Argument '{commandArgument}' matched to command '{matchedShortCommand.Name}'");
-                    matchedShortCommand.Action(parameters, commandsList);
+                    await matchedShortCommand.ActionAsync(parameters, commandsList);
                 }
                 else
                 {

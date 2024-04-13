@@ -3,6 +3,7 @@ using Moq;
 using Polo.Abstractions.Wrappers;
 using Polo.Commands;
 using Serilog;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Polo.UnitTests.Commands
@@ -10,7 +11,7 @@ namespace Polo.UnitTests.Commands
     public class VersionCommandTests
     {
         [Fact]
-        public void Action_Should_Write_Application_Version_To_The_Log_Test()
+        public async Task Action_Should_Write_Application_Version_To_The_Log_Test_Async()
         {
             // Arrange
             var resultVersionLog = string.Empty;
@@ -25,7 +26,7 @@ namespace Polo.UnitTests.Commands
             var sut = new VersionCommand(consoleWrapperMock.Object, loggerMock.Object);
 
             // Act
-            sut.Action();
+            await sut.ActionAsync();
 
             // Assert
             resultVersionLog.Should().BeEquivalentTo(expectedVersion);

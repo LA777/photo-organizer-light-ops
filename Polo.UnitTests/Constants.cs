@@ -47,6 +47,8 @@ namespace Polo.UnitTests
         public const string Mpg = ".mpg";
         public const string Mpeg = ".mpeg";
 
+        public const string Txt = ".txt";
+
         public static ICollection<string> JpegExtensions = new[] { Jpg, Jpeg };
         public static ICollection<string> RawExtensions = new[] { Orf, Crw, Cr2, Cr3, _3fr, Mef, Nef, Nrw, Pef, Ptx, Rw2, Arw, Srf, Sr2, Gpr, Raf, Raw, Rwl, Dng, Srw, X3f };
         public static ICollection<string> VideoExtensions = new[] { Mkv, Avi, M2ts, Ts, Mp4, M4v, M4p, Mpg, Mpeg };

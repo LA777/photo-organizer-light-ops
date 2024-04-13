@@ -17,8 +17,8 @@ namespace Polo.Commands
 {
     public class FsivCreateThumbnailsCommand : ICommand
     {
-        public const string NameLong = "fsiv-create-thumbnails";
-        public const string NameShort = "fct";
+        private const string NameLong = "fsiv-create-thumbnails";
+        private const string NameShort = "fct";
         private readonly ApplicationSettingsReadOnly _applicationSettings;
         private readonly ILogger _logger;
         private ISqLiteProvider _sqLiteProvider = null!;
@@ -43,7 +43,7 @@ namespace Polo.Commands
             FsivThumbnailSizeParameter = new FsivThumbnailSizeParameter()
         };
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
+        public Task ActionAsync(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
             var currentDirectory = Environment.CurrentDirectory;
             var sourceFolderPath = ParameterHandler.SourceParameter.Initialize(parameters, currentDirectory);
@@ -73,6 +73,8 @@ namespace Polo.Commands
             {
                 _sqLiteProvider.Dispose();
             }
+
+            return Task.CompletedTask;
         }
 
         private void ProcessFiles(string sourceFolderPath, bool isRecursive, int thumbnailSize)

@@ -12,8 +12,8 @@ namespace Polo.Commands
 {
     public class UpdateExifDateCommand : ICommand
     {
-        public const string NameLong = "update-exif-date";
-        public const string NameShort = "ued";
+        private const string NameLong = "update-exif-date";
+        private const string NameShort = "ued";
         private readonly ApplicationSettingsReadOnly _applicationSettings;
         private readonly ILogger _logger;
 
@@ -35,7 +35,7 @@ namespace Polo.Commands
             OutputFolderNameParameter = new OutputFolderNameParameter()
         };
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
+        public async Task ActionAsync(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
             // TODO LA - Cover with UTs
             var sourceFolderPath = ParameterHandler.SourceParameter.Initialize(parameters, Environment.CurrentDirectory);
@@ -68,7 +68,7 @@ namespace Polo.Commands
                 exifProfile.SetValue(ExifTag.DateTimeDigitized, dateFormatted);
 
                 image.SetProfile(exifProfile);
-                image.Write(destinationImagePath);
+                await image.WriteAsync(destinationImagePath);
 
                 _logger.Information($"File copied with updated EXIF: {destinationImagePath}");
             }

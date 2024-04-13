@@ -1,0 +1,6 @@
+{
+  "TestSettings": {
+    "EnvName": "prod",
+    "TestFolderPath": "c:\\tests"
+  }
+}

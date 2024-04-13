@@ -10,8 +10,8 @@ namespace Polo.Commands
 {
     public class RemoveOrphanageRawCommand : ICommand
     {
-        public const string NameLong = "remove-orphanage-raw";
-        public const string NameShort = "ror";
+        private const string NameLong = "remove-orphanage-raw";
+        private const string NameShort = "ror";
         private readonly ApplicationSettingsReadOnly _applicationSettings;
         private readonly ILogger _logger;
 
@@ -29,7 +29,7 @@ namespace Polo.Commands
 
         public IParameterHandler ParameterHandler { get; } = null!;
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
+        public Task ActionAsync(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
             // TODO LA - Cover new logic with UTs
             var currentDirectory = Environment.CurrentDirectory;
@@ -60,9 +60,11 @@ namespace Polo.Commands
                 var isDeleted = fileInfo.DeleteToRecycleBin();
 
                 _logger.Information(isDeleted
-                    ? $"[{++index}/{orphanageRawFilesToDelete.Count()}] RAW file deleted: {fileInfo.Name}"
+                    ? $"[{++index}/{orphanageRawFilesToDelete.Count}] RAW file deleted: {fileInfo.Name}"
                     : $"RAW file not found: {fileInfo.Name}");
             }
+
+            return Task.CompletedTask;
         }
     }
 }

@@ -9,8 +9,8 @@ namespace Polo.Commands
 {
     public class MoveRawToJpegFolderCommand : ICommand
     {
-        public const string NameLong = "move-raw";
-        public const string NameShort = "mr";
+        private const string NameLong = "move-raw";
+        private const string NameShort = "mr";
         private readonly ApplicationSettingsReadOnly _applicationSettings;
         private readonly ILogger _logger;
 
@@ -28,7 +28,7 @@ namespace Polo.Commands
 
         public IParameterHandler ParameterHandler { get; } = null!;
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
+        public Task ActionAsync(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
             // TODO LA - Cover new logic with UTs
             var currentDirectory = Environment.CurrentDirectory;
@@ -73,6 +73,8 @@ namespace Polo.Commands
                     _logger.Information($"[{++index}/{jpegFilesRelatedToOrphanageRawFiles.Count}] Moved: {rawFileName} to '{Path.Combine(jpegFolder, _applicationSettings.RawFolderName)}'");
                 }
             }
+
+            return Task.CompletedTask;
         }
     }
 }

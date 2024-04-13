@@ -38,7 +38,7 @@ namespace Polo.Commands
             ImageQualityParameter = new ImageQualityParameter()
         };
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
+        public async Task ActionAsync(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
             var currentDirectory = Environment.CurrentDirectory;
             var sourceFolderPath = ParameterHandler.SourceParameter.Initialize(parameters, currentDirectory);
@@ -92,7 +92,7 @@ namespace Polo.Commands
                 }
 
                 image.Quality = imageQuality; // TODO LA - Cover with UTs
-                image.Write(destinationImagePath);
+                await image.WriteAsync(destinationImagePath);
                 _logger.Information($"[{++index}/{imagesForProcess.Count}] File resized: {destinationImagePath}");
             }
         }

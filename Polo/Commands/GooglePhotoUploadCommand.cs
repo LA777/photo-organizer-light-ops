@@ -14,8 +14,8 @@ namespace Polo.Commands
 {
     public class GooglePhotoUploadCommand : ICommand
     {
-        public const string NameLong = "google-photo-upload";
-        public const string NameShort = "gpu";
+        private const string NameLong = "google-photo-upload";
+        private const string NameShort = "gpu";
         private readonly ApplicationSettingsReadOnly _applicationSettings;
         private readonly ILogger<GooglePhotoUploadCommand> _logger;
 
@@ -37,7 +37,7 @@ namespace Polo.Commands
             OutputFolderNameParameter = new OutputFolderNameParameter()
         };
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
+        public Task ActionAsync(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
             var currentFolder = Environment.CurrentDirectory;
             var directoryInfo = new DirectoryInfo(currentFolder);
@@ -114,6 +114,8 @@ namespace Polo.Commands
 
             _logger.LogInformation($"Album photos count: {mediaItemsList.Count}");
             _logger.LogInformation($"Contributor: {mediaItemsList.FirstOrDefault()?.contributorInfo?.displayName}");
+
+            return Task.CompletedTask;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualBasic.FileIO;
+using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 
 namespace Polo.Extensions
@@ -42,10 +43,6 @@ namespace Polo.Extensions
                 }
             }
 
-            string nameWithoutIndex;
-            // ReSharper disable once TooWideLocalVariableScope
-            int index;
-
             do
             {
                 const string regexPatternForIndex = "[0-9]+";
@@ -56,16 +53,26 @@ namespace Polo.Extensions
 
                 var match = regexIndex.Match(indexInBraces.Value);
                 var value = match.Value; // '0'
-                index = Convert.ToInt32(value); // 0
+                var index = Convert.ToInt32(value);
                 index++;
 
                 var length = indexInBraces.Length;
-                nameWithoutIndex = destinationFileNameWithoutExtension.Substring(0, destinationFileNameWithoutExtension.Length - length); // '101'
+                var nameWithoutIndex = destinationFileNameWithoutExtension.Substring(0, destinationFileNameWithoutExtension.Length - length);
 
                 destinationImagePath = Path.Combine(destinationFolderFullPath, $"{nameWithoutIndex}({index}){fileInfo.Extension}");
             } while (File.Exists(destinationImagePath));
 
             return destinationImagePath;
+        }
+
+        public static string GetFileHashSha256(this FileInfo fileInfo)
+        {
+            using var sha256 = SHA256.Create();
+            using var fileStream = File.OpenRead(fileInfo.FullName);
+            var byteArray = sha256.ComputeHash(fileStream);
+            var result = BitConverter.ToString(byteArray).Replace("-", string.Empty).ToLower();
+
+            return result;
         }
     }
 }

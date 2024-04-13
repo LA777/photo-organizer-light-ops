@@ -10,7 +10,7 @@ namespace Polo.UnitTests.Extensions
     {
         // TODO LA - Remove
         [Fact]
-        public void ConvertToTransparentMagickImage_Should_Convert_Succesfully_Test()
+        public void ConvertToTransparentMagickImage_Should_Convert_Successfully_Test()
         {
             // Arrange
             var readSettings = new MagickReadSettings

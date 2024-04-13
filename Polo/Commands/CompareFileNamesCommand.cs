@@ -4,13 +4,14 @@ using Polo.Comparers;
 using Polo.Parameters;
 using Polo.Parameters.Handler;
 using Serilog;
+using System.Threading.Tasks;
 
 namespace Polo.Commands
 {
     public class CompareFileNamesCommand : ICommand
     {
-        public const string NameLong = "compare-file-names";
-        public const string NameShort = "cfn";
+        private const string NameLong = "compare-file-names";
+        private const string NameShort = "cfn";
         private readonly ILogger _logger;
 
         public CompareFileNamesCommand(ILogger logger)
@@ -30,7 +31,7 @@ namespace Polo.Commands
             DestinationParameter = new DestinationParameter()
         };
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
+        public Task ActionAsync(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
             // TODO LA - Cover with UTs
             var sourceFolder = ParameterHandler.SourceParameter.Initialize(parameters, Environment.CurrentDirectory);
@@ -46,12 +47,11 @@ namespace Polo.Commands
             if (!differenceSourceFolder.Any() && !differenceDestinationFolder.Any())
             {
                 _logger.Information("Folders are equal.");
-
-                return;
             }
 
             ShowFolderDifferenceFiles(sourceFolder, differenceSourceFolder);
             ShowFolderDifferenceFiles(destinationFolder, differenceDestinationFolder);
+            return Task.CompletedTask;
         }
 
         private void ShowFolderDifferenceFiles(string folderFullPath, IList<string> differenceFiles)

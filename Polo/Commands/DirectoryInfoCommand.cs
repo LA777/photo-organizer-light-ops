@@ -10,8 +10,8 @@ namespace Polo.Commands
 {
     public class DirectoryInfoCommand : ICommand
     {
-        public const string NameLong = "directory-info";
-        public const string NameShort = "di";
+        private const string NameLong = "directory-info";
+        private const string NameShort = "di";
         private readonly ApplicationSettingsReadOnly _applicationSettings;
         private readonly ILogger _logger;
 
@@ -32,7 +32,7 @@ namespace Polo.Commands
             SourceParameter = new SourceParameter()
         };
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
+        public Task ActionAsync(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
             var sourceFolder = ParameterHandler.SourceParameter.Initialize(parameters, Environment.CurrentDirectory);
             var subFolders = Directory.EnumerateDirectories(sourceFolder, "*.*", SearchOption.TopDirectoryOnly);
@@ -43,6 +43,8 @@ namespace Polo.Commands
                 var folderSize = DirectorySize(subFolderInfo);
                 Console.WriteLine($"{subFolderInfo.Name}\t\t\t{folderSize:##,#}");
             }
+
+            return Task.CompletedTask;
         }
 
         private static long DirectorySize(DirectoryInfo directoryInfo)

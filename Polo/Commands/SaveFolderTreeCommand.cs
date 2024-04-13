@@ -10,8 +10,8 @@ namespace Polo.Commands
 {
     public class SaveFolderTreeCommand : ICommand
     {
-        public const string NameLong = "save-folder-tree";
-        public const string NameShort = "sft";
+        private const string NameLong = "save-folder-tree";
+        private const string NameShort = "sft";
         private readonly ILogger _logger;
 
         public SaveFolderTreeCommand(ILogger logger)
@@ -31,7 +31,7 @@ namespace Polo.Commands
             DestinationParameter = new DestinationParameter()
         };
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
+        public async Task ActionAsync(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
             var currentDirectory = Environment.CurrentDirectory;
             var sourceFolderPath = ParameterHandler.SourceParameter.Initialize(parameters, currentDirectory);
@@ -43,7 +43,7 @@ namespace Polo.Commands
 
             const string outputFileName = "_FolderTree.json";
             var outputFilePath = Path.Join(destinationFolder, outputFileName);
-            System.IO.File.WriteAllText(outputFilePath, json, Encoding.Unicode);
+            await System.IO.File.WriteAllTextAsync(outputFilePath, json, Encoding.Unicode);
 
             var message = $"Folder tree saved in file: {outputFilePath}";
             Console.WriteLine(message);
@@ -62,7 +62,7 @@ namespace Polo.Commands
             return json.Replace(@"\\", @"\");
         }
 
-        public static Folder CreateFolderTree(string path)
+        private static Folder CreateFolderTree(string path)
         {
             var folder = new Folder
             {

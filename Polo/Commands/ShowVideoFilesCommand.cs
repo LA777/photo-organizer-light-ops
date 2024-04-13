@@ -10,8 +10,8 @@ namespace Polo.Commands
 {
     public class ShowVideoFilesCommand : ICommand
     {
-        public const string NameLong = "show-video-files";
-        public const string NameShort = "svf";
+        private const string NameLong = "show-video-files";
+        private const string NameShort = "svf";
         private readonly ApplicationSettingsReadOnly _applicationSettings;
         private readonly ILogger _logger;
 
@@ -33,7 +33,7 @@ namespace Polo.Commands
         };
 
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
+        public Task ActionAsync(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
             // TODO LA - Cover with UTs
             var sourceFolder = ParameterHandler.SourceParameter.Initialize(parameters, Environment.CurrentDirectory);
@@ -49,6 +49,8 @@ namespace Polo.Commands
             {
                 _logger.Information(videoFile);
             }
+
+            return Task.CompletedTask;
         }
     }
 }

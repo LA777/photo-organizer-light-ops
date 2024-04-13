@@ -10,8 +10,8 @@ namespace Polo.Commands
 {
     public class MoveAllFilesCommand : ICommand
     {
-        public const string NameLong = "move-all-files";
-        public const string NameShort = "maf";
+        private const string NameLong = "move-all-files";
+        private const string NameShort = "maf";
         private readonly ApplicationSettingsReadOnly _applicationSettings;
         private readonly ILogger _logger;
 
@@ -33,7 +33,7 @@ namespace Polo.Commands
             DestinationParameter = new DestinationParameter()
         };
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
+        public Task ActionAsync(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
             var sourceFolder = ParameterHandler.SourceParameter.Initialize(parameters, _applicationSettings.DefaultSourceFolderPath);
             var destinationFolder = ParameterHandler.DestinationParameter!.Initialize(parameters, Environment.CurrentDirectory);
@@ -47,6 +47,8 @@ namespace Polo.Commands
                 File.Move(file, destinationFilePath, false);
                 _logger.Information($"File moved: {destinationFileName}");
             }
+
+            return Task.CompletedTask;
         }
     }
 }

@@ -12,8 +12,8 @@ namespace Polo.Commands
 {
     public class RemoveRedundantFilesCommand : ICommand
     {
-        public const string NameLong = "remove-redundant-files";
-        public const string NameShort = "rrf";
+        private const string NameLong = "remove-redundant-files";
+        private const string NameShort = "rrf";
         private readonly ApplicationSettingsReadOnly _applicationSettings;
         private readonly ILogger _logger;
 
@@ -34,7 +34,7 @@ namespace Polo.Commands
             SourceParameter = new SourceParameter()
         };
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
+        public Task ActionAsync(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
             // TODO LA - Cover with UTs
             // TODO LA - Add RecursiveParameter
@@ -53,6 +53,8 @@ namespace Polo.Commands
 
                 _logger.Information($"File deleted: {redundantFile}");
             }
+
+            return Task.CompletedTask;
         }
     }
 }

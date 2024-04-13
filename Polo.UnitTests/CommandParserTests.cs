@@ -7,13 +7,13 @@ using Polo.Abstractions.Exceptions;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Polo.UnitTests
 {
-    public class CommandParserTests
+    public class CommandParserTests: BaseTest
     {
-        private readonly Fixture _fixture = new Fixture();
         private static readonly Mock<ICommand> _commandMock = new Mock<ICommand>();
         private readonly IEnumerable<ICommand> _commands = new List<ICommand> { _commandMock.Object };
         private static readonly Mock<ILogger> _loggerMock = new Mock<ILogger>();
@@ -23,10 +23,10 @@ namespace Polo.UnitTests
 
         public CommandParserTests()
         {
-            _commandMock.Setup(x => x.Name).Returns(_fixture.Create<string>());
-            _commandMock.Setup(x => x.ShortName).Returns(_fixture.Create<string>());
+            _commandMock.Setup(x => x.Name).Returns(Fixture.Create<string>());
+            _commandMock.Setup(x => x.ShortName).Returns(Fixture.Create<string>());
             _commandMock.Setup(
-                x => x.Action(It.IsAny<IReadOnlyDictionary<string, string>>(), It.IsAny<IEnumerable<ICommand>>()))
+                x => x.ActionAsync(It.IsAny<IReadOnlyDictionary<string, string>>(), It.IsAny<IEnumerable<ICommand>>()))
                 .Callback<IReadOnlyDictionary<string, string>, IEnumerable<ICommand>>(
                     (args, cmds) =>
                     {
@@ -37,7 +37,7 @@ namespace Polo.UnitTests
         }
 
         [Fact]
-        public void Parse_Should_Parse_Input_Arguments_To_Commands_And_DictionaryArguments_With_Full_CommandName_Test()
+        public async Task Parse_Should_Parse_Input_Arguments_To_Commands_And_DictionaryArguments_With_Full_CommandName_Test_Async()
         {
             // Arrange
             var parameterName = "param";
@@ -51,17 +51,17 @@ namespace Polo.UnitTests
             _commandMock.Invocations.Clear();
 
             // Act
-            _sut.Parse(inputArguments, _commands);
+            await _sut.ParseAsync(inputArguments, _commands);
 
 
             // Assert
-            _commandMock.Verify(x => x.Action(It.IsAny<IReadOnlyDictionary<string, string>>(), It.IsAny<IEnumerable<ICommand>>()), Times.Once);
+            _commandMock.Verify(x => x.ActionAsync(It.IsAny<IReadOnlyDictionary<string, string>>(), It.IsAny<IEnumerable<ICommand>>()), Times.Once);
             _argumentsPassed.Should().BeEquivalentTo(parsedArguments);
             _commandsPassed.Should().BeEquivalentTo(_commands);
         }
 
         [Fact]
-        public void Parse_Should_Parse_Input_Arguments_To_Commands_And_DictionaryArguments_With_Short_CommandName_Test()
+        public async Task Parse_Should_Parse_Input_Arguments_To_Commands_And_DictionaryArguments_With_Short_CommandName_Test_Async()
         {
             // Arrange
             var parameterName = "param";
@@ -75,16 +75,16 @@ namespace Polo.UnitTests
             _commandMock.Invocations.Clear();
 
             // Act
-            _sut.Parse(inputArguments, _commands);
+            await _sut.ParseAsync(inputArguments, _commands);
 
             // Assert
-            _commandMock.Verify(x => x.Action(It.IsAny<IReadOnlyDictionary<string, string>>(), It.IsAny<IEnumerable<ICommand>>()), Times.Once);
+            _commandMock.Verify(x => x.ActionAsync(It.IsAny<IReadOnlyDictionary<string, string>>(), It.IsAny<IEnumerable<ICommand>>()), Times.Once);
             _argumentsPassed.Should().BeEquivalentTo(parsedArguments);
             _commandsPassed.Should().BeEquivalentTo(_commands);
         }
 
         [Fact]
-        public void Parse_Should_Parse_Input_Arguments_To_Commands_Without_Parameters_Test()
+        public async Task Parse_Should_Parse_Input_Arguments_To_Commands_Without_Parameters_Test_Async()
         {
             // Arrange
             var argumentLine = $"{CommandParser.CommandPrefix}{_commandMock.Object.Name}";
@@ -92,43 +92,43 @@ namespace Polo.UnitTests
             _commandMock.Invocations.Clear();
 
             // Act
-            _sut.Parse(inputArguments, _commands);
+            await _sut.ParseAsync(inputArguments, _commands);
 
             // Assert
-            _commandMock.Verify(x => x.Action(It.IsAny<IReadOnlyDictionary<string, string>>(), It.IsAny<IEnumerable<ICommand>>()), Times.Once);
+            _commandMock.Verify(x => x.ActionAsync(It.IsAny<IReadOnlyDictionary<string, string>>(), It.IsAny<IEnumerable<ICommand>>()), Times.Once);
             _argumentsPassed.Should().BeEmpty();
             _commandsPassed.Should().BeEquivalentTo(_commands);
         }
 
         [Fact]
-        public void Parse_Should_Throw_ParseException_If_No_Command_Provided_Test()
+        public async Task Parse_Should_Throw_ParseException_If_No_Command_Provided_Test_Async()
         {
             // Arrange
             var inputArguments = Array.Empty<string>();
 
             // Act
-            var exception = Assert.Throws<ParameterParseException>(() => _sut.Parse(inputArguments, _commands));
+            var exception = await Assert.ThrowsAsync<ParameterParseException>(async() => await _sut.ParseAsync(inputArguments, _commands));
 
             // Assert
             Assert.Equal("ERROR: No command provided. Please enter --help to see available commands list.", exception.Message);
         }
 
         [Fact]
-        public void Parse_Should_Throw_ParseException_If_No_Correct_Command_Provided_Test()
+        public async Task Parse_Should_Throw_ParseException_If_No_Correct_Command_Provided_Test_Async()
         {
             // Arrange
             var argumentLine = $"{CommandParser.CommandPrefix}{_commandMock.Object.Name}zz";
             var inputArguments = argumentLine.Split(' ');
 
             // Act
-            var exception = Assert.Throws<ParameterParseException>(() => _sut.Parse(inputArguments, _commands));
+            var exception = await Assert.ThrowsAsync<ParameterParseException>(async () => await _sut.ParseAsync(inputArguments, _commands));
 
             // Assert
             Assert.Equal("ERROR: Unknown command. Please enter --help to see available commands list.", exception.Message);
         }
 
         [Fact]
-        public void Parse_Should_Throw_ParseException_If_Parameter_Provided_Without_Prefix_Test()
+        public async Task Parse_Should_Throw_ParseException_If_Parameter_Provided_Without_Prefix_Test_Async()
         {
             // Arrange
             var parameterName = "param";
@@ -137,14 +137,14 @@ namespace Polo.UnitTests
             var inputArguments = argumentLine.Split(' ');
 
             // Act
-            var exception = Assert.Throws<ParameterParseException>(() => _sut.Parse(inputArguments, _commands));
+            var exception = await Assert.ThrowsAsync<ParameterParseException>(async () => await _sut.ParseAsync(inputArguments, _commands));
 
             // Assert
             Assert.Equal("ERROR: Unknown parameter. Please enter --help to see available parameters list.", exception.Message);
         }
 
         [Fact]
-        public void Parse_Should_Throw_ParseException_If_Parameter_Provided_Without_Delimiter_Test()
+        public async Task Parse_Should_Throw_ParseException_If_Parameter_Provided_Without_Delimiter_Test_Async()
         {
             // Arrange
             var parameterName = "param";
@@ -153,14 +153,14 @@ namespace Polo.UnitTests
             var inputArguments = argumentLine.Split(' ');
 
             // Act
-            var exception = Assert.Throws<ParameterParseException>(() => _sut.Parse(inputArguments, _commands));
+            var exception = await Assert.ThrowsAsync<ParameterParseException>(async () => await _sut.ParseAsync(inputArguments, _commands));
 
             // Assert
             Assert.Equal("ERROR: Parameter delimiter missed. Please enter --help to see correct parameter syntax.", exception.Message);
         }
 
         [Fact]
-        public void Parse_Should_Parse_Input_Arguments_To_Commands_And_DictionaryArguments_If_Parameter_Value_Contains_Semicolon_Test()
+        public async Task Parse_Should_Parse_Input_Arguments_To_Commands_And_DictionaryArguments_If_Parameter_Value_Contains_Semicolon_Test()
         {
             // Arrange
             var parameterName = "param";
@@ -174,16 +174,16 @@ namespace Polo.UnitTests
             _commandMock.Invocations.Clear();
 
             // Act
-            _sut.Parse(inputArguments, _commands);
+            await _sut.ParseAsync(inputArguments, _commands);
 
             // Assert
-            _commandMock.Verify(x => x.Action(It.IsAny<IReadOnlyDictionary<string, string>>(), It.IsAny<IEnumerable<ICommand>>()), Times.Once);
+            _commandMock.Verify(x => x.ActionAsync(It.IsAny<IReadOnlyDictionary<string, string>>(), It.IsAny<IEnumerable<ICommand>>()), Times.Once);
             _argumentsPassed.Should().BeEquivalentTo(parsedArguments);
             _commandsPassed.Should().BeEquivalentTo(_commands);
         }
 
         [Fact]
-        public void Parse_Should_Parse_Input_Arguments_To_Commands_And_DictionaryArguments_If_Parameter_Value_Contains_Many_Semicolons_Test()
+        public async Task Parse_Should_Parse_Input_Arguments_To_Commands_And_DictionaryArguments_If_Parameter_Value_Contains_Many_Semicolons_Test_Async()
         {
             // Arrange
             var parameterName = "param";
@@ -197,16 +197,16 @@ namespace Polo.UnitTests
             _commandMock.Invocations.Clear();
 
             // Act
-            _sut.Parse(inputArguments, _commands);
+            await _sut.ParseAsync(inputArguments, _commands);
 
             // Assert
-            _commandMock.Verify(x => x.Action(It.IsAny<IReadOnlyDictionary<string, string>>(), It.IsAny<IEnumerable<ICommand>>()), Times.Once);
+            _commandMock.Verify(x => x.ActionAsync(It.IsAny<IReadOnlyDictionary<string, string>>(), It.IsAny<IEnumerable<ICommand>>()), Times.Once);
             _argumentsPassed.Should().BeEquivalentTo(parsedArguments);
             _commandsPassed.Should().BeEquivalentTo(_commands);
         }
 
         [Fact]
-        public void Parse_Should_Parse_Input_Arguments_To_Commands_And_DictionaryArguments_If_Parameter_Value_Contains_Quotation_Marks_Test()
+        public async Task Parse_Should_Parse_Input_Arguments_To_Commands_And_DictionaryArguments_If_Parameter_Value_Contains_Quotation_Marks_Test_Async()
         {
             // Arrange
             var parameterName = "param";
@@ -219,10 +219,10 @@ namespace Polo.UnitTests
             _commandMock.Invocations.Clear();
 
             // Act
-            _sut.Parse(inputArguments, _commands);
+            await _sut.ParseAsync(inputArguments, _commands);
 
             // Assert
-            _commandMock.Verify(x => x.Action(It.IsAny<IReadOnlyDictionary<string, string>>(), It.IsAny<IEnumerable<ICommand>>()), Times.Once);
+            _commandMock.Verify(x => x.ActionAsync(It.IsAny<IReadOnlyDictionary<string, string>>(), It.IsAny<IEnumerable<ICommand>>()), Times.Once);
             _argumentsPassed.Should().BeEquivalentTo(parsedArguments);
             _commandsPassed.Should().BeEquivalentTo(_commands);
         }

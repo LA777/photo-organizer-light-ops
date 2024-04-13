@@ -13,8 +13,8 @@ namespace Polo.Commands
 {
     public class AddWatermarkCommand : ICommand
     {
-        public const string NameLong = "add-watermark";
-        public const string NameShort = "aw";
+        private const string NameLong = "add-watermark";
+        private const string NameShort = "aw";
         private readonly ApplicationSettingsReadOnly _applicationSettings;
         private readonly ILogger _logger;
 
@@ -41,7 +41,7 @@ namespace Polo.Commands
         };
 
         [SupportedOSPlatform("windows")]
-        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
+        public async Task ActionAsync(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
             // TODO LA - Add OverwriteFile parameter
 
@@ -79,7 +79,7 @@ namespace Polo.Commands
                 using var image = new MagickImage(imageForProcess);
                 image.Composite(transparentWatermark, watermarkPositionMagick, CompositeOperator.Over);
                 image.Quality = imageQuality; // TODO LA - Cover with UTs
-                image.Write(destinationImagePath);
+                await image.WriteAsync(destinationImagePath);
                 _logger.Information($"[{++index}/{imagesForProcess.Count}] Watermark added: {destinationImagePath}");
             }
         }

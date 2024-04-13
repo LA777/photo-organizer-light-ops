@@ -3,13 +3,13 @@ using Moq;
 using Polo.Abstractions.Commands;
 using Polo.Abstractions.Options;
 using Polo.Commands;
-using Polo.UnitTests.FileUtils;
 using Polo.UnitTests.Models;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Polo.UnitTests.Commands
@@ -34,24 +34,24 @@ namespace Polo.UnitTests.Commands
                 new Folder()
                 {
                     Name = _albumName,
-                    Files = new List<FotoFile>()
+                    Files = new List<PhotoFile>()
                     {
-                        new FotoFile("UTP-1", FileExtension.Jpg),
-                        new FotoFile("UTP-2", FileExtension.Jpeg.ToUpper())
+                        new PhotoFile("UTP-1", FileExtension.Jpg),
+                        new PhotoFile("UTP-2", FileExtension.Jpeg.ToUpper())
                     },
                     SubFolders = new List<Folder>()
                     {
                         new Folder()
                         {
                             Name = Constants.RawFolderName,
-                            Files = new List<FotoFile>()
+                            Files = new List<PhotoFile>()
                             {
-                                new FotoFile("UTP-1", FileExtension.Orf),
-                                new FotoFile("UTP-2", FileExtension.Orf),
-                                new FotoFile("UTP-3", FileExtension.Orf),
-                                new FotoFile("UTP-4", FileExtension.Orf),
-                                new FotoFile("UTP-5", FileExtension.Orf),
-                                new FotoFile("UTP-6", FileExtension.Orf),
+                                new PhotoFile("UTP-1", FileExtension.Orf),
+                                new PhotoFile("UTP-2", FileExtension.Orf),
+                                new PhotoFile("UTP-3", FileExtension.Orf),
+                                new PhotoFile("UTP-4", FileExtension.Orf),
+                                new PhotoFile("UTP-5", FileExtension.Orf),
+                                new PhotoFile("UTP-6", FileExtension.Orf),
                             }
                         }
                     }
@@ -66,20 +66,20 @@ namespace Polo.UnitTests.Commands
                 new Folder()
                 {
                     Name = _albumName,
-                    Files = new List<FotoFile>()
+                    Files = new List<PhotoFile>()
                     {
-                        new FotoFile("UTP-1", FileExtension.Jpg),
-                        new FotoFile("UTP-2", FileExtension.Jpeg.ToUpper())
+                        new PhotoFile("UTP-1", FileExtension.Jpg),
+                        new PhotoFile("UTP-2", FileExtension.Jpeg.ToUpper())
                     },
                     SubFolders = new List<Folder>()
                     {
                         new Folder()
                         {
                             Name = Constants.RawFolderName,
-                            Files = new List<FotoFile>()
+                            Files = new List<PhotoFile>()
                             {
-                                new FotoFile("UTP-1", FileExtension.Orf),
-                                new FotoFile("UTP-2", FileExtension.Orf)
+                                new PhotoFile("UTP-1", FileExtension.Orf),
+                                new PhotoFile("UTP-2", FileExtension.Orf)
                             }
                         }
                     }
@@ -94,7 +94,7 @@ namespace Polo.UnitTests.Commands
 
         private void AddRawFilesToStructure()
         {
-            var rawFiles = FileExtension.RawExtensions.Select(extension => new FotoFile($"image-{extension.TrimStart('.')}", extension)).ToList();
+            var rawFiles = FileExtension.RawExtensions.Select(extension => new PhotoFile($"image-{extension.TrimStart('.')}", extension)).ToList();
 
             _folderStructureInitial.SubFolders.Where(x => x.Name == _albumName).ToList()
                 .ForEach(x => x.SubFolders.Where(folder => folder.Name == Constants.RawFolderName).ToList()
@@ -102,14 +102,14 @@ namespace Polo.UnitTests.Commands
         }
 
         [Fact]
-        public void Action_Should_Create_Raw_Folder_And_Move_Raw_Files_Test()
+        public async Task Action_Should_Create_Raw_Folder_And_Move_Raw_Files_Test_Async()
         {
             // Arrange
             var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
             Environment.CurrentDirectory = Path.Combine(testFolderFullPath, _albumName);
 
             // Act
-            _sut.Action();
+            await _sut.ActionAsync();
 
             // Assert
             var folderStructureActual = FileHelper.CreateFolderStructureByFolderAndFiles(testFolderFullPath);
@@ -122,7 +122,7 @@ namespace Polo.UnitTests.Commands
 
 
         [Fact]
-        public void Action_Should_Create_Raw_Folder_And_Move_Raw_Files_If_Setting_Have_Duplicate_JpegFileExtension_Test()
+        public async Task Action_Should_Create_Raw_Folder_And_Move_Raw_Files_If_Setting_Have_Duplicate_JpegFileExtension_Test_Async()
         {
             // Arrange
             var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
@@ -138,7 +138,7 @@ namespace Polo.UnitTests.Commands
             var sut = new RemoveOrphanageRawCommand(GetOptions(applicationSettings), _loggerMock.Object);
 
             // Act
-            sut.Action();
+            await sut.ActionAsync();
 
             // Assert
             var folderStructureActual = FileHelper.CreateFolderStructureByFolderAndFiles(testFolderFullPath);
@@ -146,7 +146,7 @@ namespace Polo.UnitTests.Commands
         }
 
         [Fact]
-        public void AAction_Should_Create_Raw_Folder_And_Move_Raw_Files_If_Setting_Have_Duplicate_RawFileExtension_Test()
+        public async Task AAction_Should_Create_Raw_Folder_And_Move_Raw_Files_If_Setting_Have_Duplicate_RawFileExtension_Test_Async()
         {
             // Arrange
             var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
@@ -164,7 +164,7 @@ namespace Polo.UnitTests.Commands
             var sut = new RemoveOrphanageRawCommand(GetOptions(applicationSettings), _loggerMock.Object);
 
             // Act
-            sut.Action();
+            await sut.ActionAsync();
 
             // Assert
             var folderStructureActual = FileHelper.CreateFolderStructureByFolderAndFiles(testFolderFullPath);

@@ -12,8 +12,8 @@ namespace Polo.Commands
 {
     public class MoveCorruptedImagesCommand : ICommand
     {
-        public const string NameLong = "move-corrupted-images";
-        public const string NameShort = "mci";
+        private const string NameLong = "move-corrupted-images";
+        private const string NameShort = "mci";
         private readonly ApplicationSettingsReadOnly _applicationSettings;
         private readonly ILogger _logger;
 
@@ -36,7 +36,7 @@ namespace Polo.Commands
             RecursiveParameter = new RecursiveParameter()
         };
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
+        public Task ActionAsync(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
             var currentDirectory = Environment.CurrentDirectory;
             var sourceFolderPath = ParameterHandler.SourceParameter.Initialize(parameters, currentDirectory);
@@ -49,6 +49,8 @@ namespace Polo.Commands
             }
 
             MoveCorruptedImages(sourceFolderPath, destinationFolderPath, isRecursive);
+
+            return Task.CompletedTask;
         }
 
         private void MoveCorruptedImages(string fullFolderPath, string destinationFolderFullPath, bool isRecursive)

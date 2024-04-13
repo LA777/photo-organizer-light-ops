@@ -8,8 +8,8 @@ namespace Polo.Commands
 {
     public class RawCommand : ICommand
     {
-        public const string NameLong = "raw";
-        public const string NameShort = "r";
+        private const string NameLong = "raw";
+        private const string NameShort = "r";
         private readonly ApplicationSettingsReadOnly _applicationSettings;
         private readonly ILogger _logger;
 
@@ -27,7 +27,7 @@ namespace Polo.Commands
 
         public IParameterHandler ParameterHandler { get; } = null!;
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
+        public Task ActionAsync(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
             var currentDirectory = Environment.CurrentDirectory;
             var rawFolderPath = Path.Join(currentDirectory, _applicationSettings.RawFolderName); // TODO LA - Add RawFolderName parameter
@@ -44,6 +44,8 @@ namespace Polo.Commands
                 File.Move(rawFilePath, destinationFilePath);
                 _logger.Information($"Moved: {fileInfo.Name} to '{_applicationSettings.RawFolderName}'");
             }
+
+            return Task.CompletedTask;
         }
     }
 }

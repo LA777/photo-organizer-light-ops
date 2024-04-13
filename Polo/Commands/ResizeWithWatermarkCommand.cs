@@ -13,8 +13,8 @@ namespace Polo.Commands
 {
     public class ResizeWithWatermarkCommand : ICommand
     {
-        public const string NameLong = "resize-with-watermark";
-        public const string NameShort = "rww";
+        private const string NameLong = "resize-with-watermark";
+        private const string NameShort = "rww";
         private readonly ApplicationSettingsReadOnly _applicationSettings;
         private readonly ILogger _logger;
 
@@ -43,7 +43,7 @@ namespace Polo.Commands
         };
 
         [SupportedOSPlatform("windows")]
-        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
+        public async Task ActionAsync(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
             // TODO LA - Add OverwriteFile parameter and setting
 
@@ -99,7 +99,7 @@ namespace Polo.Commands
                 {
                     image.Composite(transparentWatermark, watermarkPositionMagick, CompositeOperator.Over);
                     image.Quality = imageQuality; // TODO LA - Cover with UTs
-                    image.Write(destinationImagePath);
+                    await image.WriteAsync(destinationImagePath);
                     _logger.Information($"[{++index}/{imagesForProcess.Count}] File copied with watermark and without resize: {destinationImagePath}");
 
                     continue;
@@ -107,7 +107,7 @@ namespace Polo.Commands
 
                 image.Composite(transparentWatermark, watermarkPositionMagick, CompositeOperator.Over);
                 image.Quality = imageQuality; // TODO LA - Cover with UTs
-                image.Write(destinationImagePath);
+                await image.WriteAsync(destinationImagePath);
                 _logger.Information($"[{++index}/{imagesForProcess.Count}] File resized with watermark: {destinationImagePath}");
             }
         }

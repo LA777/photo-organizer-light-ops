@@ -7,47 +7,31 @@ using System.Threading;
 
 namespace Polo.UnitTests.FileUtils
 {
-    public static class FileHelper
+    public class FileHelper
     {
-        public const int FileLimit = 5;
-        public const string JpegExtension = ".JPG";
-        public const string RawExtension = ".ORF";
         private const string TestFolderName = "UnitTestTemp";
-        public const string FilePrefix = "UTP-";
-        public const string RawFolderName = "RAW";
-        public const string WatermarkFolderName = "watermark";
-        public static readonly FotoFile Watermark = new FotoFile("watermark", ".png", 10, 10);
+        private const string WatermarkFolderName = "watermark";
+        public static readonly PhotoFile Watermark = new("watermark", ".png", 10, 10);
+        private readonly string _testFolderFullPath;
 
-        private static string UnitTestFolder
+        public FileHelper(string testFolderPath)
         {
-            get
-            {
-                try
-                {
-                    var testFodlerPath = Environment.GetEnvironmentVariable("TEST_FOLDER");
-                    if (!string.IsNullOrWhiteSpace(testFodlerPath))
-                    {
-                        return testFodlerPath;
-                    }
-                }
-                catch (Exception)
-                {
-                    // ignored
-                }
-
-                return Directory.GetCurrentDirectory(); // "photo-organizer-light-ops\\Polo.UnitTests\\bin\\Debug"
-            }
+            var unitTestFolder = !string.IsNullOrWhiteSpace(testFolderPath) ? testFolderPath : Directory.GetCurrentDirectory(); // "photo-organizer-light-ops\\Polo.UnitTests\\bin\\Debug"
+            _testFolderFullPath = Path.Join(unitTestFolder, TestFolderName);
         }
 
-        private static string TestFolderFullPath { get; set; } = Path.Join(UnitTestFolder, TestFolderName);
-
-        public static string CreateFoldersAndFilesByStructure(Folder folderStructure)
+        public string CreateFoldersAndFilesByStructure(Folder folderStructure)
         {
             var testFolderFullPath = CreateTestFolder();
 
-            foreach (var fotoFile in folderStructure.Files)
+            foreach (var photoFile in folderStructure.Files)
             {
-                CreateFileByFotoFile(testFolderFullPath, fotoFile);
+                CreateFileByPhotoFile(testFolderFullPath, photoFile);
+            }
+
+            foreach (var textFile in folderStructure.TextFiles)
+            {
+                CreateFileByTextFile(testFolderFullPath, textFile);
             }
 
             foreach (var subFolder in folderStructure.SubFolders)
@@ -58,9 +42,9 @@ namespace Polo.UnitTests.FileUtils
             return testFolderFullPath;
         }
 
-        public static string CreateWatermark()
+        public string CreateWatermark()
         {
-            var watermarkPath = Path.Combine(TestFolderFullPath, WatermarkFolderName, $"{Watermark.Name}{Watermark.Extension}");
+            var watermarkPath = Path.Combine(_testFolderFullPath, WatermarkFolderName, $"{Watermark.Name}{Watermark.Extension}");
 
             if (File.Exists(watermarkPath))
             {
@@ -69,48 +53,45 @@ namespace Polo.UnitTests.FileUtils
 
             var folderStructureInitial = new Folder()
             {
-                SubFolders = new List<Folder>()
-                {
-                    new Folder()
+                SubFolders =
+                [
+                    new Folder
                     {
                         Name = WatermarkFolderName,
-                        Files = new List<FotoFile>()
-                        {
-                            Watermark
-                        }
+                        Files = [Watermark]
                     }
-                }
+                ]
             };
 
             CreateFoldersAndFilesByStructure(folderStructureInitial);
 
-            return Path.Combine(TestFolderFullPath, WatermarkFolderName, $"{Watermark.Name}{Watermark.Extension}");
+            return Path.Combine(_testFolderFullPath, WatermarkFolderName, $"{Watermark.Name}{Watermark.Extension}");
         }
 
-        private static string CreateTestFolder()
+        private string CreateTestFolder()
         {
-            if (Directory.Exists(TestFolderFullPath))
+            if (Directory.Exists(_testFolderFullPath))
             {
-                Directory.Delete(TestFolderFullPath, true);
+                Directory.Delete(_testFolderFullPath, true);
             }
 
-            var directoryInfo = Directory.CreateDirectory(TestFolderFullPath);
+            var directoryInfo = Directory.CreateDirectory(_testFolderFullPath);
 
             return directoryInfo.FullName;
         }
 
-        public static void TryDeleteTestFolder(int retryCount = 3)
+        public void TryDeleteTestFolder(int retryCount = 3)
         {
-            if (!Directory.Exists(TestFolderFullPath))
+            if (!Directory.Exists(_testFolderFullPath))
             {
                 return;
             }
 
-            Environment.CurrentDirectory = Directory.GetParent(TestFolderFullPath)?.FullName ?? throw new DirectoryNotFoundException(TestFolderFullPath);
+            Environment.CurrentDirectory = Directory.GetParent(_testFolderFullPath)?.FullName ?? throw new DirectoryNotFoundException(_testFolderFullPath);
 
             try
             {
-                Directory.Delete(TestFolderFullPath, true);
+                Directory.Delete(_testFolderFullPath, true);
             }
             catch (Exception exception)
             {
@@ -126,14 +107,14 @@ namespace Polo.UnitTests.FileUtils
             }
         }
 
-        public static Folder CreateFolderStructureByFolderAndFiles(string folderFullPath)
+        public Folder CreateFolderStructureByFolderAndFiles(string folderFullPath)
         {
             var folderStructure = CreateFolderStructure(folderFullPath);
 
             return folderStructure;
         }
 
-        private static Folder CreateFolderStructure(string folderFullPath)
+        private Folder CreateFolderStructure(string folderFullPath)
         {
             var folderStructure = new Folder();
 
@@ -142,17 +123,17 @@ namespace Polo.UnitTests.FileUtils
             {
                 var fileName = Path.GetFileNameWithoutExtension(file);
                 var fileExtension = Path.GetExtension(file);
-                var fotoFile = new FotoFile(fileName, fileExtension);
+                var photoFile = new PhotoFile(fileName, fileExtension);
                 var fileExtensionUpper = fileExtension.ToUpper();
 
-                if (fileExtensionUpper == ".JPEG" || fileExtensionUpper == ".JPG" || fileExtensionUpper == ".PNG")
+                if (fileExtensionUpper is ".JPEG" or ".JPG" or ".PNG")
                 {
                     var (width, height) = TryGetWidthAndHeight(file);
-                    fotoFile.Width = width;
-                    fotoFile.Height = height;
+                    photoFile.Width = width;
+                    photoFile.Height = height;
                 }
 
-                folderStructure.Files.Add(fotoFile);
+                folderStructure.Files.Add(photoFile);
             }
 
             var subFoldersFullPath = Directory.EnumerateDirectories(folderFullPath, "*", SearchOption.TopDirectoryOnly);
@@ -167,7 +148,7 @@ namespace Polo.UnitTests.FileUtils
             return folderStructure;
         }
 
-        private static (int, int) TryGetWidthAndHeight(string filePath)
+        private (int, int) TryGetWidthAndHeight(string filePath)
         {
             try
             {
@@ -183,7 +164,7 @@ namespace Polo.UnitTests.FileUtils
             return (0, 0);
         }
 
-        private static void CreateFoldersAndFiles(Folder folderStructure, string parentFolderFullPath)
+        private void CreateFoldersAndFiles(Folder folderStructure, string parentFolderFullPath)
         {
             var currentFolderPath = Path.Combine(parentFolderFullPath, folderStructure.Name);
             if (!Directory.Exists(currentFolderPath))
@@ -191,9 +172,14 @@ namespace Polo.UnitTests.FileUtils
                 Directory.CreateDirectory(currentFolderPath);
             }
 
-            foreach (var fotoFile in folderStructure.Files)
+            foreach (var photoFile in folderStructure.Files)
             {
-                CreateFileByFotoFile(currentFolderPath, fotoFile);
+                CreateFileByPhotoFile(currentFolderPath, photoFile);
+            }
+
+            foreach (var textFile in folderStructure.TextFiles)
+            {
+                CreateFileByTextFile(currentFolderPath, textFile);
             }
 
             foreach (var folder in folderStructure.SubFolders)
@@ -202,20 +188,20 @@ namespace Polo.UnitTests.FileUtils
             }
         }
 
-        private static void CreateFileByFotoFile(string folderPath, FotoFile fotoFile)
+        private void CreateFileByPhotoFile(string folderPath, PhotoFile photoFile)
         {
-            var fullFileName = Path.Join(folderPath, fotoFile.GetNameWithExtension());
+            var fullFileName = Path.Join(folderPath, photoFile.GetNameWithExtension());
 
-            if (fotoFile.Width > 0 || fotoFile.Height > 0)
+            if (photoFile.Width > 0 || photoFile.Height > 0)
             {
-                if (fotoFile == Watermark)
+                if (photoFile == Watermark)
                 {
-                    using var image = new MagickImage(new MagickColor("#FFFFFF"), fotoFile.Width, fotoFile.Height);
+                    using var image = new MagickImage(new MagickColor("#FFFFFF"), photoFile.Width, photoFile.Height);
                     image.Write(fullFileName);
                 }
                 else
                 {
-                    using var image = new MagickImage(new MagickColor("#000000"), fotoFile.Width, fotoFile.Height);
+                    using var image = new MagickImage(new MagickColor("#000000"), photoFile.Width, photoFile.Height);
                     image.Write(fullFileName);
                 }
             }
@@ -223,10 +209,15 @@ namespace Polo.UnitTests.FileUtils
             {
                 using var fileStream = File.Create(fullFileName);
                 using var writer = new BinaryWriter(fileStream);
-                writer.Write($"{fotoFile.GetNameWithExtension()}-{Guid.NewGuid()}");
-                writer.Dispose();
-                fileStream.Dispose();
+                writer.Write($"{photoFile.GetNameWithExtension()}-{Guid.NewGuid()}");
             }
+        }
+
+        private void CreateFileByTextFile(string folderPath, TextFile textFile)
+        {
+            var fullFileName = Path.Join(folderPath, textFile.GetNameWithExtension());
+            using var outputFile = new StreamWriter(fullFileName);
+            outputFile.WriteLine(textFile);
         }
     }
 }

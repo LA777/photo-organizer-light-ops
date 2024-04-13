@@ -1,0 +1,6 @@
+{
+  "TestSettings": {
+    "EnvName": "local",
+    "TestFolderPath": "c://tests"
+  }
+}

@@ -8,8 +8,8 @@ namespace Polo.Commands
 {
     public class VersionCommand : ICommand
     {
-        public const string NameLong = "version";
-        public const string NameShort = "v";
+        private const string NameLong = "version";
+        private const string NameShort = "v";
         private readonly IConsoleWrapper _consoleWrapper;
         private readonly ILogger _logger;
 
@@ -27,7 +27,7 @@ namespace Polo.Commands
 
         public IParameterHandler ParameterHandler { get; } = null!;
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
+        public Task ActionAsync(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
             var version = Assembly.GetExecutingAssembly().GetName().Version;
             if (version == null)
@@ -38,6 +38,8 @@ namespace Polo.Commands
             var versionText = version.ToString();
             _logger.Verbose(versionText);
             _consoleWrapper.WriteLine(versionText);
+
+            return Task.CompletedTask;
         }
     }
 }

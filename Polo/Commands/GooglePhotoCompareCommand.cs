@@ -14,8 +14,8 @@ namespace Polo.Commands
 {
     public class GooglePhotoCompareCommand : ICommand
     {
-        public const string NameLong = "google-photo-compare";
-        public const string NameShort = "gpc";
+        private const string NameLong = "google-photo-compare";
+        private const string NameShort = "gpc";
         private readonly ApplicationSettingsReadOnly _applicationSettings;
         private readonly ILogger<GooglePhotoCompareCommand> _logger;
 
@@ -37,7 +37,7 @@ namespace Polo.Commands
             OutputFolderNameParameter = new OutputFolderNameParameter()
         };
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
+        public Task ActionAsync(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
             var currentFolder = Environment.CurrentDirectory;
             var sourceFolderPath = ParameterHandler.SourceParameter.Initialize(parameters, currentFolder);
@@ -101,6 +101,8 @@ namespace Polo.Commands
             {
                 _logger.LogInformation($"[{++index}] {absentItem}");
             }
+
+            return Task.CompletedTask;
         }
     }
 }

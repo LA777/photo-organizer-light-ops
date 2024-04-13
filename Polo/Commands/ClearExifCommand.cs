@@ -12,8 +12,8 @@ namespace Polo.Commands
 {
     public class ClearExifCommand : ICommand
     {
-        public const string NameLong = "clear-exif";
-        public const string NameShort = "ce";
+        private const string NameLong = "clear-exif";
+        private const string NameShort = "ce";
         private readonly ApplicationSettingsReadOnly _applicationSettings;
         private readonly ILogger _logger;
 
@@ -35,7 +35,7 @@ namespace Polo.Commands
             OutputFolderNameParameter = new OutputFolderNameParameter()
         };
 
-        public void Action(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
+        public async Task ActionAsync(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
         {
             // TODO LA - Cover with UTs
             var sourceFolderPath = ParameterHandler.SourceParameter.Initialize(parameters, Environment.CurrentDirectory);
@@ -60,7 +60,7 @@ namespace Polo.Commands
                 using var image = new MagickImage(imageForProcess);
                 var exifProfile = image.GetExifProfile();
                 image.RemoveProfile(exifProfile!);
-                image.Write(destinationImagePath);
+                await image.WriteAsync(destinationImagePath);
 
                 _logger.Information($"File copied without EXIF: {destinationImagePath}");
             }

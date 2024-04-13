@@ -1,4 +1,5 @@
 ﻿using Polo.Abstractions.Commands;
+using Polo.Abstractions.Enums;
 using Polo.Abstractions.Parameters;
 using Polo.Abstractions.Parameters.Handler;
 using System.Text;
@@ -21,6 +22,7 @@ namespace Polo.Parameters.Handler
         public IParameter<string> DestinationParameter { get; init; } = null!;
         public IParameter<int> ImageQualityParameter { get; init; } = null!;
         public IParameter<double> TimeDifferenceParameter { get; init; } = null!;
+        public IParameter<OutputFileType> OutputFileTypeParameter { get; init; } = null!;
         public IParameter<ICommand> CommandParameter { get; init; } = null!;
 
         public string GetParametersDescription()
@@ -109,6 +111,11 @@ namespace Polo.Parameters.Handler
             if (ExtensionParameter != null)
             {
                 parameters.Add(FsivThumbnailSizeParameter);
+            }
+
+            if (OutputFileTypeParameter != null)
+            {
+                parameters.Add(OutputFileTypeParameter);
             }
 
             if (CommandParameter != null)

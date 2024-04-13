@@ -3,13 +3,13 @@ using Moq;
 using Polo.Abstractions.Commands;
 using Polo.Abstractions.Options;
 using Polo.Commands;
-using Polo.UnitTests.FileUtils;
 using Polo.UnitTests.Models;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Polo.UnitTests.Commands
@@ -29,11 +29,11 @@ namespace Polo.UnitTests.Commands
                 new Folder()
                 {
                     Name = _albumName,
-                    Files = new List<FotoFile>()
+                    Files = new List<PhotoFile>()
                     {
-                        new FotoFile("video-1", FileExtension.Mp4),
-                        new FotoFile("UTP-1", FileExtension.Orf),
-                        new FotoFile("UTP-1", FileExtension.Jpg)
+                        new PhotoFile("video-1", FileExtension.Mp4),
+                        new PhotoFile("UTP-1", FileExtension.Orf),
+                        new PhotoFile("UTP-1", FileExtension.Jpg)
                     }
                 }
             }
@@ -46,19 +46,19 @@ namespace Polo.UnitTests.Commands
                 new Folder()
                 {
                     Name = _albumName,
-                    Files = new List<FotoFile>()
+                    Files = new List<PhotoFile>()
                     {
-                        new FotoFile("UTP-1", FileExtension.Orf),
-                        new FotoFile("UTP-1", FileExtension.Jpg)
+                        new PhotoFile("UTP-1", FileExtension.Orf),
+                        new PhotoFile("UTP-1", FileExtension.Jpg)
                     },
                     SubFolders = new List<Folder>()
                     {
                         new Folder()
                         {
                             Name = Constants.VideoFolderName,
-                            Files = new List<FotoFile>()
+                            Files = new List<PhotoFile>()
                             {
-                                new FotoFile("video-1", FileExtension.Mp4)
+                                new PhotoFile("video-1", FileExtension.Mp4)
                             }
                         }
                     }
@@ -73,7 +73,7 @@ namespace Polo.UnitTests.Commands
 
         private void AddVideoFilesToFolderStructure()
         {
-            var videoFiles = FileExtension.VideoExtensions.Select(extension => new FotoFile($"video-{extension.TrimStart('.')}", extension)).ToList();
+            var videoFiles = FileExtension.VideoExtensions.Select(extension => new PhotoFile($"video-{extension.TrimStart('.')}", extension)).ToList();
 
             _folderStructureInitial.SubFolders.Where(x => x.Name == _albumName).ToList().ForEach(x => x.Files.AddRange(videoFiles));
             _folderStructureExpected.SubFolders.Where(x => x.Name == _albumName).ToList()
@@ -82,14 +82,14 @@ namespace Polo.UnitTests.Commands
         }
 
         [Fact]
-        public void Action_Should_Create_Video_Folder_And_Move_Video_Files_Test()
+        public async Task Action_Should_Create_Video_Folder_And_Move_Video_Files_Test_Async()
         {
             // Arrange
             var testFolderFullPath = FileHelper.CreateFoldersAndFilesByStructure(_folderStructureInitial);
             Environment.CurrentDirectory = Path.Combine(testFolderFullPath, _albumName);
 
             // Act
-            _sut.Action();
+            await _sut.ActionAsync();
 
             // Assert
             var folderStructureActual = FileHelper.CreateFolderStructureByFolderAndFiles(testFolderFullPath);
