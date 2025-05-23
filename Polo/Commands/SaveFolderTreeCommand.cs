@@ -6,108 +6,107 @@ using Polo.Parameters.Handler;
 using Serilog;
 using System.Text;
 
-namespace Polo.Commands
+namespace Polo.Commands;
+
+public class SaveFolderTreeCommand : ICommand
 {
-    public class SaveFolderTreeCommand : ICommand
+    private const string NameLong = "save-folder-tree";
+    private const string NameShort = "sft";
+    private readonly ILogger _logger;
+
+    public SaveFolderTreeCommand(ILogger logger)
     {
-        private const string NameLong = "save-folder-tree";
-        private const string NameShort = "sft";
-        private readonly ILogger _logger;
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    }
 
-        public SaveFolderTreeCommand(ILogger logger)
+    public string Name => NameLong;
+
+    public string ShortName => NameShort;
+
+    public string Description => "Saves folder structure with all files and sub-folders.";
+
+    public IParameterHandler ParameterHandler => new ParameterHandler
+    {
+        SourceParameter = new SourceParameter(),
+        DestinationParameter = new DestinationParameter()
+    };
+
+    public async Task ActionAsync(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
+    {
+        var currentDirectory = Environment.CurrentDirectory;
+        var sourceFolderPath = ParameterHandler.SourceParameter.Initialize(parameters, currentDirectory);
+        var destinationFolder = ParameterHandler.DestinationParameter!.Initialize(parameters, sourceFolderPath);
+
+        var folderTree = CreateFolderTree(sourceFolderPath);
+
+        var json = ConvertToNsJson(folderTree);
+
+        const string outputFileName = "_FolderTree.json";
+        var outputFilePath = Path.Join(destinationFolder, outputFileName);
+        await System.IO.File.WriteAllTextAsync(outputFilePath, json, Encoding.Unicode);
+
+        var message = $"Folder tree saved in file: {outputFilePath}";
+        Console.WriteLine(message);
+        _logger.Information(message);
+    }
+
+    private static string ConvertToNsJson(Folder folderTree)
+    {
+        var settings = new JsonSerializerSettings
         {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        }
-
-        public string Name => NameLong;
-
-        public string ShortName => NameShort;
-
-        public string Description => "Saves folder structure with all files and sub-folders.";
-
-        public IParameterHandler ParameterHandler => new ParameterHandler
-        {
-            SourceParameter = new SourceParameter(),
-            DestinationParameter = new DestinationParameter()
+            NullValueHandling = NullValueHandling.Ignore
         };
 
-        public async Task ActionAsync(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
+        var json = JsonConvert.SerializeObject(folderTree, Formatting.Indented, settings);
+
+        return json.Replace(@"\\", @"\");
+    }
+
+    private static Folder CreateFolderTree(string path)
+    {
+        var folder = new Folder
         {
-            var currentDirectory = Environment.CurrentDirectory;
-            var sourceFolderPath = ParameterHandler.SourceParameter.Initialize(parameters, currentDirectory);
-            var destinationFolder = ParameterHandler.DestinationParameter!.Initialize(parameters, sourceFolderPath);
+            FolderName = new DirectoryInfo(path).Name,
+            FolderPath = path //.Replace(@"\\", @"\")
+        };
 
-            var folderTree = CreateFolderTree(sourceFolderPath);
+        var subFolders = Directory.EnumerateDirectories(path);
+        foreach (var subFolderPath in subFolders)
+        {
+            var subFolder = CreateFolderTree(subFolderPath);
+            folder.Subfolders ??= new List<Folder>();
 
-            var json = ConvertToNsJson(folderTree);
-
-            const string outputFileName = "_FolderTree.json";
-            var outputFilePath = Path.Join(destinationFolder, outputFileName);
-            await System.IO.File.WriteAllTextAsync(outputFilePath, json, Encoding.Unicode);
-
-            var message = $"Folder tree saved in file: {outputFilePath}";
-            Console.WriteLine(message);
-            _logger.Information(message);
+            folder.Subfolders.Add(subFolder);
         }
 
-        private static string ConvertToNsJson(Folder folderTree)
+        var files = Directory.EnumerateFiles(path);
+        foreach (var filePath in files)
         {
-            var settings = new JsonSerializerSettings
+            var fileInfo = new FileInfo(filePath);
+
+            var file = new File
             {
-                NullValueHandling = NullValueHandling.Ignore
+                FileName = fileInfo.Name,
+                FileSize = fileInfo.Length
             };
-
-            var json = JsonConvert.SerializeObject(folderTree, Formatting.Indented, settings);
-
-            return json.Replace(@"\\", @"\");
+            folder.Files ??= new List<File>();
+            folder.Files.Add(file);
         }
 
-        private static Folder CreateFolderTree(string path)
-        {
-            var folder = new Folder
-            {
-                FolderName = new DirectoryInfo(path).Name,
-                FolderPath = path //.Replace(@"\\", @"\")
-            };
+        return folder;
+    }
 
-            var subFolders = Directory.EnumerateDirectories(path);
-            foreach (var subFolderPath in subFolders)
-            {
-                var subFolder = CreateFolderTree(subFolderPath);
-                folder.Subfolders ??= new List<Folder>();
+    public class Folder
+    {
+        public string? FolderName { get; set; }
+        public string? FolderPath { get; set; }
+        public IList<Folder>? Subfolders { get; set; }
+        public IList<File>? Files { get; set; }
+    }
 
-                folder.Subfolders.Add(subFolder);
-            }
-
-            var files = Directory.EnumerateFiles(path);
-            foreach (var filePath in files)
-            {
-                var fileInfo = new FileInfo(filePath);
-
-                var file = new File
-                {
-                    FileName = fileInfo.Name,
-                    FileSize = fileInfo.Length
-                };
-                folder.Files ??= new List<File>();
-                folder.Files.Add(file);
-            }
-
-            return folder;
-        }
-
-        public class Folder
-        {
-            public string? FolderName { get; set; }
-            public string? FolderPath { get; set; }
-            public IList<Folder>? Subfolders { get; set; }
-            public IList<File>? Files { get; set; }
-        }
-
-        public class File
-        {
-            public string? FileName { get; set; }
-            public long FileSize { get; set; }
-        }
+    public class File
+    {
+        public string? FileName { get; set; }
+        public long FileSize { get; set; }
     }
 }

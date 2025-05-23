@@ -3,40 +3,39 @@ using Polo.Abstractions.Exceptions;
 using Polo.Abstractions.Parameters;
 using Polo.Extensions;
 
-namespace Polo.Parameters
+namespace Polo.Parameters;
+
+public class LongSideLimitParameter : IParameter<uint>
 {
-    public class LongSideLimitParameter : IParameter<int>
+    public static uint Min => 1;
+
+    public string Name => "long-side-limit";
+
+    public IReadOnlyCollection<string> PossibleValues => [Min.ToString(), "1200"];
+
+    public string Description => "Long side limit for image resize.";
+
+    public uint Initialize(IReadOnlyDictionary<string, string> inputParameters, uint defaultValue, IEnumerable<ICommand> commands = null!)
     {
-        public static int Min => 1;
+        var outputValue = defaultValue;
 
-        public string Name => "long-side-limit";
-
-        public IReadOnlyCollection<string> PossibleValues => new List<string> { Min.ToString(), "1200" };
-
-        public string Description => "Long side limit for image resize.";
-
-        public int Initialize(IReadOnlyDictionary<string, string> inputParameters, int defaultValue, IEnumerable<ICommand> commands = null!)
+        if (!inputParameters.IsNullOrEmpty() && inputParameters.TryGetValue(Name, out var parameterValue))
         {
-            var outputValue = defaultValue;
-
-            if (!inputParameters.IsNullOrEmpty() && inputParameters.TryGetValue(Name, out var parameterValue))
+            if (uint.TryParse(parameterValue, out var number))
             {
-                if (int.TryParse(parameterValue, out var number))
-                {
-                    outputValue = number;
-                }
-                else
-                {
-                    throw new ParameterParseException($"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{Name}' is not a number.");
-                }
+                outputValue = number;
             }
-
-            if (outputValue < Min)
+            else
             {
-                throw new ArgumentOutOfRangeException($"{CommandParser.ShortCommandPrefix}{Name}", $"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{Name}' should be higher than {Min - 1}.");
+                throw new ParameterParseException($"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{Name}' is not a number.");
             }
-
-            return outputValue;
         }
+
+        if (outputValue < Min)
+        {
+            throw new ArgumentOutOfRangeException($"{CommandParser.ShortCommandPrefix}{Name}", $"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{Name}' should be higher than {Min - 1}.");
+        }
+
+        return outputValue;
     }
 }

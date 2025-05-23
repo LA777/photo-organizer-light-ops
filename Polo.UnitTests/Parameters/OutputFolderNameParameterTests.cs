@@ -6,78 +6,77 @@ using Polo.Parameters;
 using System.Collections.Generic;
 using Xunit;
 
-namespace Polo.UnitTests.Parameters
+namespace Polo.UnitTests.Parameters;
+
+public class OutputFolderNameParameterTests
 {
-    public class OutputFolderNameParameterTests
+    private readonly IParameter<string> _sut = new OutputFolderNameParameter();
+
+    [Fact]
+    public void Initialize_Should_Return_Input_Parameter_Test()
     {
-        private readonly IParameter<string> _sut = new OutputFolderNameParameter();
-
-        [Fact]
-        public void Initialize_Should_Return_Input_Parameter_Test()
+        // Arrange
+        const string inputParameter = nameof(inputParameter);
+        const string defaultValue = nameof(defaultValue);
+        var inputParameters = new Dictionary<string, string>
         {
-            // Arrange
-            const string inputParameter = nameof(inputParameter);
-            const string defaultValue = nameof(defaultValue);
-            var inputParameters = new Dictionary<string, string>
-            {
-                { new OutputFolderNameParameter().Name, inputParameter }
-            };
+            { new OutputFolderNameParameter().Name, inputParameter }
+        };
 
-            // Act
-            var result = _sut.Initialize(inputParameters, defaultValue);
+        // Act
+        var result = _sut.Initialize(inputParameters, defaultValue);
 
-            // Assert
-            result.Should().Be(inputParameter);
-        }
+        // Assert
+        result.Should().Be(inputParameter);
+    }
 
-        [Fact]
-        public void Initialize_Should_Return_Default_Parameter_Test()
+    [Fact]
+    public void Initialize_Should_Return_Default_Parameter_Test()
+    {
+        // Arrange
+        const string defaultValue = nameof(defaultValue);
+        var inputParameters = new Dictionary<string, string>();
+
+        // Act
+        var result = _sut.Initialize(inputParameters, defaultValue);
+
+        // Assert
+        result.Should().Be(defaultValue);
+    }
+
+    [Theory]
+    [InlineData(" ")]
+    [InlineData("")]
+    [InlineData(null)]
+    public void Initialize_Should_Throw_ParameterAbsentException_If_Input_Parameter_Is_Null_Or_WhiteSpace_Test(string parameterValue)
+    {
+        // Arrange
+        const string defaultValue = nameof(defaultValue);
+        var inputParameters = new Dictionary<string, string>
         {
-            // Arrange
-            const string defaultValue = nameof(defaultValue);
-            var inputParameters = new Dictionary<string, string>();
+            { new OutputFolderNameParameter().Name, parameterValue }
+        };
 
-            // Act
-            var result = _sut.Initialize(inputParameters, defaultValue);
+        // Act
+        var exception = Assert.Throws<ParameterAbsentException>(() => _sut.Initialize(inputParameters, defaultValue));
 
-            // Assert
-            result.Should().Be(defaultValue);
-        }
+        // Assert
+        Assert.Contains($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{new OutputFolderNameParameter().Name}' parameter or setup setting value '{nameof(ApplicationSettingsReadOnly.OutputSubfolderName)}'.", exception.Message);
+    }
 
-        [Theory]
-        [InlineData(" ")]
-        [InlineData("")]
-        [InlineData(null)]
-        public void Initialize_Should_Throw_ParameterAbsentException_If_Input_Parameter_Is_Null_Or_WhiteSpace_Test(string parameterValue)
-        {
-            // Arrange
-            const string defaultValue = nameof(defaultValue);
-            var inputParameters = new Dictionary<string, string>
-            {
-                { new OutputFolderNameParameter().Name, parameterValue }
-            };
+    [Theory]
+    [InlineData(" ")]
+    [InlineData("")]
+    [InlineData(null)]
+    public void Initialize_Should_Throw_ParameterAbsentException_If_Default_Parameter_Is_Null_Or_WhiteSpace_Test(string parameterValue)
+    {
+        // Arrange
+        var inputParameters = new Dictionary<string, string>();
 
-            // Act
-            var exception = Assert.Throws<ParameterAbsentException>(() => _sut.Initialize(inputParameters, defaultValue));
+        // Act
+        var exception = Assert.Throws<ParameterAbsentException>(() => _sut.Initialize(inputParameters, parameterValue));
 
-            // Assert
-            Assert.Contains($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{new OutputFolderNameParameter().Name}' parameter or setup setting value '{nameof(ApplicationSettingsReadOnly.OutputSubfolderName)}'.", exception.Message);
-        }
-
-        [Theory]
-        [InlineData(" ")]
-        [InlineData("")]
-        [InlineData(null)]
-        public void Initialize_Should_Throw_ParameterAbsentException_If_Default_Parameter_Is_Null_Or_WhiteSpace_Test(string parameterValue)
-        {
-            // Arrange
-            var inputParameters = new Dictionary<string, string>();
-
-            // Act
-            var exception = Assert.Throws<ParameterAbsentException>(() => _sut.Initialize(inputParameters, parameterValue));
-
-            // Assert
-            Assert.Contains($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{new OutputFolderNameParameter().Name}' parameter or setup setting value '{nameof(ApplicationSettingsReadOnly.OutputSubfolderName)}'.", exception.Message);
-        }
+        // Assert
+        Assert.Contains($"ERROR: Please provide '{CommandParser.ShortCommandPrefix}{new OutputFolderNameParameter().Name}' parameter or setup setting value '{nameof(ApplicationSettingsReadOnly.OutputSubfolderName)}'.", exception.Message);
     }
 }

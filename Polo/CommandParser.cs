@@ -3,86 +3,85 @@ using Polo.Abstractions.Commands;
 using Polo.Abstractions.Exceptions;
 using Serilog;
 
-namespace Polo
-{
-    public class CommandParser : ICommandParser
-    {
-        public const string ShortCommandPrefix = "-";
-        public const string CommandPrefix = "--";
-        public const string ParameterDelimiter = ":";
-        private readonly ILogger _logger;
+namespace Polo;
 
-        public CommandParser(ILogger logger)
+public class CommandParser : ICommandParser
+{
+    public const string ShortCommandPrefix = "-";
+    public const string CommandPrefix = "--";
+    public const string ParameterDelimiter = ":";
+    private readonly ILogger _logger;
+
+    public CommandParser(ILogger logger)
+    {
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    }
+
+    public async Task ParseAsync(string[] arguments, IEnumerable<ICommand> commands)
+    {
+        if (arguments == null || !arguments.Any())
         {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            throw new ParameterParseException("ERROR: No command provided. Please enter --help to see available commands list.");
         }
 
-        public async Task ParseAsync(string[] arguments, IEnumerable<ICommand> commands)
+        var commandArgument = arguments.First();
+        var parameters = new Dictionary<string, string>();
+        var commandsList = commands.ToList();
+
+        if (arguments.Length > 1)
         {
-            if (arguments == null || !arguments.Any())
-            {
-                throw new ParameterParseException("ERROR: No command provided. Please enter --help to see available commands list.");
-            }
+            parameters = ParseParameters(arguments.Skip(1).ToArray());
+        }
 
-            var commandArgument = arguments.First();
-            var parameters = new Dictionary<string, string>();
-            var commandsList = commands.ToList();
+        var matchedCommand = commandsList.FirstOrDefault(x => $"{CommandPrefix}{x.Name}" == commandArgument);
+        if (matchedCommand != null)
+        {
+            _logger.Verbose($"Argument '{commandArgument}' matched to command '{matchedCommand.Name}'");
+            await matchedCommand.ActionAsync(parameters, commandsList);
+        }
+        else
+        {
+            var matchedShortCommand = commandsList.FirstOrDefault(x => $"{ShortCommandPrefix}{x.ShortName}" == commandArgument);
 
-            if (arguments.Length > 1)
+            if (matchedShortCommand != null)
             {
-                parameters = ParseParameters(arguments.Skip(1).ToArray());
-            }
-
-            var matchedCommand = commandsList.FirstOrDefault(x => $"{CommandPrefix}{x.Name}" == commandArgument);
-            if (matchedCommand != null)
-            {
-                _logger.Verbose($"Argument '{commandArgument}' matched to command '{matchedCommand.Name}'");
-                await matchedCommand.ActionAsync(parameters, commandsList);
+                _logger.Verbose($"Argument '{commandArgument}' matched to command '{matchedShortCommand.Name}'");
+                await matchedShortCommand.ActionAsync(parameters, commandsList);
             }
             else
             {
-                var matchedShortCommand = commandsList.FirstOrDefault(x => $"{ShortCommandPrefix}{x.ShortName}" == commandArgument);
-
-                if (matchedShortCommand != null)
-                {
-                    _logger.Verbose($"Argument '{commandArgument}' matched to command '{matchedShortCommand.Name}'");
-                    await matchedShortCommand.ActionAsync(parameters, commandsList);
-                }
-                else
-                {
-                    throw new ParameterParseException("ERROR: Unknown command. Please enter --help to see available commands list."); // TODO LA - Refactor
-                }
+                throw new ParameterParseException("ERROR: Unknown command. Please enter --help to see available commands list."); // TODO LA - Refactor
             }
-
-            _logger.Verbose($"Command '{commandArgument}' DONE!");
         }
 
-        private Dictionary<string, string> ParseParameters(IEnumerable<string> arguments)
+        _logger.Verbose($"Command '{commandArgument}' DONE!");
+    }
+
+    private Dictionary<string, string> ParseParameters(IEnumerable<string> arguments)
+    {
+        var dictionary = new Dictionary<string, string>();
+
+        foreach (var argument in arguments)
         {
-            var dictionary = new Dictionary<string, string>();
-
-            foreach (var argument in arguments)
+            if (!argument.StartsWith(ShortCommandPrefix))
             {
-                if (!argument.StartsWith(ShortCommandPrefix))
-                {
-                    throw new ParameterParseException("ERROR: Unknown parameter. Please enter --help to see available parameters list."); // TODO LA - Refactor
-                }
-
-                var argumentWithoutPrefix = argument.TrimStart(ShortCommandPrefix.ToCharArray().First());
-                var split = argumentWithoutPrefix.Split(ParameterDelimiter);
-
-                if (split.Length < 2)
-                {
-                    throw new ParameterParseException("ERROR: Parameter delimiter missed. Please enter --help to see correct parameter syntax."); // TODO LA - Refactor
-                }
-
-                var value = split.Length > 2 ? string.Join(ParameterDelimiter, split.Skip(1)) : split[1];
-
-                _logger.Verbose($"Parameter name: '{split[0]}' value: '{value}'");
-                dictionary.Add(split[0], value);
+                throw new ParameterParseException("ERROR: Unknown parameter. Please enter --help to see available parameters list."); // TODO LA - Refactor
             }
 
-            return dictionary;
+            var argumentWithoutPrefix = argument.TrimStart(ShortCommandPrefix.ToCharArray().First());
+            var split = argumentWithoutPrefix.Split(ParameterDelimiter);
+
+            if (split.Length < 2)
+            {
+                throw new ParameterParseException("ERROR: Parameter delimiter missed. Please enter --help to see correct parameter syntax."); // TODO LA - Refactor
+            }
+
+            var value = split.Length > 2 ? string.Join(ParameterDelimiter, split.Skip(1)) : split[1];
+
+            _logger.Verbose($"Parameter name: '{split[0]}' value: '{value}'");
+            dictionary.Add(split[0], value);
         }
+
+        return dictionary;
     }
 }

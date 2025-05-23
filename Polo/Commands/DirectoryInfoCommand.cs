@@ -6,56 +6,55 @@ using Polo.Parameters;
 using Polo.Parameters.Handler;
 using Serilog;
 
-namespace Polo.Commands
+namespace Polo.Commands;
+
+public class DirectoryInfoCommand : ICommand
 {
-    public class DirectoryInfoCommand : ICommand
+    private const string NameLong = "directory-info";
+    private const string NameShort = "di";
+    private readonly ApplicationSettingsReadOnly _applicationSettings;
+    private readonly ILogger _logger;
+
+    public DirectoryInfoCommand(IOptions<ApplicationSettingsReadOnly> applicationOptions, ILogger logger)
     {
-        private const string NameLong = "directory-info";
-        private const string NameShort = "di";
-        private readonly ApplicationSettingsReadOnly _applicationSettings;
-        private readonly ILogger _logger;
+        _applicationSettings = applicationOptions.Value ?? throw new ArgumentNullException(nameof(applicationOptions));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    }
 
-        public DirectoryInfoCommand(IOptions<ApplicationSettingsReadOnly> applicationOptions, ILogger logger)
+    public string Name => NameLong;
+
+    public string ShortName => NameShort;
+
+    public string Description => "Shows information about size of subdirectories.";
+
+    public IParameterHandler ParameterHandler => new ParameterHandler
+    {
+        SourceParameter = new SourceParameter()
+    };
+
+    public Task ActionAsync(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
+    {
+        var sourceFolder = ParameterHandler.SourceParameter.Initialize(parameters, Environment.CurrentDirectory);
+        var subFolders = Directory.EnumerateDirectories(sourceFolder, "*.*", SearchOption.TopDirectoryOnly);
+
+        foreach (var subFolder in subFolders)
         {
-            _applicationSettings = applicationOptions.Value ?? throw new ArgumentNullException(nameof(applicationOptions));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            var subFolderInfo = new DirectoryInfo(subFolder);
+            var folderSize = DirectorySize(subFolderInfo);
+            Console.WriteLine($"{subFolderInfo.Name}\t\t\t{folderSize:##,#}");
         }
 
-        public string Name => NameLong;
+        return Task.CompletedTask;
+    }
 
-        public string ShortName => NameShort;
-
-        public string Description => "Shows information about size of subdirectories.";
-
-        public IParameterHandler ParameterHandler => new ParameterHandler
-        {
-            SourceParameter = new SourceParameter()
-        };
-
-        public Task ActionAsync(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
-        {
-            var sourceFolder = ParameterHandler.SourceParameter.Initialize(parameters, Environment.CurrentDirectory);
-            var subFolders = Directory.EnumerateDirectories(sourceFolder, "*.*", SearchOption.TopDirectoryOnly);
-
-            foreach (var subFolder in subFolders)
-            {
-                var subFolderInfo = new DirectoryInfo(subFolder);
-                var folderSize = DirectorySize(subFolderInfo);
-                Console.WriteLine($"{subFolderInfo.Name}\t\t\t{folderSize:##,#}");
-            }
-
-            return Task.CompletedTask;
-        }
-
-        private static long DirectorySize(DirectoryInfo directoryInfo)
-        {
-            // Add file sizes.
-            var fileInfos = directoryInfo.GetFiles();
-            var size = fileInfos.Sum(fileInfo => fileInfo.Length);
-            // Add sub-directory sizes.
-            var directoryInfos = directoryInfo.GetDirectories();
-            size += directoryInfos.Sum(DirectorySize);
-            return size;
-        }
+    private static long DirectorySize(DirectoryInfo directoryInfo)
+    {
+        // Add file sizes.
+        var fileInfos = directoryInfo.GetFiles();
+        var size = fileInfos.Sum(fileInfo => fileInfo.Length);
+        // Add sub-directory sizes.
+        var directoryInfos = directoryInfo.GetDirectories();
+        size += directoryInfos.Sum(DirectorySize);
+        return size;
     }
 }

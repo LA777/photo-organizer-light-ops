@@ -8,77 +8,76 @@ using Polo.Parameters;
 using Polo.Parameters.Handler;
 using Serilog;
 
-namespace Polo.Commands
+namespace Polo.Commands;
+
+public class CopyValidImagesCommand : ICommand
 {
-    public class CopyValidImagesCommand : ICommand
+    private const string NameLong = "copy-valid-images";
+    private const string NameShort = "cvi";
+    private readonly ApplicationSettingsReadOnly _applicationSettings;
+    private readonly ILogger _logger;
+
+    public CopyValidImagesCommand(IOptions<ApplicationSettingsReadOnly> applicationOptions, ILogger logger)
     {
-        private const string NameLong = "copy-valid-images";
-        private const string NameShort = "cvi";
-        private readonly ApplicationSettingsReadOnly _applicationSettings;
-        private readonly ILogger _logger;
+        _applicationSettings = applicationOptions.Value ?? throw new ArgumentNullException(nameof(applicationOptions));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    }
 
-        public CopyValidImagesCommand(IOptions<ApplicationSettingsReadOnly> applicationOptions, ILogger logger)
+    public string Name => NameLong;
+
+    public string ShortName => NameShort;
+
+    public string Description => "Copy valid (image contains at least some pixels) images into destination folder.";
+
+    public IParameterHandler ParameterHandler => new ParameterHandler
+    {
+        SourceParameter = new SourceParameter(),
+        DestinationParameter = new DestinationParameter()
+    };
+
+    public Task ActionAsync(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
+    {
+        var currentDirectory = Environment.CurrentDirectory;
+        var sourceFolderPath = ParameterHandler.SourceParameter.Initialize(parameters, currentDirectory);
+        var destinationFolderPath = ParameterHandler.DestinationParameter!.Initialize(parameters, string.Empty);
+
+        if (!Directory.Exists(destinationFolderPath))
         {
-            _applicationSettings = applicationOptions.Value ?? throw new ArgumentNullException(nameof(applicationOptions));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            Directory.CreateDirectory(destinationFolderPath);
         }
 
-        public string Name => NameLong;
+        CopyValidImages(sourceFolderPath, destinationFolderPath);
 
-        public string ShortName => NameShort;
+        return Task.CompletedTask;
+    }
 
-        public string Description => "Copy valid (image contains at least some pixels) images into destination folder.";
+    private void CopyValidImages(string fullFolderPath, string destinationFolderFullPath)
+    {
+        var imageFiles = new List<string>();
+        _applicationSettings.ImageFileExtensions.Distinct().ToList()
+            .ForEach(x => imageFiles.AddRange(Directory.EnumerateFiles(fullFolderPath, $"*{x}", SearchOption.TopDirectoryOnly)));
 
-        public IParameterHandler ParameterHandler => new ParameterHandler
+        foreach (var imageFilePath in imageFiles)
         {
-            SourceParameter = new SourceParameter(),
-            DestinationParameter = new DestinationParameter()
-        };
-
-        public Task ActionAsync(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
-        {
-            var currentDirectory = Environment.CurrentDirectory;
-            var sourceFolderPath = ParameterHandler.SourceParameter.Initialize(parameters, currentDirectory);
-            var destinationFolderPath = ParameterHandler.DestinationParameter!.Initialize(parameters, string.Empty);
-
-            if (!Directory.Exists(destinationFolderPath))
+            try
             {
-                Directory.CreateDirectory(destinationFolderPath);
+                using var image = new MagickImage(imageFilePath);
+                var imageFileInfo = new FileInfo(imageFilePath);
+                var destinationImagePath = imageFileInfo.GenerateFileFullPath(destinationFolderFullPath);
+
+                File.Copy(imageFilePath, destinationImagePath);
+                _logger.Information($"Valid file copied: {destinationImagePath}");
             }
-
-            CopyValidImages(sourceFolderPath, destinationFolderPath);
-
-            return Task.CompletedTask;
+            catch (Exception)
+            {
+                _logger.Information($"Invalid file skipped: {imageFilePath}");
+            }
         }
 
-        private void CopyValidImages(string fullFolderPath, string destinationFolderFullPath)
+        var subFolders = Directory.EnumerateDirectories(fullFolderPath);
+        foreach (var subFolderPath in subFolders)
         {
-            var imageFiles = new List<string>();
-            _applicationSettings.ImageFileExtensions.Distinct().ToList()
-                .ForEach(x => imageFiles.AddRange(Directory.EnumerateFiles(fullFolderPath, $"*{x}", SearchOption.TopDirectoryOnly)));
-
-            foreach (var imageFilePath in imageFiles)
-            {
-                try
-                {
-                    using var image = new MagickImage(imageFilePath);
-                    var imageFileInfo = new FileInfo(imageFilePath);
-                    var destinationImagePath = imageFileInfo.GenerateFileFullPath(destinationFolderFullPath);
-
-                    File.Copy(imageFilePath, destinationImagePath);
-                    _logger.Information($"Valid file copied: {destinationImagePath}");
-                }
-                catch (Exception)
-                {
-                    _logger.Information($"Invalid file skipped: {imageFilePath}");
-                }
-            }
-
-            var subFolders = Directory.EnumerateDirectories(fullFolderPath);
-            foreach (var subFolderPath in subFolders)
-            {
-                CopyValidImages(subFolderPath, destinationFolderFullPath);
-            }
+            CopyValidImages(subFolderPath, destinationFolderFullPath);
         }
     }
 }

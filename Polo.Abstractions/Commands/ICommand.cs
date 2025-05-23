@@ -1,17 +1,16 @@
 ﻿using Polo.Abstractions.Parameters.Handler;
 
-namespace Polo.Abstractions.Commands
+namespace Polo.Abstractions.Commands;
+
+public interface ICommand
 {
-    public interface ICommand
-    {
-        public string Name { get; }
+    public string Name { get; }
 
-        public string ShortName { get; }
+    public string ShortName { get; }
 
-        public string Description { get; }
+    public string Description { get; }
 
-        public IParameterHandler ParameterHandler { get; }
+    public IParameterHandler ParameterHandler { get; }
 
-        public Task ActionAsync(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!);
-    }
+    public Task ActionAsync(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!);
 }

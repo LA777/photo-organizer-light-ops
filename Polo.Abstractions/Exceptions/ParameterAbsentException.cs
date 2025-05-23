@@ -1,13 +1,10 @@
-﻿using System;
+﻿namespace Polo.Abstractions.Exceptions;
 
-namespace Polo.Abstractions.Exceptions
+public class ParameterAbsentException : Exception
 {
-    public class ParameterAbsentException : Exception
-    {
-        public ParameterAbsentException() { }
+    public ParameterAbsentException() { }
 
-        public ParameterAbsentException(string message) : base(message) { }
+    public ParameterAbsentException(string message) : base(message) { }
 
-        public ParameterAbsentException(string message, Exception innerException) : base(message, innerException) { }
-    }
+    public ParameterAbsentException(string message, Exception innerException) : base(message, innerException) { }
 }

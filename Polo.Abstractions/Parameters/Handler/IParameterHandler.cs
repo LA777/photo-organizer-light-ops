@@ -1,26 +1,25 @@
 ﻿using Polo.Abstractions.Commands;
 
-namespace Polo.Abstractions.Parameters.Handler
+namespace Polo.Abstractions.Parameters.Handler;
+
+public interface IParameterHandler
 {
-    public interface IParameterHandler
-    {
-        public IParameter<string> SourceParameter { get; init; }
-        public IParameter<string> ExtensionParameter { get; init; }
-        public IParameter<string> WatermarkPathParameter { get; init; }
-        public IParameter<string> OutputFolderNameParameter { get; init; }
-        public IParameter<string> PositionParameter { get; init; }
-        public IParameter<int> TransparencyParameter { get; init; }
-        public IParameter<int> LongSideLimitParameter { get; init; }
-        public IParameter<float> MegaPixelsLimitParameter { get; init; }
-        public IParameter<string> DestinationParameter { get; init; }
-        public IParameter<int> ImageQualityParameter { get; init; }
-        public IParameter<double> TimeDifferenceParameter { get; init; }
-        public IParameter<bool> RecursiveParameter { get; init; }
-        public IParameter<int> FsivThumbnailSizeParameter { get; init; }
-        public IParameter<ICommand> CommandParameter { get; init; }
+    public IParameter<string> SourceParameter { get; init; }
+    public IParameter<string> ExtensionParameter { get; init; }
+    public IParameter<string> WatermarkPathParameter { get; init; }
+    public IParameter<string> OutputFolderNameParameter { get; init; }
+    public IParameter<string> PositionParameter { get; init; }
+    public IParameter<int> TransparencyParameter { get; init; }
+    public IParameter<uint> LongSideLimitParameter { get; init; }
+    public IParameter<float> MegaPixelsLimitParameter { get; init; }
+    public IParameter<string> DestinationParameter { get; init; }
+    public IParameter<uint> ImageQualityParameter { get; init; }
+    public IParameter<double> TimeDifferenceParameter { get; init; }
+    public IParameter<bool> RecursiveParameter { get; init; }
+    public IParameter<uint> FsivThumbnailSizeParameter { get; init; }
+    public IParameter<ICommand> CommandParameter { get; init; }
 
-        public string GetParametersDescription();
+    public string GetParametersDescription();
 
-        public IReadOnlyCollection<IParameterInfo?> GetParameters();
-    }
+    public IReadOnlyCollection<IParameterInfo?> GetParameters();
 }

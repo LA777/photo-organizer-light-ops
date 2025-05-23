@@ -1,8 +1,7 @@
-﻿namespace Polo.Abstractions.Enums
+﻿namespace Polo.Abstractions.Enums;
+
+public enum FsivItemType
 {
-    public enum FsivItemType
-    {
-        File = 0,
-        Folder = 1
-    }
+    File = 0,
+    Folder = 1
 }

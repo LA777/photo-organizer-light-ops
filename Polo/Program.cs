@@ -14,115 +14,111 @@ using Serilog.Events;
 using System.Reflection;
 using System.Text;
 
-namespace Polo
+namespace Polo;
+
+public static class Program
 {
-    public static class Program
+    private static IConfiguration Configuration { get; } = new ConfigurationBuilder()
+        .SetBasePath(Directory.GetCurrentDirectory())
+        .AddJsonFile(Path.Combine(AppContext.BaseDirectory, @"settings\settings.json"), false, false)
+        .Build();
+
+    private static async Task Main(string[] args)
     {
-        private static IConfiguration Configuration { get; } = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile(Path.Combine(AppContext.BaseDirectory, @"settings\settings.json"), false, false)
-            .Build();
+        Console.OutputEncoding = Encoding.UTF8;
+        var services = new ServiceCollection();
+        ConfigureServices(services);
+        var serviceProvider = services.BuildServiceProvider();
+        var commandParser = serviceProvider.GetRequiredService<ICommandParser>();
+        var commands = serviceProvider.GetServices<ICommand>();
+        var logger = serviceProvider.GetService<ILogger>();
+        var task = commandParser.ParseAsync(args, commands);
 
-        private static void Main(string[] args)
+        try
         {
-            Console.OutputEncoding = Encoding.UTF8;
-            var services = new ServiceCollection();
-            ConfigureServices(services);
-            var serviceProvider = services.BuildServiceProvider();
-            var commandParser = serviceProvider.GetRequiredService<ICommandParser>();
-            var commands = serviceProvider.GetServices<ICommand>();
-            var logger = serviceProvider.GetService<ILogger>();
+            ValidateApplicationSettings(serviceProvider.GetService<IOptions<ApplicationSettings>>()?.Value);
+            await task;
+        }
+        catch (Exception exception)
+        {
+            logger?.Error(exception, exception.Message);
+        }
+    }
 
-            var task = Task.Run(() => commandParser.Parse(args, commands));
+    private static void ValidateApplicationSettings(ApplicationSettings? applicationSettings)
+    {
+        if (applicationSettings == null)
+        {
+            throw new ArgumentNullException(nameof(applicationSettings), "ERROR: Application settings are absent.");
+        }
+    }
 
-            try
-            {
-                ValidateApplicationSettings(serviceProvider);
-                task.Wait();
-            }
-            catch (Exception exception)
-            {
-                logger?.Error(exception.Message);
-            }
+    private static void ConfigureServices(IServiceCollection services)
+    {
+        services.AddOptions<ApplicationSettings>()
+            .Bind(Configuration)
+            .ValidateDataAnnotations();
+
+        var version = Assembly.GetExecutingAssembly().GetName().Version;
+        if (version == null)
+        {
+            throw new ArgumentNullException("Version is null.", nameof(Version));
         }
 
-        private static void ValidateApplicationSettings(ServiceProvider serviceProvider)
+        var applicationSettings = Configuration.Get<ApplicationSettings>();
+        if (applicationSettings == null)
         {
-            var applicationSettings = serviceProvider.GetService<IOptions<ApplicationSettings>>()?.Value;
-
-            if (applicationSettings == null)
-            {
-                throw new ArgumentNullException(nameof(applicationSettings), "ERROR: Application settings are absent.");
-            }
+            throw new ArgumentNullException("ApplicationSettings is null.", nameof(ApplicationSettings));
         }
 
-        private static void ConfigureServices(IServiceCollection services)
+        if (applicationSettings.LogFilePath == null)
         {
-            services.AddOptions<ApplicationSettings>()
-                .Bind(Configuration)
-                .ValidateDataAnnotations();
-
-            var version = Assembly.GetExecutingAssembly().GetName().Version;
-            if (version == null)
-            {
-                throw new ArgumentException("Version is null.", nameof(Version));
-            }
-
-            var applicationSettings = Configuration.Get<ApplicationSettings>();
-            if (applicationSettings == null)
-            {
-                throw new ArgumentException("ApplicationSettings is null.", nameof(ApplicationSettings));
-            }
-
-            if (applicationSettings.LogFilePath == null)
-            {
-                throw new ArgumentException("LogFilePath in ApplicationSettings is null.");
-            }
-
-            var logger = new LoggerConfiguration()
-                .MinimumLevel.Verbose()
-                .Enrich.WithProperty("Version", version)
-                .WriteTo.Console(LogEventLevel.Information, "{Timestamp:yyyy-MM-dd HH:mm:ss} | {Message:lj}{NewLine}{Exception}")
-                .WriteTo.File(Path.Combine(AppContext.BaseDirectory, applicationSettings.LogFilePath), rollingInterval: RollingInterval.Day)
-                .CreateLogger();
-
-            var applicationSettingsReadOnly = new ApplicationSettingsReadOnly(applicationSettings);
-            var applicationSettingsReadOnlyOptions = Options.Create(applicationSettingsReadOnly);
-
-            services.AddLogging(loggingBuilder => { loggingBuilder.AddSerilog(logger, true); });
-
-            services.AddTransient<IParameterHandler, ParameterHandler>();
-            services.AddTransient<IConsoleWrapper, ConsoleWrapper>();
-
-            services.AddSingleton<ILogger>(logger);
-            services.AddSingleton(applicationSettingsReadOnlyOptions);
-            services.AddSingleton<ICommandParser, CommandParser>();
-            services.AddSingleton<ICommand, VersionCommand>();
-            services.AddSingleton<ICommand, HelpCommand>();
-            services.AddSingleton<ICommand, MoveRawToJpegFolderCommand>();
-            services.AddSingleton<ICommand, RawCommand>();
-            services.AddSingleton<ICommand, RemoveOrphanageRawCommand>();
-            services.AddSingleton<ICommand, CopyAllFilesCommand>();
-            services.AddSingleton<ICommand, MoveAllFilesCommand>();
-            services.AddSingleton<ICommand, MoveVideoToSubfolderCommand>();
-            services.AddSingleton<ICommand, AddWatermarkCommand>();
-            services.AddSingleton<ICommand, ResizeCommand>();
-            services.AddSingleton<ICommand, ResizeWithWatermarkCommand>();
-            services.AddSingleton<ICommand, ClearExifCommand>();
-            services.AddSingleton<ICommand, UpdateExifDateCommand>();
-            services.AddSingleton<ICommand, GooglePhotoUploadCommand>();
-            services.AddSingleton<ICommand, RemoveRedundantFilesCommand>();
-            services.AddSingleton<ICommand, GooglePhotoCompareCommand>();
-            services.AddSingleton<ICommand, CompareFileNamesCommand>();
-            services.AddSingleton<ICommand, ShowVideoFilesCommand>();
-            services.AddSingleton<ICommand, ConvertExifTimezoneCommand>();
-            services.AddSingleton<ICommand, AddWatermarkWithConvertExifTimezoneCommand>();
-            services.AddSingleton<ICommand, SaveFolderTreeCommand>();
-            services.AddSingleton<ICommand, CopyValidImagesCommand>();
-            services.AddSingleton<ICommand, MoveCorruptedImagesCommand>();
-            services.AddSingleton<ICommand, FsivCreateThumbnailsCommand>();
-            services.AddSingleton<ICommand, DeleteFilesByExtensionCommand>();
-            services.AddSingleton<ICommand, DirectoryInfoCommand>();
+            throw new ArgumentNullException("LogFilePath in ApplicationSettings is null.");
         }
+
+        var logger = new LoggerConfiguration()
+            .MinimumLevel.Verbose()
+            .Enrich.WithProperty("Version", version)
+            .WriteTo.Console(LogEventLevel.Information, "{Timestamp:yyyy-MM-dd HH:mm:ss} | {Message:lj}{NewLine}{Exception}")
+            .WriteTo.File(Path.Combine(AppContext.BaseDirectory, applicationSettings.LogFilePath), rollingInterval: RollingInterval.Day)
+            .CreateLogger();
+
+        var applicationSettingsReadOnly = new ApplicationSettingsReadOnly(applicationSettings);
+        var applicationSettingsReadOnlyOptions = Options.Create(applicationSettingsReadOnly);
+
+        services.AddLogging(loggingBuilder => { loggingBuilder.AddSerilog(logger, true); });
+
+        services.AddTransient<IParameterHandler, ParameterHandler>();
+        services.AddTransient<IConsoleWrapper, ConsoleWrapper>();
+
+        services.AddSingleton<ILogger>(logger);
+        services.AddSingleton(applicationSettingsReadOnlyOptions);
+        services.AddSingleton<ICommandParser, CommandParser>();
+        services.AddSingleton<ICommand, VersionCommand>();
+        services.AddSingleton<ICommand, HelpCommand>();
+        services.AddSingleton<ICommand, MoveRawToJpegFolderCommand>();
+        services.AddSingleton<ICommand, RawCommand>();
+        services.AddSingleton<ICommand, RemoveOrphanageRawCommand>();
+        services.AddSingleton<ICommand, CopyAllFilesCommand>();
+        services.AddSingleton<ICommand, MoveAllFilesCommand>();
+        services.AddSingleton<ICommand, MoveVideoToSubfolderCommand>();
+        services.AddSingleton<ICommand, AddWatermarkCommand>();
+        services.AddSingleton<ICommand, ResizeCommand>();
+        services.AddSingleton<ICommand, ResizeWithWatermarkCommand>();
+        services.AddSingleton<ICommand, ClearExifCommand>();
+        services.AddSingleton<ICommand, UpdateExifDateCommand>();
+        services.AddSingleton<ICommand, GooglePhotoUploadCommand>();
+        services.AddSingleton<ICommand, RemoveRedundantFilesCommand>();
+        services.AddSingleton<ICommand, GooglePhotoCompareCommand>();
+        services.AddSingleton<ICommand, CompareFileNamesCommand>();
+        services.AddSingleton<ICommand, ShowVideoFilesCommand>();
+        services.AddSingleton<ICommand, ConvertExifTimezoneCommand>();
+        services.AddSingleton<ICommand, AddWatermarkWithConvertExifTimezoneCommand>();
+        services.AddSingleton<ICommand, SaveFolderTreeCommand>();
+        services.AddSingleton<ICommand, CopyValidImagesCommand>();
+        services.AddSingleton<ICommand, MoveCorruptedImagesCommand>();
+        services.AddSingleton<ICommand, FsivCreateThumbnailsCommand>();
+        services.AddSingleton<ICommand, DeleteFilesByExtensionCommand>();
+        services.AddSingleton<ICommand, DirectoryInfoCommand>();
     }
 }

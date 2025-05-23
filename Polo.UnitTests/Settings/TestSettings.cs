@@ -1,8 +1,7 @@
-﻿namespace Polo.UnitTests.Settings
+﻿namespace Polo.UnitTests.Settings;
+
+internal class TestSettings
 {
-    internal class TestSettings
-    {
-        public string EnvName { get; set; }
-        public string TestFolderPath { get; set; }
-    }
+    public string EnvName { get; set; }
+    public string TestFolderPath { get; set; }
 }

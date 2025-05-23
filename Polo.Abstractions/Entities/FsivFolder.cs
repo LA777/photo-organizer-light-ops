@@ -1,19 +1,18 @@
 ﻿using Dapper.Contrib.Extensions;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Polo.Abstractions.Entities
+namespace Polo.Abstractions.Entities;
+
+[Dapper.Contrib.Extensions.Table("FolderList")]
+public class FsivFolder
 {
-    [Dapper.Contrib.Extensions.Table("FolderList")]
-    public class FsivFolder
-    {
-        [Key]
-        [Column("folderID")]
-        public int FolderId { get; set; }
+    [Key]
+    [Column("folderID")]
+    public int FolderId { get; set; }
 
-        [Column("folderName")]
-        public string? FolderName { get; set; } // C:\T\PICS\
+    [Column("folderName")]
+    public string? FolderName { get; set; } // C:\T\PICS\
 
-        [Column("lastAccess")]
-        public int LastAccess { get; set; }
-    }
+    [Column("lastAccess")]
+    public int LastAccess { get; set; }
 }

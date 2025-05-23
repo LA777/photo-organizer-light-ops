@@ -8,62 +8,61 @@ using Polo.Parameters;
 using Polo.Parameters.Handler;
 using Serilog;
 
-namespace Polo.Commands
-{
-    public class ClearExifCommand : ICommand
-    {
-        private const string NameLong = "clear-exif";
-        private const string NameShort = "ce";
-        private readonly ApplicationSettingsReadOnly _applicationSettings;
-        private readonly ILogger _logger;
+namespace Polo.Commands;
 
-        public ClearExifCommand(IOptions<ApplicationSettingsReadOnly> applicationOptions, ILogger logger)
+public class ClearExifCommand : ICommand
+{
+    private const string NameLong = "clear-exif";
+    private const string NameShort = "ce";
+    private readonly ApplicationSettingsReadOnly _applicationSettings;
+    private readonly ILogger _logger;
+
+    public ClearExifCommand(IOptions<ApplicationSettingsReadOnly> applicationOptions, ILogger logger)
+    {
+        _applicationSettings = applicationOptions.Value ?? throw new ArgumentNullException(nameof(applicationOptions));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    }
+
+    public string Name => NameLong;
+
+    public string ShortName => NameShort;
+
+    public string Description => "Clears all EXIF data.";
+
+    public IParameterHandler ParameterHandler => new ParameterHandler
+    {
+        SourceParameter = new SourceParameter(),
+        OutputFolderNameParameter = new OutputFolderNameParameter()
+    };
+
+    public async Task ActionAsync(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
+    {
+        // TODO LA - Cover with UTs
+        var sourceFolderPath = ParameterHandler.SourceParameter.Initialize(parameters, Environment.CurrentDirectory);
+        var outputFolderName = ParameterHandler.OutputFolderNameParameter!.Initialize(parameters, _applicationSettings.OutputSubfolderName);
+        var destinationFolder = Path.GetFullPath(outputFolderName, sourceFolderPath);
+
+        var imagesForProcess = new List<string>();
+        _applicationSettings.FileForProcessExtensions.Distinct().ToList()
+            .ForEach(x => imagesForProcess.AddRange(Directory.EnumerateFiles(sourceFolderPath, $"*{x}", SearchOption.TopDirectoryOnly)));
+        imagesForProcess.SortByFileName();
+
+        if (imagesForProcess.Any() && !Directory.Exists(destinationFolder))
         {
-            _applicationSettings = applicationOptions.Value ?? throw new ArgumentNullException(nameof(applicationOptions));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            Directory.CreateDirectory(destinationFolder);
         }
 
-        public string Name => NameLong;
-
-        public string ShortName => NameShort;
-
-        public string Description => "Clears all EXIF data.";
-
-        public IParameterHandler ParameterHandler => new ParameterHandler
+        foreach (var imageForProcess in imagesForProcess)
         {
-            SourceParameter = new SourceParameter(),
-            OutputFolderNameParameter = new OutputFolderNameParameter()
-        };
+            var fileName = Path.GetFileName(imageForProcess);
+            var destinationImagePath = Path.Combine(destinationFolder, fileName);
 
-        public async Task ActionAsync(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
-        {
-            // TODO LA - Cover with UTs
-            var sourceFolderPath = ParameterHandler.SourceParameter.Initialize(parameters, Environment.CurrentDirectory);
-            var outputFolderName = ParameterHandler.OutputFolderNameParameter!.Initialize(parameters, _applicationSettings.OutputSubfolderName);
-            var destinationFolder = Path.GetFullPath(outputFolderName, sourceFolderPath);
+            using var image = new MagickImage(imageForProcess);
+            var exifProfile = image.GetExifProfile();
+            image.RemoveProfile(exifProfile!);
+            await image.WriteAsync(destinationImagePath);
 
-            var imagesForProcess = new List<string>();
-            _applicationSettings.FileForProcessExtensions.Distinct().ToList()
-                .ForEach(x => imagesForProcess.AddRange(Directory.EnumerateFiles(sourceFolderPath, $"*{x}", SearchOption.TopDirectoryOnly)));
-            imagesForProcess.SortByFileName();
-
-            if (imagesForProcess.Any() && !Directory.Exists(destinationFolder))
-            {
-                Directory.CreateDirectory(destinationFolder);
-            }
-
-            foreach (var imageForProcess in imagesForProcess)
-            {
-                var fileName = Path.GetFileName(imageForProcess);
-                var destinationImagePath = Path.Combine(destinationFolder, fileName);
-
-                using var image = new MagickImage(imageForProcess);
-                var exifProfile = image.GetExifProfile();
-                image.RemoveProfile(exifProfile!);
-                await image.WriteAsync(destinationImagePath);
-
-                _logger.Information($"File copied without EXIF: {destinationImagePath}");
-            }
+            _logger.Information($"File copied without EXIF: {destinationImagePath}");
         }
     }
 }

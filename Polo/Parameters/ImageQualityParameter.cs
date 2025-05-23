@@ -3,44 +3,43 @@ using Polo.Abstractions.Exceptions;
 using Polo.Abstractions.Parameters;
 using Polo.Extensions;
 
-namespace Polo.Parameters
+namespace Polo.Parameters;
+
+public class ImageQualityParameter : IParameter<uint>
 {
-    public class ImageQualityParameter : IParameter<int>
+    public static uint Min => 0; // TODO LA - Combine min and max with Options validation
+    public static uint Max => 100;
+
+    public string Name => "image-quality";
+
+    public IReadOnlyCollection<string> PossibleValues => new List<string> { Min.ToString(), "42", Max.ToString() };
+
+    public string Description => "Image quality.";
+
+    public uint Initialize(IReadOnlyDictionary<string, string> inputParameters, uint defaultValue, IEnumerable<ICommand> commands = null!)
     {
-        public static int Min => 0; // TODO LA - Combine min and max with Options validation
-        public static int Max => 100;
+        // TODO LA - Cover with UTs
 
-        public string Name => "image-quality";
+        var outputValue = defaultValue;
+        var parametersEmpty = inputParameters.IsNullOrEmpty();
 
-        public IReadOnlyCollection<string> PossibleValues => new List<string> { Min.ToString(), "42", Max.ToString() };
-
-        public string Description => "Image quality.";
-
-        public int Initialize(IReadOnlyDictionary<string, string> inputParameters, int defaultValue, IEnumerable<ICommand> commands = null!)
+        if (!parametersEmpty && inputParameters.TryGetValue(Name, out var parameterValue))
         {
-            // TODO LA - Cover with UTs
-
-            var outputValue = defaultValue;
-            var parametersEmpty = inputParameters.IsNullOrEmpty();
-
-            if (!parametersEmpty && inputParameters.TryGetValue(Name, out var parameterValue))
+            if (uint.TryParse(parameterValue, out var number))
             {
-                if (int.TryParse(parameterValue, out var number))
-                {
-                    outputValue = number;
-                }
-                else
-                {
-                    throw new ParameterParseException($"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{Name}' is not a number.");
-                }
+                outputValue = number;
             }
-
-            if (outputValue < Min || outputValue > Max)
+            else
             {
-                throw new ArgumentOutOfRangeException($"{CommandParser.ShortCommandPrefix}{Name}", $"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{Name}' should be in the range from '{Min}' to '{Max}'.");
+                throw new ParameterParseException($"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{Name}' is not a number.");
             }
-
-            return outputValue;
         }
+
+        if (outputValue < Min || outputValue > Max)
+        {
+            throw new ArgumentOutOfRangeException($"{CommandParser.ShortCommandPrefix}{Name}", $"ERROR: Parameter '{CommandParser.ShortCommandPrefix}{Name}' should be in the range from '{Min}' to '{Max}'.");
+        }
+
+        return outputValue;
     }
 }

@@ -1,10 +1,8 @@
 ﻿using Polo.Abstractions.Commands;
-using System.Collections.Generic;
 
-namespace Polo.Abstractions
+namespace Polo.Abstractions;
+
+public interface ICommandParser
 {
-    public interface ICommandParser
-    {
-        public void Parse(string[] arguments, IEnumerable<ICommand> commands);
-    }
+    public Task ParseAsync(string[] arguments, IEnumerable<ICommand> commands);
 }

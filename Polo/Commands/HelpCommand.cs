@@ -7,119 +7,118 @@ using Serilog;
 using System.Reflection;
 using System.Text;
 
-namespace Polo.Commands
+namespace Polo.Commands;
+
+public class HelpCommand : ICommand
 {
-    public class HelpCommand : ICommand
+    private const string NameLong = "help";
+    private const string NameShort = "h";
+    private readonly ILogger _logger;
+
+
+    public HelpCommand(ILogger logger)
     {
-        private const string NameLong = "help";
-        private const string NameShort = "h";
-        private readonly ILogger _logger;
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    }
 
+    public string Name => NameLong;
 
-        public HelpCommand(ILogger logger)
+    public string ShortName => NameShort;
+
+    public string Description => "Shows list of available commands.";
+
+    public IParameterHandler ParameterHandler { get; } = new ParameterHandler
+    {
+        CommandParameter = new CommandParameter()
+    };
+
+    public Task ActionAsync(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
+    {
+        // TODO LA - Cover with UTs
+        if (commands == null)
         {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            throw new ArgumentNullException(nameof(commands));
         }
 
-        public string Name => NameLong;
+        var stringBuilder = new StringBuilder();
 
-        public string ShortName => NameShort;
-
-        public string Description => "Shows list of available commands.";
-
-        public IParameterHandler ParameterHandler { get; } = new ParameterHandler
+        if (parameters.IsNullOrEmpty())
         {
-            CommandParameter = new CommandParameter()
-        };
+            stringBuilder.AppendLine();
+            stringBuilder.AppendLine("POLO - photo organizer light operations.");
+            stringBuilder.AppendLine("Utility that helps arrange and manage images.");
+            stringBuilder.AppendLine();
+            stringBuilder.AppendLine("Commands:");
 
-        public Task ActionAsync(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
+            foreach (var command in commands.OrderBy(x => x.Name))
+            {
+                stringBuilder.AppendLine($"\tCommand Name:\t{CommandParser.CommandPrefix}{command.Name}");
+                stringBuilder.AppendLine($"\tShort Name:\t{CommandParser.ShortCommandPrefix}{command.ShortName}");
+                stringBuilder.AppendLine($"\tDescription:\t{command.Description}");
+                stringBuilder.AppendLine();
+            }
+
+            DisplayAndLogText(stringBuilder.ToString());
+        }
+        else
         {
-            // TODO LA - Cover with UTs
+            if (ParameterHandler == null)
+            {
+                throw new ArgumentException();
+            }
+
             if (commands == null)
             {
-                throw new ArgumentNullException(nameof(commands));
+                throw new ArgumentException();
             }
 
-            var stringBuilder = new StringBuilder();
+            var parameterCommand = ParameterHandler.CommandParameter!.Initialize(parameters, null!, commands);
 
-            if (parameters.IsNullOrEmpty())
+            if (parameterCommand == null)
             {
-                stringBuilder.AppendLine();
-                stringBuilder.AppendLine("POLO - photo organizer light operations.");
-                stringBuilder.AppendLine("Utility that helps arrange and manage images.");
-                stringBuilder.AppendLine();
-                stringBuilder.AppendLine("Commands:");
-
-                foreach (var command in commands.OrderBy(x => x.Name))
-                {
-                    stringBuilder.AppendLine($"\tCommand Name:\t{CommandParser.CommandPrefix}{command.Name}");
-                    stringBuilder.AppendLine($"\tShort Name:\t{CommandParser.ShortCommandPrefix}{command.ShortName}");
-                    stringBuilder.AppendLine($"\tDescription:\t{command.Description}");
-                    stringBuilder.AppendLine();
-                }
-
-                DisplayAndLogText(stringBuilder.ToString());
+                throw new ArgumentException();
             }
-            else
+
+            stringBuilder.AppendLine();
+            stringBuilder.AppendLine($"Command Name:\t{CommandParser.CommandPrefix}{parameterCommand.Name}");
+            stringBuilder.AppendLine($"Short Name:\t{CommandParser.ShortCommandPrefix}{parameterCommand.ShortName}");
+            stringBuilder.AppendLine($"Description:\t{parameterCommand.Description}");
+            stringBuilder.AppendLine();
+            stringBuilder.AppendLine("Example:");
+
+            var applicationName = Assembly.GetExecutingAssembly().GetName().Name?.ToLower() ?? "polo";
+            stringBuilder.Append($"{applicationName} {CommandParser.CommandPrefix}{parameterCommand.Name} ");
+
+            var commandParameters = parameterCommand.ParameterHandler.GetParameters().OrderBy(x => x!.Name).ToList();
+
+            foreach (var parameter in commandParameters)
             {
-                if (ParameterHandler == null)
-                {
-                    throw new ArgumentException();
-                }
-
-                if (commands == null)
-                {
-                    throw new ArgumentException();
-                }
-
-                var parameterCommand = ParameterHandler.CommandParameter!.Initialize(parameters, null!, commands);
-
-                if (parameterCommand == null)
-                {
-                    throw new ArgumentException();
-                }
-
-                stringBuilder.AppendLine();
-                stringBuilder.AppendLine($"Command Name:\t{CommandParser.CommandPrefix}{parameterCommand.Name}");
-                stringBuilder.AppendLine($"Short Name:\t{CommandParser.ShortCommandPrefix}{parameterCommand.ShortName}");
-                stringBuilder.AppendLine($"Description:\t{parameterCommand.Description}");
-                stringBuilder.AppendLine();
-                stringBuilder.AppendLine("Example:");
-
-                var applicationName = Assembly.GetExecutingAssembly().GetName().Name?.ToLower() ?? "polo";
-                stringBuilder.Append($"{applicationName} {CommandParser.CommandPrefix}{parameterCommand.Name} ");
-
-                var commandParameters = parameterCommand.ParameterHandler.GetParameters().OrderBy(x => x!.Name).ToList();
-
-                foreach (var parameter in commandParameters)
-                {
-                    stringBuilder.Append($"{CommandParser.ShortCommandPrefix}{parameter!.Name}{CommandParser.ParameterDelimiter}{parameter.PossibleValues.Last()} ");
-                }
-
-                stringBuilder.AppendLine();
-                stringBuilder.AppendLine();
-                stringBuilder.AppendLine("Parameters:");
-
-
-                foreach (var parameter in commandParameters)
-                {
-                    stringBuilder.AppendLine($"\tParameter Name:\t\t{CommandParser.ShortCommandPrefix}{parameter!.Name}");
-                    stringBuilder.AppendLine($"\tDescription:\t\t{parameter.Description}");
-                    var possibleValues = string.Join("; ", parameter.PossibleValues);
-                    stringBuilder.AppendLine($"\tPossible values:\t{possibleValues}");
-                    stringBuilder.AppendLine();
-                }
-
-                DisplayAndLogText(stringBuilder.ToString());
+                stringBuilder.Append($"{CommandParser.ShortCommandPrefix}{parameter!.Name}{CommandParser.ParameterDelimiter}{parameter.PossibleValues.Last()} ");
             }
 
-            return Task.CompletedTask;
+            stringBuilder.AppendLine();
+            stringBuilder.AppendLine();
+            stringBuilder.AppendLine("Parameters:");
+
+
+            foreach (var parameter in commandParameters)
+            {
+                stringBuilder.AppendLine($"\tParameter Name:\t\t{CommandParser.ShortCommandPrefix}{parameter!.Name}");
+                stringBuilder.AppendLine($"\tDescription:\t\t{parameter.Description}");
+                var possibleValues = string.Join("; ", parameter.PossibleValues);
+                stringBuilder.AppendLine($"\tPossible values:\t{possibleValues}");
+                stringBuilder.AppendLine();
+            }
+
+            DisplayAndLogText(stringBuilder.ToString());
         }
 
-        private void DisplayAndLogText(string text)
-        {
-            _logger.Verbose(text);
-            Console.WriteLine(text);
-        }
+        return Task.CompletedTask;
+    }
+
+    private void DisplayAndLogText(string text)
+    {
+        _logger.Verbose(text);
+        Console.WriteLine(text);
     }
 }

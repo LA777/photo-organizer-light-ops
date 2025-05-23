@@ -5,125 +5,124 @@ using Polo.Abstractions.Parameters.Handler;
 using System.Text;
 
 // ReSharper disable ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-namespace Polo.Parameters.Handler
+namespace Polo.Parameters.Handler;
+
+public class ParameterHandler : IParameterHandler
 {
-    public class ParameterHandler : IParameterHandler
+    public IParameter<string> ExtensionParameter { get; init; } = null!;
+    public IParameter<uint> FsivThumbnailSizeParameter { get; init; } = null!;
+    public IParameter<bool> RecursiveParameter { get; init; } = null!;
+    public IParameter<string> SourceParameter { get; init; } = null!;
+    public IParameter<string> WatermarkPathParameter { get; init; } = null!;
+    public IParameter<string> OutputFolderNameParameter { get; init; } = null!;
+    public IParameter<string> PositionParameter { get; init; } = null!;
+    public IParameter<int> TransparencyParameter { get; init; } = null!;
+    public IParameter<uint> LongSideLimitParameter { get; init; } = null!;
+    public IParameter<float> MegaPixelsLimitParameter { get; init; } = null!;
+    public IParameter<string> DestinationParameter { get; init; } = null!;
+    public IParameter<uint> ImageQualityParameter { get; init; } = null!;
+    public IParameter<double> TimeDifferenceParameter { get; init; } = null!;
+    public IParameter<OutputFileType> OutputFileTypeParameter { get; init; } = null!;
+    public IParameter<ICommand> CommandParameter { get; init; } = null!;
+
+    public string GetParametersDescription()
     {
-        public IParameter<string> ExtensionParameter { get; init; } = null!;
-        public IParameter<int> FsivThumbnailSizeParameter { get; init; } = null!;
-        public IParameter<bool> RecursiveParameter { get; init; } = null!;
-        public IParameter<string> SourceParameter { get; init; } = null!;
-        public IParameter<string> WatermarkPathParameter { get; init; } = null!;
-        public IParameter<string> OutputFolderNameParameter { get; init; } = null!;
-        public IParameter<string> PositionParameter { get; init; } = null!;
-        public IParameter<int> TransparencyParameter { get; init; } = null!;
-        public IParameter<int> LongSideLimitParameter { get; init; } = null!;
-        public IParameter<float> MegaPixelsLimitParameter { get; init; } = null!;
-        public IParameter<string> DestinationParameter { get; init; } = null!;
-        public IParameter<int> ImageQualityParameter { get; init; } = null!;
-        public IParameter<double> TimeDifferenceParameter { get; init; } = null!;
-        public IParameter<OutputFileType> OutputFileTypeParameter { get; init; } = null!;
-        public IParameter<ICommand> CommandParameter { get; init; } = null!;
+        var parameters = GetParameters();
+        var stringBuilder = new StringBuilder();
 
-        public string GetParametersDescription()
+        foreach (var parameter in parameters)
         {
-            var parameters = GetParameters();
-            var stringBuilder = new StringBuilder();
-
-            foreach (var parameter in parameters)
+            if (parameter == null)
             {
-                if (parameter == null)
-                {
-                    continue;
-                }
-
-                var text = $"{CommandParser.ShortCommandPrefix}{parameter.Name}{CommandParser.ParameterDelimiter}{parameter.PossibleValues.First()} ";
-                stringBuilder.AppendLine(text);
+                continue;
             }
 
-            return stringBuilder.ToString();
+            var text = $"{CommandParser.ShortCommandPrefix}{parameter.Name}{CommandParser.ParameterDelimiter}{parameter.PossibleValues.First()} ";
+            stringBuilder.AppendLine(text);
         }
 
-        public IReadOnlyCollection<IParameterInfo?> GetParameters()
+        return stringBuilder.ToString();
+    }
+
+    public IReadOnlyCollection<IParameterInfo?> GetParameters()
+    {
+        var parameters = new List<IParameterInfo?>();
+
+        if (SourceParameter != null)
         {
-            var parameters = new List<IParameterInfo?>();
-
-            if (SourceParameter != null)
-            {
-                parameters.Add(SourceParameter);
-            }
-
-            if (WatermarkPathParameter != null)
-            {
-                parameters.Add(WatermarkPathParameter);
-            }
-
-            if (OutputFolderNameParameter != null)
-            {
-                parameters.Add(OutputFolderNameParameter);
-            }
-
-            if (PositionParameter != null)
-            {
-                parameters.Add(PositionParameter);
-            }
-
-            if (TransparencyParameter != null)
-            {
-                parameters.Add(TransparencyParameter);
-            }
-
-            if (LongSideLimitParameter != null)
-            {
-                parameters.Add(LongSideLimitParameter);
-            }
-
-            if (MegaPixelsLimitParameter != null)
-            {
-                parameters.Add(MegaPixelsLimitParameter);
-            }
-
-            if (DestinationParameter != null)
-            {
-                parameters.Add(DestinationParameter);
-            }
-
-            if (ImageQualityParameter != null)
-            {
-                parameters.Add(ImageQualityParameter);
-            }
-
-            if (TimeDifferenceParameter != null)
-            {
-                parameters.Add(TimeDifferenceParameter);
-            }
-
-            if (RecursiveParameter != null)
-            {
-                parameters.Add(RecursiveParameter);
-            }
-
-            if (FsivThumbnailSizeParameter != null)
-            {
-                parameters.Add(FsivThumbnailSizeParameter);
-            }
-
-            if (ExtensionParameter != null)
-            {
-                parameters.Add(FsivThumbnailSizeParameter);
-            }
-
-            if (OutputFileTypeParameter != null)
-            {
-                parameters.Add(OutputFileTypeParameter);
-            }
-
-            if (CommandParameter != null)
-            {
-                parameters.Add(CommandParameter);
-            }
-
-            return parameters;
+            parameters.Add(SourceParameter);
         }
+
+        if (WatermarkPathParameter != null)
+        {
+            parameters.Add(WatermarkPathParameter);
+        }
+
+        if (OutputFolderNameParameter != null)
+        {
+            parameters.Add(OutputFolderNameParameter);
+        }
+
+        if (PositionParameter != null)
+        {
+            parameters.Add(PositionParameter);
+        }
+
+        if (TransparencyParameter != null)
+        {
+            parameters.Add(TransparencyParameter);
+        }
+
+        if (LongSideLimitParameter != null)
+        {
+            parameters.Add(LongSideLimitParameter);
+        }
+
+        if (MegaPixelsLimitParameter != null)
+        {
+            parameters.Add(MegaPixelsLimitParameter);
+        }
+
+        if (DestinationParameter != null)
+        {
+            parameters.Add(DestinationParameter);
+        }
+
+        if (ImageQualityParameter != null)
+        {
+            parameters.Add(ImageQualityParameter);
+        }
+
+        if (TimeDifferenceParameter != null)
+        {
+            parameters.Add(TimeDifferenceParameter);
+        }
+
+        if (RecursiveParameter != null)
+        {
+            parameters.Add(RecursiveParameter);
+        }
+
+        if (FsivThumbnailSizeParameter != null)
+        {
+            parameters.Add(FsivThumbnailSizeParameter);
+        }
+
+        if (ExtensionParameter != null)
+        {
+            parameters.Add(FsivThumbnailSizeParameter);
+        }
+
+        if (OutputFileTypeParameter != null)
+        {
+            parameters.Add(OutputFileTypeParameter);
+        }
+
+        if (CommandParameter != null)
+        {
+            parameters.Add(CommandParameter);
+        }
+
+        return parameters;
     }
 }

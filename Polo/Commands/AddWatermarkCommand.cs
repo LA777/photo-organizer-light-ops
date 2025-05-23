@@ -44,7 +44,6 @@ public class AddWatermarkCommand : ICommand
     public async Task ActionAsync(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
     {
         // TODO LA - Add OverwriteFile parameter
-
         var sourceFolderPath = ParameterHandler.SourceParameter.Initialize(parameters, Environment.CurrentDirectory);
         var watermarkPath = ParameterHandler.WatermarkPathParameter!.Initialize(parameters, _applicationSettings.WatermarkPath);
         var watermarkOutputFolderName = ParameterHandler.OutputFolderNameParameter!.Initialize(parameters, _applicationSettings.OutputSubfolderName);

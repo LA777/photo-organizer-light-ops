@@ -8,53 +8,52 @@ using Polo.Parameters.Handler;
 using Serilog;
 using SearchOption = System.IO.SearchOption;
 
-namespace Polo.Commands
+namespace Polo.Commands;
+
+public class RemoveRedundantFilesCommand : ICommand
 {
-    public class RemoveRedundantFilesCommand : ICommand
+    private const string NameLong = "remove-redundant-files";
+    private const string NameShort = "rrf";
+    private readonly ApplicationSettingsReadOnly _applicationSettings;
+    private readonly ILogger _logger;
+
+    public RemoveRedundantFilesCommand(IOptions<ApplicationSettingsReadOnly> applicationOptions, ILogger logger)
     {
-        private const string NameLong = "remove-redundant-files";
-        private const string NameShort = "rrf";
-        private readonly ApplicationSettingsReadOnly _applicationSettings;
-        private readonly ILogger _logger;
+        _applicationSettings = applicationOptions.Value ?? throw new ArgumentNullException(nameof(applicationOptions));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    }
 
-        public RemoveRedundantFilesCommand(IOptions<ApplicationSettingsReadOnly> applicationOptions, ILogger logger)
+    public string Name => NameLong;
+
+    public string ShortName => NameShort;
+
+    public string Description => "Removes redundant files from the folder and sub folders.";
+
+    public IParameterHandler ParameterHandler => new ParameterHandler
+    {
+        SourceParameter = new SourceParameter()
+    };
+
+    public Task ActionAsync(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
+    {
+        // TODO LA - Cover with UTs
+        // TODO LA - Add RecursiveParameter
+        var currentDirectory = Environment.CurrentDirectory;
+        var sourceFolderPath = ParameterHandler.SourceParameter.Initialize(parameters, currentDirectory);
+
+        // TODO LA - Cover with UTs - check for duplicates
+        // TODO LA - add Parameter for RedundantFiles names
+        var redundantFiles = new List<string>();
+        _applicationSettings.RedundantFiles.Distinct().ToList()
+            .ForEach(x => redundantFiles.AddRange(Directory.EnumerateFiles(sourceFolderPath, $"{x}", SearchOption.AllDirectories))); // TODO LA - Refactor
+
+        foreach (var redundantFile in redundantFiles)
         {
-            _applicationSettings = applicationOptions.Value ?? throw new ArgumentNullException(nameof(applicationOptions));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            FileSystem.DeleteFile(redundantFile, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+
+            _logger.Information($"File deleted: {redundantFile}");
         }
 
-        public string Name => NameLong;
-
-        public string ShortName => NameShort;
-
-        public string Description => "Removes redundant files from the folder and sub folders.";
-
-        public IParameterHandler ParameterHandler => new ParameterHandler
-        {
-            SourceParameter = new SourceParameter()
-        };
-
-        public Task ActionAsync(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
-        {
-            // TODO LA - Cover with UTs
-            // TODO LA - Add RecursiveParameter
-            var currentDirectory = Environment.CurrentDirectory;
-            var sourceFolderPath = ParameterHandler.SourceParameter.Initialize(parameters, currentDirectory);
-
-            // TODO LA - Cover with UTs - check for duplicates
-            // TODO LA - add Parameter for RedundantFiles names
-            var redundantFiles = new List<string>();
-            _applicationSettings.RedundantFiles.Distinct().ToList()
-                .ForEach(x => redundantFiles.AddRange(Directory.EnumerateFiles(sourceFolderPath, $"{x}", SearchOption.AllDirectories))); // TODO LA - Refactor
-
-            foreach (var redundantFile in redundantFiles)
-            {
-                FileSystem.DeleteFile(redundantFile, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
-
-                _logger.Information($"File deleted: {redundantFile}");
-            }
-
-            return Task.CompletedTask;
-        }
+        return Task.CompletedTask;
     }
 }

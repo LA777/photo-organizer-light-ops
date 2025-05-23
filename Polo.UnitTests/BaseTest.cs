@@ -1,16 +1,15 @@
 ﻿using AutoFixture;
 
-namespace Polo.UnitTests
-{
-    public class BaseTest
-    {
-        protected readonly IFixture Fixture;
+namespace Polo.UnitTests;
 
-        public BaseTest()
-        {
-            Fixture = new Fixture();
-            Fixture.Behaviors.Remove(new ThrowingRecursionBehavior());
-            Fixture.Behaviors.Add(new OmitOnRecursionBehavior());
-        }
+public class BaseTest
+{
+    protected readonly IFixture Fixture;
+
+    public BaseTest()
+    {
+        Fixture = new Fixture();
+        Fixture.Behaviors.Remove(new ThrowingRecursionBehavior());
+        Fixture.Behaviors.Add(new OmitOnRecursionBehavior());
     }
 }
