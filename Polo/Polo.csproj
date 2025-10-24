@@ -7,7 +7,7 @@
     <Nullable>enable</Nullable>
 
       <ApplicationIcon>Icon\multimediaphotoviewer.ico</ApplicationIcon>
-    <Version>0.0.12.6</Version>
+    <Version>0.0.12.7</Version>
     <Description>Photo organizer</Description>
     <PackageProjectUrl>https://github.com/LA777/photo-organizer-light-ops</PackageProjectUrl>
     <PackageIcon>multimediaphotoviewer.ico</PackageIcon>
@@ -17,7 +17,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CasCap.Apis.GooglePhotos" Version="3.0.2" />
     <PackageReference Include="Dapper" Version="2.1.66" />
     <PackageReference Include="Dapper.Contrib" Version="2.0.78" />
     <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="14.6.0" />
@@ -25,7 +24,7 @@
     <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.16" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" Version="8.0.0" />
     <PackageReference Include="Serilog" Version="4.3.0" />
@@ -33,6 +32,7 @@
     <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.1" />
+    <PackageReference Include="System.Text.Json" Version="8.0.5" />
   </ItemGroup>
 
   <ItemGroup>

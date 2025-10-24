@@ -8,6 +8,7 @@ public interface IParameterHandler
     public IParameter<string> ExtensionParameter { get; init; }
     public IParameter<string> WatermarkPathParameter { get; init; }
     public IParameter<string> OutputFolderNameParameter { get; init; }
+    public IParameter<string> OutputFileNameParameter { get; init; }
     public IParameter<string> PositionParameter { get; init; }
     public IParameter<int> TransparencyParameter { get; init; }
     public IParameter<uint> LongSideLimitParameter { get; init; }

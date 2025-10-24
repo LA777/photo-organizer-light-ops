@@ -1,7 +1,7 @@
-﻿using Polo.Abstractions.Commands;
+﻿using Microsoft.Extensions.Logging;
+using Polo.Abstractions.Commands;
 using Polo.Abstractions.Parameters.Handler;
 using Polo.Abstractions.Wrappers;
-using Serilog;
 using System.Reflection;
 
 namespace Polo.Commands;
@@ -11,9 +11,9 @@ public class VersionCommand : ICommand
     private const string NameLong = "version";
     private const string NameShort = "v";
     private readonly IConsoleWrapper _consoleWrapper;
-    private readonly ILogger _logger;
+    private readonly ILogger<VersionCommand> _logger;
 
-    public VersionCommand(IConsoleWrapper consoleWrapper, ILogger logger)
+    public VersionCommand(IConsoleWrapper consoleWrapper, ILogger<VersionCommand> logger)
     {
         _consoleWrapper = consoleWrapper ?? throw new ArgumentNullException(nameof(consoleWrapper));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -32,7 +32,7 @@ public class VersionCommand : ICommand
         var version = Assembly.GetExecutingAssembly().GetName().Version;
         ArgumentNullException.ThrowIfNullOrWhiteSpace(nameof(version));
         var versionText = version?.ToString() ?? "Version is not specified.";
-        _logger.Verbose(versionText);
+        _logger.LogTrace(versionText);
         _consoleWrapper.WriteLine(versionText);
 
         return Task.CompletedTask;

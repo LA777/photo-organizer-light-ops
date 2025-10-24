@@ -15,6 +15,7 @@ public class ParameterHandler : IParameterHandler
     public IParameter<string> SourceParameter { get; init; } = null!;
     public IParameter<string> WatermarkPathParameter { get; init; } = null!;
     public IParameter<string> OutputFolderNameParameter { get; init; } = null!;
+    public IParameter<string> OutputFileNameParameter { get; init; } = null!;
     public IParameter<string> PositionParameter { get; init; } = null!;
     public IParameter<int> TransparencyParameter { get; init; } = null!;
     public IParameter<uint> LongSideLimitParameter { get; init; } = null!;
@@ -61,6 +62,11 @@ public class ParameterHandler : IParameterHandler
         if (OutputFolderNameParameter != null)
         {
             parameters.Add(OutputFolderNameParameter);
+        }
+
+        if (OutputFileNameParameter != null)
+        {
+            parameters.Add(OutputFileNameParameter);
         }
 
         if (PositionParameter != null)

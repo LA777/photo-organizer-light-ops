@@ -11,6 +11,7 @@ public class ApplicationSettingsReadOnly
         ImageResizeMegaPixelsLimit = applicationSettings.ImageResizeMegaPixelsLimit;
         WatermarkPath = applicationSettings.WatermarkPath;
         OutputSubfolderName = applicationSettings.OutputSubfolderName;
+        OutputFileName = applicationSettings.OutputFileName;
         WatermarkPosition = applicationSettings.WatermarkPosition;
         ImageQuality = applicationSettings.ImageQuality;
         FsivThumbnailSize = applicationSettings.FsivThumbnailSize;
@@ -36,6 +37,8 @@ public class ApplicationSettingsReadOnly
     public string WatermarkPath { get; }
 
     public string OutputSubfolderName { get; }
+
+    public string OutputFileName { get; }
 
     public string WatermarkPosition { get; }
 

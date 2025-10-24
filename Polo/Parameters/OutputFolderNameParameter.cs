@@ -10,7 +10,7 @@ public class OutputFolderNameParameter : IParameter<string> // TODO LA - Refacto
 {
     public string Name => "output-folder-name";
 
-    public IReadOnlyCollection<string> PossibleValues => new List<string> { "output", "processed" };
+    public IReadOnlyCollection<string> PossibleValues => ["output", "processed"];
 
     public string Description => "Name of the folder, where all processed files will be placed.";
 

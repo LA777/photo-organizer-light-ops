@@ -1,10 +1,11 @@
-﻿using Newtonsoft.Json;
-using Polo.Abstractions.Commands;
+﻿using Polo.Abstractions.Commands;
 using Polo.Abstractions.Parameters.Handler;
 using Polo.Parameters;
 using Polo.Parameters.Handler;
 using Serilog;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Polo.Commands;
 
@@ -39,7 +40,7 @@ public class SaveFolderTreeCommand : ICommand
 
         var folderTree = CreateFolderTree(sourceFolderPath);
 
-        var json = ConvertToNsJson(folderTree);
+        var json = ConvertToJson(folderTree);
 
         const string outputFileName = "_FolderTree.json";
         var outputFilePath = Path.Join(destinationFolder, outputFileName);
@@ -50,16 +51,19 @@ public class SaveFolderTreeCommand : ICommand
         _logger.Information(message);
     }
 
-    private static string ConvertToNsJson(Folder folderTree)
+    private static string ConvertToJson(Folder folderTree)
     {
-        var settings = new JsonSerializerSettings
+        var serializerOptions = new JsonSerializerOptions
         {
-            NullValueHandling = NullValueHandling.Ignore
+            WriteIndented = true, // Your global setting
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            Converters = { new JsonStringEnumConverter() }
         };
 
-        var json = JsonConvert.SerializeObject(folderTree, Formatting.Indented, settings);
+        var json = JsonSerializer.Serialize(folderTree, serializerOptions);
 
-        return json.Replace(@"\\", @"\");
+        //return json.Replace(@"\\", @"\");
+        return json;
     }
 
     private static Folder CreateFolderTree(string path)

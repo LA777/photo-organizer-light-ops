@@ -4,8 +4,9 @@
   "RawFolderName": "RAW", // RawSubfolderName
   "ImageResizeLongSideLimit": 50000, // Min - 1; // TODO LA - Rename
   "ImageResizeMegaPixelsLimit": 16.0, // Min - 0.001; // TODO LA - Rename
-  "WatermarkPath": "X:\\_LA_\\Sign\\Sign v3.5sl - 64% - FSviewer.png", //"d:\\tmp dev\\images\\sign\\Sign v3.5 small.png",
-  "OutputSubfolderName": "publish", // TODO LA - Rename
+  "WatermarkPath": "D:\\_LA_\\Sign\\Sign v3.5sl - 64% - FSviewer.png", //"d:\\tmp dev\\images\\sign\\Sign v3.5 small.png",
+  "OutputSubfolderName": "_output", // TODO LA - Rename
+  "OutputFileName": "_output.txt",
   "WatermarkPosition": "left-bottom",
   "WatermarkTransparencyPercent": 64, // Min - 0; Max - 100;
   "ImageQuality": 83,
@@ -13,7 +14,7 @@
   "FileForProcessExtensions": [ ".jpg", ".jpeg" ],
   "ImageFileExtensions": [ ".jpg", ".jpeg", ".png", ".bmp", ".gif", ".svg", ".webp", ".tiff" ],
   "RawFileExtensions": [ ".orf", ".crw", ".cr2", ".cr3", ".3fr", ".mef", ".nef", ".nrw", ".pef", ".ptx", ".rw2", ".arw", ".srf", ".sr2", ".gpr", ".raf", ".raw", ".rwl", ".dng", ".srw", ".x3f" ],
-  "VideoFileExtensions": [ ".mkv", ".avi", ".m2ts", ".ts", ".mp4", ".m4p", ".m4v", ".mpg", ".mpeg", ".mov", ".3gp" ],
+  "VideoFileExtensions": [ ".mkv", ".avi", ".m2ts", ".ts", ".mp4", ".m4v", ".mpg", ".mpeg", ".mov", ".3gp" ],
   "RedundantFiles": [ "thumbs.db", ".picasa.ini", "Desktop.ini" ],
   "SqliteDbConnectionStrings": "Data Source=indexed-file-system.db"
 }

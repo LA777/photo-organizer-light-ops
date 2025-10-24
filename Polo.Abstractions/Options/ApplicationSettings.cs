@@ -25,6 +25,9 @@ public class ApplicationSettings
     public string OutputSubfolderName { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "ERROR: Value for {0} should contain some data.")]
+    public string OutputFileName { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "ERROR: Value for {0} should contain some data.")]
     public string WatermarkPosition { get; set; } = string.Empty;
 
     [Range(0, 100, ErrorMessage = "ERROR: Value for {0} should be between {1} and {2}.")]

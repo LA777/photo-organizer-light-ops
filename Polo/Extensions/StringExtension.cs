@@ -19,7 +19,7 @@ public static class StringExtension
     }
 
     public static Gravity ParsePosition(this string position)
-    {// TODO LA - Move this extension to MagickImage extensions
+    {
         var split = position.Split(CommandParser.ShortCommandPrefix);
         if (split.Length != 2)
         {
@@ -87,5 +87,31 @@ public static class StringExtension
         }
 
         return screenPosition;
+    }
+
+    /// <summary>
+    /// Return MagickFormat based on file extension ('.jpg').
+    /// </summary>
+    /// <param name="fileExtensionWithLeadingDot"></param>
+    /// <returns>MagickFormat</returns>
+    public static MagickFormat GetMagickFormatByFileExtension(this string fileExtensionWithLeadingDot)
+    {
+        if (fileExtensionWithLeadingDot.ToLowerInvariant() == ".3fr")
+        {
+            return MagickFormat.ThreeFr;
+        }
+        else if (fileExtensionWithLeadingDot.ToLowerInvariant() == ".3gp")
+        {
+            return MagickFormat.ThreeGp;
+        }
+
+        var formatInfo = MagickFormatInfo.Create(fileExtensionWithLeadingDot);
+
+        if (formatInfo != null)
+        {
+            return formatInfo.Format;
+        }
+
+        return default;
     }
 }

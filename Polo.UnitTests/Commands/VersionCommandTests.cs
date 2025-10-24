@@ -1,8 +1,8 @@
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Polo.Abstractions.Wrappers;
 using Polo.Commands;
-using Serilog;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -16,9 +16,9 @@ public class VersionCommandTests
         // Arrange
         var resultVersionLog = string.Empty;
         var resultVersionConsole = string.Empty;
-        var loggerMock = new Mock<ILogger>();
+        var loggerMock = new Mock<ILogger<VersionCommand>>();
         var consoleWrapperMock = new Mock<IConsoleWrapper>();
-        loggerMock.Setup(x => x.Verbose(It.IsAny<string>()))
+        loggerMock.Setup(x => x.LogTrace(It.IsAny<string>()))
             .Callback<string>(v => resultVersionLog = v);
         consoleWrapperMock.Setup(x => x.WriteLine(It.IsAny<string>()))
             .Callback<string>(v => resultVersionConsole = v);

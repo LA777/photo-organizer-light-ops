@@ -1,11 +1,11 @@
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Polo.Abstractions.Commands;
 using Polo.Abstractions.Options;
 using Polo.Commands;
 using Polo.Parameters;
 using Polo.UnitTests.Models;
-using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,7 +19,7 @@ public class MoveAllFilesCommandTests : CommandTestBase
 {
     private const string DefaultSourceFolderPath = "d:\\";
     private static readonly ApplicationSettings _validApplicationSettings = new() { DefaultSourceFolderPath = DefaultSourceFolderPath };
-    private static readonly Mock<ILogger> _loggerMock = new();
+    private static readonly Mock<ILogger<MoveAllFilesCommand>> _loggerMock = new();
 
     private readonly Folder _folderStructureExpected = new()
     {

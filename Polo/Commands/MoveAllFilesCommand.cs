@@ -1,10 +1,10 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Polo.Abstractions.Commands;
 using Polo.Abstractions.Options;
 using Polo.Abstractions.Parameters.Handler;
 using Polo.Parameters;
 using Polo.Parameters.Handler;
-using Serilog;
 
 namespace Polo.Commands;
 
@@ -13,9 +13,9 @@ public class MoveAllFilesCommand : ICommand
     private const string NameLong = "move-all-files";
     private const string NameShort = "maf";
     private readonly ApplicationSettingsReadOnly _applicationSettings;
-    private readonly ILogger _logger;
+    private readonly ILogger<MoveAllFilesCommand> _logger;
 
-    public MoveAllFilesCommand(IOptions<ApplicationSettingsReadOnly> applicationOptions, ILogger logger)
+    public MoveAllFilesCommand(IOptions<ApplicationSettingsReadOnly> applicationOptions, ILogger<MoveAllFilesCommand> logger)
     {
         _applicationSettings = applicationOptions.Value ?? throw new ArgumentNullException(nameof(applicationOptions));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -45,7 +45,7 @@ public class MoveAllFilesCommand : ICommand
             var destinationFileName = Path.GetFileName(file);
             var destinationFilePath = Path.Combine(destinationFolder, destinationFileName);
             File.Move(file, destinationFilePath, false);
-            _logger.Information($"File moved: {destinationFileName}");
+            _logger.LogInformation("File moved: {0}", destinationFileName);
         }
 
         return Task.CompletedTask;

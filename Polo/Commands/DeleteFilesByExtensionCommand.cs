@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Polo.Abstractions.Commands;
 using Polo.Abstractions.Options;
 using Polo.Abstractions.Parameters.Handler;
@@ -13,12 +14,10 @@ public class DeleteFilesByExtensionCommand : ICommand
 {
     private const string NameLong = "delete-files-by-extension";
     private const string NameShort = "dfbe";
-    private readonly ApplicationSettingsReadOnly _applicationSettings;
-    private readonly ILogger _logger;
+    private readonly ILogger<DeleteFilesByExtensionCommand> _logger;
 
-    public DeleteFilesByExtensionCommand(IOptions<ApplicationSettingsReadOnly> applicationOptions, ILogger logger)
+    public DeleteFilesByExtensionCommand(ILogger<DeleteFilesByExtensionCommand> logger)
     {
-        _applicationSettings = applicationOptions.Value ?? throw new ArgumentNullException(nameof(applicationOptions));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -37,7 +36,7 @@ public class DeleteFilesByExtensionCommand : ICommand
 
     public Task ActionAsync(IReadOnlyDictionary<string, string> parameters = null!, IEnumerable<ICommand> commands = null!)
     {
-        var sourceFolder = ParameterHandler.SourceParameter.Initialize(parameters, _applicationSettings.DefaultSourceFolderPath);
+        var sourceFolder = ParameterHandler.SourceParameter.Initialize(parameters, Environment.CurrentDirectory);
         var extension = ParameterHandler.ExtensionParameter.Initialize(parameters, null!);
         var isRecursive = ParameterHandler.RecursiveParameter.Initialize(parameters, true);
         var searchOption = isRecursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
@@ -48,7 +47,7 @@ public class DeleteFilesByExtensionCommand : ICommand
         foreach (var (fileFullPath, index) in allFiles.WithIndex())
         {
             File.Delete(fileFullPath);
-            _logger.Information($"[{index}/{filesCount}] File was deleted: {fileFullPath}");
+            _logger.LogInformation($"[{index}/{filesCount}] File was deleted: {fileFullPath}");
         }
 
         return Task.CompletedTask;

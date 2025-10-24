@@ -1,6 +1,8 @@
 ﻿
 TODO
 
+- add command that collect all file extensions in folder recursevily (params: source, output-file)
+
 - add argument for resize JPEG files (resize with watermark)
 
 - add overwrite-file parameter

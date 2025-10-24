@@ -9,7 +9,7 @@ public class DestinationParameter : IParameter<string>
 {
     public string Name => "destination";
 
-    public IReadOnlyCollection<string> PossibleValues => new List<string> { @"""c:\photo""" };
+    public IReadOnlyCollection<string> PossibleValues => [@"""c:\photo"""];
 
     public string Description => "Destination folder full path.";
 

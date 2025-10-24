@@ -1,5 +1,4 @@
-﻿using CasCap.Common.Extensions;
-using ImageMagick;
+﻿using ImageMagick;
 using Microsoft.Extensions.Options;
 using Polo.Abstractions.Commands;
 using Polo.Abstractions.DataProviders;

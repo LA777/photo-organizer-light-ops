@@ -107,9 +107,9 @@ public static class Program
         services.AddSingleton<ICommand, ResizeWithWatermarkCommand>();
         services.AddSingleton<ICommand, ClearExifCommand>();
         services.AddSingleton<ICommand, UpdateExifDateCommand>();
-        services.AddSingleton<ICommand, GooglePhotoUploadCommand>();
+        //services.AddSingleton<ICommand, GooglePhotoUploadCommand>();
         services.AddSingleton<ICommand, RemoveRedundantFilesCommand>();
-        services.AddSingleton<ICommand, GooglePhotoCompareCommand>();
+        //services.AddSingleton<ICommand, GooglePhotoCompareCommand>();
         services.AddSingleton<ICommand, CompareFileNamesCommand>();
         services.AddSingleton<ICommand, ShowVideoFilesCommand>();
         services.AddSingleton<ICommand, ConvertExifTimezoneCommand>();
@@ -120,5 +120,7 @@ public static class Program
         services.AddSingleton<ICommand, FsivCreateThumbnailsCommand>();
         services.AddSingleton<ICommand, DeleteFilesByExtensionCommand>();
         services.AddSingleton<ICommand, DirectoryInfoCommand>();
+        services.AddSingleton<ICommand, CollectFileExtensionsCommand>();
+        services.AddSingleton<ICommand, CloneExifAndTimestampsCommand>();
     }
 }
